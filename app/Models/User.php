@@ -101,6 +101,21 @@ class User extends Authenticatable
             ->with(['heartbeats']);
     }
 
+    protected function online(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->onlines()->first() &&
+                $this->onlines()->first()?->leaving_at == null;
+        });
+    }
+
+    protected function leavingAt(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->onlines()->first()?->leaving_at;
+        });
+    }
+
     public function scopeWhereOnline(Builder $builder, bool $online): Builder
     {
         if ($online) {
@@ -117,20 +132,5 @@ class User extends Authenticatable
         }
 
         return $builder;
-    }
-
-    protected function online(): Attribute
-    {
-        return Attribute::get(function () {
-            return $this->onlines()->first() &&
-                $this->onlines()->first()?->leaving_at == null;
-        });
-    }
-
-    protected function leavingAt(): Attribute
-    {
-        return Attribute::get(function () {
-            return $this->onlines()->first()?->leaving_at;
-        });
     }
 }
