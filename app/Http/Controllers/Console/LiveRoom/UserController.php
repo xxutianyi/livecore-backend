@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Console\LiveRoom;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserGroup;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -13,7 +14,7 @@ class UserController extends Controller
     {
         $size = $request->input('size', 10);
 
-        $query = User::query()
+        $query = User::query()->with(['groups'])
             ->where('role', 'audience')
             ->sort($request->string('sorts'))
             ->search($request->string('search'))
@@ -22,6 +23,7 @@ class UserController extends Controller
 
         return inertia('console/live-room/user/index', [
             'data' => $query->paginate($size)->withQueryString(),
+            'groups' => UserGroup::all(),
         ]);
     }
 

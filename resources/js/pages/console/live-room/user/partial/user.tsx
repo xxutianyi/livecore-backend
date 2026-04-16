@@ -1,12 +1,12 @@
 import { Description, DescriptionItem } from '@/components/description';
-import { FormFieldText } from '@/components/form';
+import { FormFieldSelect, FormFieldText } from '@/components/form';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { formatDate, formatDatetime } from '@/lib/utils';
-import { User } from '@/services/model';
-import { Form } from '@inertiajs/react';
+import { User, UserGroup } from '@/services/model';
+import { Form, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -108,6 +108,43 @@ export function UserUpdate({ user }: { user: User }) {
                         <FormFieldText name="phone" label="手机号" defaultValue={user.phone} />
                         <FormFieldText name="email" label="电子邮件" defaultValue={user.email} />
                         <FormFieldText name="invitation_code" label="邀请人代码" defaultValue={user.invitation_code} />
+                        <Field>
+                            <Button type="submit">保存</Button>
+                        </Field>
+                    </FieldGroup>
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+export function UserBatchGroup({ ids }: { ids: string[] }) {
+    const [open, setOpen] = useState(false);
+    const { groups } = usePage<{ groups: UserGroup[] }>().props;
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button>编辑分组</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>编辑分组</DialogHeader>
+                <Form
+                    action={route('users.batch.group')}
+                    method="POST"
+                    transform={(data) => ({ ...data, user_ids: ids })}
+                    onSuccess={() => {
+                        setOpen(false);
+                        toast.success('保存成功');
+                    }}
+                >
+                    <FieldGroup>
+                        <FormFieldSelect
+                            label="分组"
+                            name="group_id"
+                            options={groups}
+                            optionsKey={{ label: 'name', value: 'id' }}
+                        />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>

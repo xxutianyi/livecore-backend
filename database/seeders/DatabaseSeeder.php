@@ -22,12 +22,5 @@ class DatabaseSeeder extends Seeder
         LiveRoom::factory(20)->create();
         LiveEvent::factory(200)->create();
         LiveMessage::factory(1000)->create();
-        LiveMessage::factory(1000)->create();
-        LiveMessage::factory(1000)->create();
-        LiveMessage::factory(1000)->create();
-        LiveMessage::factory(1000)->create();
-        LiveMessage::factory(1000)->create();
-        LiveMessage::factory(1000)->create();
-        LiveMessage::factory(1000)->create();
     }
 }

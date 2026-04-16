@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -99,6 +100,13 @@ class User extends Authenticatable
             ->latest('joined_at')
             ->withCount(['heartbeats'])
             ->with(['heartbeats']);
+    }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroup::class, 'users_groups')
+            ->without(['users', 'parent', 'children'])
+            ->withPivot('manageable');
     }
 
     protected function online(): Attribute

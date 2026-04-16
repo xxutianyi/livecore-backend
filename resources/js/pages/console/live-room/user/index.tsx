@@ -6,9 +6,12 @@ import { formatDatetime } from '@/lib/utils';
 import { User } from '@/services/model';
 import { PaginateData } from '@/types';
 import { Link } from '@inertiajs/react';
-import { UserCreate } from './partial/user';
+import { useState } from 'react';
+import { UserBatchGroup, UserCreate } from './partial/user';
 
 export default function Users({ data }: { data: PaginateData<User> }) {
+    const [select, setSelect] = useState<string[]>();
+
     const columns = defineColumns<User>([
         {
             dataKey: 'name',
@@ -42,6 +45,17 @@ export default function Users({ data }: { data: PaginateData<User> }) {
             tableRowRender: (data) => formatDatetime(data.leaving_at),
         },
         {
+            index: 'groups',
+            title: '分组',
+            tableRowRender: (data) => (
+                <>
+                    {data.groups?.map((group) => (
+                        <span key={group.id}>{group.name}</span>
+                    ))}
+                </>
+            ),
+        },
+        {
             index: 'actions',
             tableRowRender: (data) => {
                 return (
@@ -60,7 +74,12 @@ export default function Users({ data }: { data: PaginateData<User> }) {
                     <span>观众列表</span>
                     <UserCreate />
                 </div>
-                <DataTable columns={columns} paginateData={data} toolbarAction={<></>} />
+                <DataTable
+                    columns={columns}
+                    paginateData={data}
+                    onRowSelection={setSelect}
+                    toolbarAction={<>{select && select?.length > 0 && <UserBatchGroup ids={select} />}</>}
+                />
             </div>
         </ConsoleLayout>
     );

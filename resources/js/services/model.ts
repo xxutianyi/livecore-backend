@@ -25,6 +25,7 @@ export interface User extends Model {
     invitation_code?: string;
     online?: boolean;
     leaving_at?: string;
+    groups?: UserGroup[];
 }
 
 export interface UserOnline extends Model {
@@ -41,10 +42,13 @@ export interface UserHeartbeat extends Model {
     online_id: UserOnline['id'];
 }
 
-export interface Team extends Model, WithChildren<Team> {
+export interface UserGroup extends Model, WithChildren<UserGroup> {
     name: string;
     path: string;
-    parent_id: Team['id'];
+    users?: User;
+    users_count?: number;
+    children?: UserGroup[];
+    parent_id?: UserGroup['id'];
 }
 
 export interface LiveRoom extends Model {

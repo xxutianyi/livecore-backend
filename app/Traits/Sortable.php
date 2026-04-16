@@ -9,7 +9,7 @@ trait Sortable
     public function scopeSort(Builder $query, ?string $sorts = null): Builder
     {
         if (empty($sorts)) {
-            return $query->latest();
+            return $query->latest()->orderByDesc('id');
         }
 
         $sorts = mb_split(',', $sorts);

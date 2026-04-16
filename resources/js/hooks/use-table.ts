@@ -43,7 +43,7 @@ export function useDataTable<TData>({ rowKey, columns, paginateData, onRowSelect
     }
 
     function getRowKey(dataItem: TData) {
-        return JSON.stringify(dataItem[rowKey]);
+        return dataItem[rowKey] as string;
     }
 
     function setRowSelected(dataItem: TData, selected: boolean | 'indeterminate') {
