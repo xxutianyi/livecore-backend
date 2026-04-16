@@ -54,8 +54,8 @@ return [
     'email' => '输入的 :attribute 应为有效邮箱地址。',
     'encoding' => '输入的 :attribute 应为 :encoding 编码。',
     'ends_with' => '输入的 :attribute 应以 :values 结尾。',
-    'enum' => '选择的 :attribute 不在有效范围。',
-    'exists' => '选择的 :attribute 不在有效范围。',
+    'enum' => '输入的 :attribute 无效。',
+    'exists' => ':attribute不在有效范围内。',
     'extensions' => '上传的 :attribute 扩展名应为 :values 。',
     'file' => ':attribute 字段应为文件。',
     'filled' => '应输入 :attribute 。',
@@ -140,7 +140,7 @@ return [
     'prohibited_unless' => '除非 :other 为 :value 时，禁止输入 :attribute 。',
     'prohibits' => ':attribute 字段禁止了 :other 。',
     'regex' => '输入的 :attribute 不符合格式要求。',
-    'required' => ':attribute 是必填项。',
+    'required' => ':attribute是必填项。',
     'required_array_keys' => '输入的 :attribute 必须包含 :values。',
     'required_if' => '当 :other 为 :value 时，:attribute 是必填项。',
     'required_if_accepted' => '当勾选确认 :other 时，:attribute 是必填项。',
@@ -196,6 +196,11 @@ return [
     */
 
     'attributes' => [
+        'name' => '用户姓名',
+        'phone' => '手机号',
+        'email' => '电子邮件',
+        'invitation_code' => '邀请人代码',
+
         'new_password' => '新密码',
         'current_password' => '当前密码',
     ],

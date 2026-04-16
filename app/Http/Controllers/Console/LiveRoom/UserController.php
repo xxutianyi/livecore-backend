@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Console\LiveRoom;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -31,5 +32,40 @@ class UserController extends Controller
             'onlines' => $user->onlines,
             'messages' => $user->messages,
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', Rule::unique('users')],
+            'email' => ['nullable', 'email', Rule::unique('users')],
+            'phone' => ['nullable', 'string', Rule::unique('users')],
+            'invitation_code' => ['nullable', 'string', 'exists:users,inviter_code'],
+        ]);
+
+        User::create($validated);
+
+        return back();
+    }
+
+    public function update(User $user, Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', Rule::unique('users')->ignore($user)],
+            'email' => ['nullable', 'email', Rule::unique('users')->ignore($user)],
+            'phone' => ['nullable', 'string', Rule::unique('users')->ignore($user)],
+            'invitation_code' => ['nullable', 'string', 'exists:users,inviter_code'],
+        ]);
+
+        $user->update($validated);
+
+        return back();
+    }
+
+    public function destroy(User $user)
+    {
+        $user->delete();
+
+        return to_route('users.index');
     }
 }
