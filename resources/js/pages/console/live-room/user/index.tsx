@@ -49,8 +49,11 @@ export default function Users({ data }: { data: PaginateData<User> }) {
             title: '分组',
             tableRowRender: (data) => (
                 <>
-                    {data.groups?.map((group) => (
-                        <span key={group.id}>{group.name}</span>
+                    {data.groups?.map((group, index) => (
+                        <span key={index}>
+                            {group.name}
+                            {index + 1 !== data.groups?.length && <>&nbsp;,&nbsp;</>}
+                        </span>
                     ))}
                 </>
             ),

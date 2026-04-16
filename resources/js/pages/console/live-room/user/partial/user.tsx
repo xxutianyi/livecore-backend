@@ -1,5 +1,5 @@
 import { Description, DescriptionItem } from '@/components/description';
-import { FormFieldSelect, FormFieldText } from '@/components/form';
+import { FormFieldMutiSelect, FormFieldText } from '@/components/form';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
@@ -128,7 +128,7 @@ export function UserBatchGroup({ ids }: { ids: string[] }) {
                 <Button>编辑分组</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>编辑分组</DialogHeader>
+                <DialogHeader>批量移动到...</DialogHeader>
                 <Form
                     action={route('users.batch.group')}
                     method="POST"
@@ -139,9 +139,8 @@ export function UserBatchGroup({ ids }: { ids: string[] }) {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldSelect
-                            label="分组"
-                            name="group_id"
+                        <FormFieldMutiSelect
+                            name="group_ids"
                             options={groups}
                             optionsKey={{ label: 'name', value: 'id' }}
                         />
