@@ -16,7 +16,8 @@ class UserController extends Controller
             ->where('role', 'audience')
             ->sort($request->string('sorts'))
             ->search($request->string('search'))
-            ->filter($request->only(['invitation_code']));
+            ->filter($request->only(['invitation_code']))
+            ->whereOnline($request->boolean('online'));
 
         return inertia('console/live-room/user/index', [
             'data' => $query->paginate($size)->withQueryString(),
@@ -27,7 +28,7 @@ class UserController extends Controller
     {
         return inertia('console/live-room/user/show', [
             'user' => $user,
-            'onlines'=>$user->onlines,
+            'onlines' => $user->onlines,
             'messages' => $user->messages,
         ]);
     }

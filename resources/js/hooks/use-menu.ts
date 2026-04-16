@@ -1,10 +1,22 @@
-import { Boxes, ChartArea, Lock, Play, ShieldAlert, TvMinimal, TvMinimalPlay, Users, Video } from 'lucide-react';
+import {
+    Boxes,
+    ChartArea,
+    HeartPulse,
+    Lock,
+    Play,
+    ShieldAlert,
+    TvMinimal,
+    TvMinimalPlay,
+    Users,
+    Video,
+} from 'lucide-react';
 import { FunctionComponent } from 'react';
 
 export type GroupedMenuItem = {
     title: string;
     items?: {
         href?: string;
+        external?: boolean;
         icon?: FunctionComponent;
         title: string;
         isActive?: boolean;
@@ -12,6 +24,7 @@ export type GroupedMenuItem = {
             href?: string;
             title: string;
             isActive?: boolean;
+            external?: boolean;
         }[];
     }[];
 };
@@ -44,6 +57,10 @@ export const menuItems: GroupedMenuItem[] = [
             { title: '管理员', icon: Lock },
             { title: '操作记录', icon: ShieldAlert },
         ],
+    },
+    {
+        title: '系统监控',
+        items: [{ title: 'Pulse', icon: HeartPulse, href: '/pulse', external: true }],
     },
     {
         title: '观众视角',

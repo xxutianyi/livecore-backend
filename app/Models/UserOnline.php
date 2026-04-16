@@ -40,7 +40,7 @@ class UserOnline extends Model
             $online = UserOnline::create(['user_id' => $user->id, 'joined_at' => $joinedAt]);
         }
 
-        Cache::put($cacheKey, $online->id, now()->addSeconds(30));
+        Cache::put($cacheKey, $online->id, now()->addSeconds(60));
 
         return $online;
     }

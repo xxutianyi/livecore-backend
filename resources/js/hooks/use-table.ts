@@ -257,7 +257,7 @@ export function useSimpleTable<TData>({ data, defaultPageSize = 10 }: { data: TD
     }
 
     function getCurrentPageData() {
-        return data.slice(pageSize * (currentPage - 1), pageSize * currentPage - 1);
+        return data.slice(pageSize * (currentPage - 1), pageSize * currentPage);
     }
 
     function toFirstPage() {

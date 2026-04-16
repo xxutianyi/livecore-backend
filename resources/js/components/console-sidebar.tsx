@@ -73,9 +73,15 @@ export function ConsoleSidebar() {
                                                     {item.children.map((childItem, i) => (
                                                         <SidebarMenuSubItem key={i}>
                                                             <SidebarMenuSubButton asChild isActive={childItem.isActive}>
-                                                                <Link href={childItem.href ?? ''}>
-                                                                    <span>{childItem.title}</span>
-                                                                </Link>
+                                                                {childItem.external ? (
+                                                                    <a href={childItem.href ?? ''} target="_blank">
+                                                                        <span>{childItem.title}</span>
+                                                                    </a>
+                                                                ) : (
+                                                                    <Link href={childItem.href ?? ''}>
+                                                                        <span>{childItem.title}</span>
+                                                                    </Link>
+                                                                )}
                                                             </SidebarMenuSubButton>
                                                         </SidebarMenuSubItem>
                                                     ))}
@@ -89,10 +95,17 @@ export function ConsoleSidebar() {
                             return (
                                 <SidebarMenuItem key={index}>
                                     <SidebarMenuButton asChild isActive={item.isActive}>
-                                        <Link href={item.href ?? ''}>
-                                            {item.icon && <item.icon />}
-                                            <span>{item.title}</span>
-                                        </Link>
+                                        {item.external ? (
+                                            <a href={item.href ?? ''} target="_blank">
+                                                {item.icon && <item.icon />}
+                                                <span>{item.title}</span>
+                                            </a>
+                                        ) : (
+                                            <Link href={item.href ?? ''}>
+                                                {item.icon && <item.icon />}
+                                                <span>{item.title}</span>
+                                            </Link>
+                                        )}
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             );

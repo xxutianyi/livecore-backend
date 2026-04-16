@@ -1,6 +1,8 @@
 import { DataTable, defineColumns } from '@/components/table';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ConsoleLayout } from '@/layouts/console-layout';
+import { formatDatetime } from '@/lib/utils';
 import { User } from '@/services/model';
 import { PaginateData } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -24,10 +26,18 @@ export const columns = defineColumns<User>([
     {
         dataKey: 'online',
         title: '在线状态',
+        tableRowRender: (data) => (
+            <Badge variant={data.online ? 'default' : 'secondary'}>{data.online ? '在线' : '离线'}</Badge>
+        ),
+        filter: [
+            { label: '在线', value: 'true' },
+            { label: '离线', value: 'false' },
+        ],
     },
     {
-        dataKey: 'online_at',
+        dataKey: 'leaving_at',
         title: '上次在线时间',
+        tableRowRender: (data) => formatDatetime(data.leaving_at),
     },
     {
         index: 'actions',

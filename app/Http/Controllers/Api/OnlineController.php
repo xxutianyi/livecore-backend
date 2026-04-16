@@ -6,16 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\UserOnline;
 use App\Models\UserOnlineHeartbeat;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 class OnlineController extends Controller
 {
+    #[Middleware('auth:sanctum')]
     public function joined(Request $request)
     {
-        $online= UserOnline::joined($request->user(), now());
+        $online = UserOnline::joined($request->user(), now());
 
         return response()->json($online->id);
     }
 
+    #[Middleware('auth:sanctum')]
     public function heartbeat(Request $request)
     {
         $validated = $request->validate([
@@ -23,6 +26,7 @@ class OnlineController extends Controller
             'online_id' => ['required', 'uuid', 'exists:user_onlines,id']
         ]);
 
+        UserOnline::find($validated['online_id'])->update(['leaving_at' => null]);
         UserOnlineHeartbeat::create($validated);
 
         return response()->json();

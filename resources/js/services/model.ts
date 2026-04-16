@@ -23,6 +23,8 @@ export interface User extends Model {
     external_id?: string;
     inviter_code: string;
     invitation_code?: string;
+    online?: boolean;
+    leaving_at?: string;
 }
 
 export interface UserOnline extends Model {
@@ -30,6 +32,7 @@ export interface UserOnline extends Model {
     joined_at?: string;
     leaving_at?: string;
     heartbeats?: UserHeartbeat[];
+    heartbeats_count?: number;
 }
 
 export interface UserHeartbeat extends Model {

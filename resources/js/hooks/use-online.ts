@@ -11,7 +11,7 @@ export default function useOnline() {
 
     const meta = () => {
         const online_id = localStorage.getItem('online_id');
-        return { online_id, meta: { path: url, room: room?.id, event: event?.id } };
+        return { online_id, meta: { url, room, event } };
     };
 
     useEffect(() => {
@@ -25,6 +25,7 @@ export default function useOnline() {
         }, 10000);
 
         return () => {
+            axios.post('/api/presence/heartbeat', meta());
             axios.post('/api/presence/leaving', meta());
             clearInterval(heartbeatInterval);
         };

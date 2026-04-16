@@ -7,6 +7,8 @@ use App\Traits\Filterable;
 use App\Traits\Searchable;
 use App\Traits\Sortable;
 use App\Utils\InviterCode;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,6 +36,11 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+    ];
+
+    protected $appends = [
+        'online',
+        'leaving_at'
     ];
 
     protected array $sortable = [
@@ -90,6 +97,40 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserOnline::class)
             ->latest('joined_at')
+            ->withCount(['heartbeats'])
             ->with(['heartbeats']);
+    }
+
+    public function scopeWhereOnline(Builder $builder, bool $online): Builder
+    {
+        if ($online) {
+            $builder->whereHas('onlines', function (Builder $builder) {
+                $builder->whereNull('leaving_at');
+            });
+        }
+
+        if (!$online) {
+            $builder->whereDoesntHave('onlines')
+                ->orWhereHas('onlines', function (Builder $builder) {
+                    $builder->whereNotNull('leaving_at');
+                });
+        }
+
+        return $builder;
+    }
+
+    protected function online(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->onlines()->first() &&
+                $this->onlines()->first()?->leaving_at == null;
+        });
+    }
+
+    protected function leavingAt(): Attribute
+    {
+        return Attribute::get(function () {
+            return $this->onlines()->first()?->leaving_at;
+        });
     }
 }
