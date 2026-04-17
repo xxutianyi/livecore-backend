@@ -3,6 +3,8 @@ import { Separator } from '@/components/ui/separator';
 import { Description, DescriptionItem } from '@/components/winglab/description';
 import { defineColumns, SimpleTable } from '@/components/winglab/table';
 import { ConsoleLayout } from '@/layouts/console-layout';
+import { diffDatetime } from '@/lib/utils';
+import { Playback } from '@/pages/console/live-room/room/partial/playback';
 import { LiveEvent, LiveRoom } from '@/services/model';
 import { RoomUpdate } from './partial/forms';
 
@@ -27,14 +29,22 @@ export default function Show({ room, events }: PageProps) {
             dataKey: 'finished_at',
         },
         {
+            title: '直播时长',
+            index: 'duration',
+            tableRowRender: (data) => diffDatetime(data.started_at, data.finished_at),
+        },
+        {
             index: 'actions',
             tableRowRender: (data) => {
                 return (
-                    <Button asChild variant="secondary">
-                        <a href={route('rooms.events.show', [data.room_id, data.id])} target="_blank">
-                            查看回放和评论
-                        </a>
-                    </Button>
+                    <>
+                        <Playback event={data} />
+                        <Button asChild variant="secondary">
+                            <a href={route('rooms.events.show', [data.room_id, data.id])} target="_blank">
+                                查看回放和评论
+                            </a>
+                        </Button>
+                    </>
                 );
             },
         },
