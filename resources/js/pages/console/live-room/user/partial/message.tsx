@@ -1,5 +1,5 @@
-import { defineColumns, SimpleTable } from '@/components/table';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { defineColumns, SimpleTable } from '@/components/winglab/table';
 import { formatDatetime } from '@/lib/utils';
 import { LiveMessage } from '@/services/model';
 

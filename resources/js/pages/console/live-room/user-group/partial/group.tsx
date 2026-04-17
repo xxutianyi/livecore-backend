@@ -1,7 +1,7 @@
-import { FormFieldText } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
+import { FormFieldText } from '@/components/winglab/form';
 import { UserGroup } from '@/services/model';
 import { Form } from '@inertiajs/react';
 import { useState } from 'react';

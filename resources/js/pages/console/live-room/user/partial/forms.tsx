@@ -1,9 +1,9 @@
 import { Description, DescriptionItem } from '@/components/description';
-import { FormFieldMutiSelect, FormFieldText } from '@/components/form';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
+import { FormFieldMutiSelect, FormFieldText } from '@/components/winglab/form';
 import { formatDate, formatDatetime } from '@/lib/utils';
 import { User, UserGroup } from '@/services/model';
 import { Form, usePage } from '@inertiajs/react';
@@ -47,6 +47,14 @@ export function UserDetail({ user }: { user: User }) {
                     </span>
                 </DescriptionItem>
                 <DescriptionItem label="上次在线时间">{formatDatetime(user.leaving_at)}</DescriptionItem>
+                <DescriptionItem label="分组">
+                    {user.groups?.map((group, index) => (
+                        <span key={index}>
+                            {group.name}
+                            {index + 1 !== user.groups?.length && <>&nbsp;,&nbsp;</>}
+                        </span>
+                    ))}
+                </DescriptionItem>
             </Description>
         </>
     );
@@ -54,6 +62,7 @@ export function UserDetail({ user }: { user: User }) {
 
 export function UserCreate() {
     const [open, setOpen] = useState(false);
+    const { groups } = usePage<{ groups: UserGroup[] }>().props;
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -75,6 +84,11 @@ export function UserCreate() {
                         <FormFieldText name="phone" label="手机号" />
                         <FormFieldText name="email" label="电子邮件" />
                         <FormFieldText name="invitation_code" label="邀请人代码" />
+                        <FormFieldMutiSelect
+                            name="group_ids"
+                            options={groups}
+                            optionsKey={{ label: 'name', value: 'id' }}
+                        />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>
@@ -87,6 +101,7 @@ export function UserCreate() {
 
 export function UserUpdate({ user }: { user: User }) {
     const [open, setOpen] = useState(false);
+    const { groups } = usePage<{ groups: UserGroup[] }>().props;
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -108,6 +123,12 @@ export function UserUpdate({ user }: { user: User }) {
                         <FormFieldText name="phone" label="手机号" defaultValue={user.phone} />
                         <FormFieldText name="email" label="电子邮件" defaultValue={user.email} />
                         <FormFieldText name="invitation_code" label="邀请人代码" defaultValue={user.invitation_code} />
+                        <FormFieldMutiSelect
+                            name="group_ids"
+                            options={groups}
+                            optionsKey={{ label: 'name', value: 'id' }}
+                            defaultValue={user.groups?.map((g) => g.id)}
+                        />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>

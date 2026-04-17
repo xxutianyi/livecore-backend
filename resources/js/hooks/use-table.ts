@@ -1,4 +1,4 @@
-import { PaginateData, TableColumn } from '@/components/table';
+import { PaginateData, TableColumn } from '@/components/winglab/table';
 import { router } from '@inertiajs/react';
 import qs, { ParsedQs } from 'qs';
 import { useState } from 'react';

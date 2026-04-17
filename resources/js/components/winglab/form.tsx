@@ -55,7 +55,7 @@ export function FormFieldSelect({ name, label, placeholder, defaultValue, option
         <Field>
             <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
-            <input name={name} value={value} className="hidden" />
+            <input name={name} value={value} readOnly className="hidden" />
 
             <Select defaultValue={defaultValue} onValueChange={setValue}>
                 <SelectTrigger>
@@ -71,6 +71,7 @@ export function FormFieldSelect({ name, label, placeholder, defaultValue, option
                     </SelectGroup>
                 </SelectContent>
             </Select>
+
             {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
         </Field>
     );
@@ -100,7 +101,7 @@ export function FormFieldMutiSelect({ name, label, placeholder, defaultValue, op
             <FieldLabel htmlFor={name}>{label}</FieldLabel>
 
             {selectedValues.map((value, index) => (
-                <input key={index} name={`${name}[]`} value={value} className="hidden" />
+                <input key={index} name={`${name}[]`} value={value} readOnly className="hidden" />
             ))}
 
             <Popover open={open} onOpenChange={setOpen}>

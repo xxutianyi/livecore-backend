@@ -1,13 +1,13 @@
-import { DataTable, defineColumns } from '@/components/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { DataTable, defineColumns } from '@/components/winglab/table';
 import { ConsoleLayout } from '@/layouts/console-layout';
 import { formatDatetime } from '@/lib/utils';
 import { User } from '@/services/model';
 import { PaginateData } from '@/types';
 import { Link } from '@inertiajs/react';
 import { useState } from 'react';
-import { UserBatchGroup, UserCreate } from './partial/user';
+import { UserBatchGroup, UserCreate } from './partial/forms';
 
 export default function Users({ data }: { data: PaginateData<User> }) {
     const [select, setSelect] = useState<string[]>();

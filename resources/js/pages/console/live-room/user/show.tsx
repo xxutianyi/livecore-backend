@@ -1,9 +1,9 @@
 import { Separator } from '@/components/ui/separator';
 import { ConsoleLayout } from '@/layouts/console-layout';
-import { MessageTable } from '@/pages/console/live-room/user/partial/message';
-import { Online } from '@/pages/console/live-room/user/partial/online';
-import { UserDetail } from '@/pages/console/live-room/user/partial/user';
 import { LiveMessage, User, UserOnline } from '@/services/model';
+import { UserDetail } from './partial/forms';
+import { MessageTable } from './partial/message';
+import { Online } from './partial/online';
 
 type PageProps = { user: User; onlines: UserOnline[]; messages: LiveMessage[] };
 

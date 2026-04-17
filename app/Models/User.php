@@ -39,6 +39,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $with = [
+        'groups'
+    ];
+
     protected $appends = [
         'online',
         'leaving_at'

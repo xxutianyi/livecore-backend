@@ -1,4 +1,4 @@
-import { DataTable, defineColumns } from '@/components/table';
+import { DataTable, defineColumns } from '@/components/winglab/table';
 import { ConsoleLayout } from '@/layouts/console-layout';
 import { UserGroup } from '@/services/model';
 import { PaginateData } from '@/types';
