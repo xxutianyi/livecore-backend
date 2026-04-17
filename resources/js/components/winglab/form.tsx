@@ -4,6 +4,7 @@ import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { useFormContext } from '@inertiajs/react';
 import { Check, ChevronsUpDown } from 'lucide-react';
@@ -38,6 +39,22 @@ export function FormFieldText({ name, label, placeholder, defaultValue }: BaseFi
         <Field>
             <FieldLabel htmlFor={name}>{label}</FieldLabel>
             <Input id={name} name={name} placeholder={placeholder ?? '请输入'} defaultValue={defaultValue} />
+            {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
+        </Field>
+    );
+}
+
+export function FormFieldTextarea({ name, label, placeholder, defaultValue }: BaseFieldProps) {
+    const form = useFormContext();
+
+    if (!form) {
+        return null;
+    }
+
+    return (
+        <Field>
+            <FieldLabel htmlFor={name}>{label}</FieldLabel>
+            <Textarea id={name} name={name} placeholder={placeholder ?? '请输入'} defaultValue={defaultValue} />
             {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
         </Field>
     );

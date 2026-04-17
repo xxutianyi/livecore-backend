@@ -18,7 +18,7 @@ class RoomController extends Controller
     {
         return inertia('watch/rooms/show', [
             'room' => $room,
-            'event' => $room->events->first(),
+            //'event' => $room->events->first(),
             'messages' => $room->events->first()->messages
         ]);
     }

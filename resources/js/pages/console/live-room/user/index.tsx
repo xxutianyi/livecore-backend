@@ -63,7 +63,7 @@ export default function Users({ data }: { data: PaginateData<User> }) {
             tableRowRender: (data) => {
                 return (
                     <Button asChild variant="secondary">
-                        <Link href={route('users.show', data.id)}>详情</Link>
+                        <Link href={route('console.users.show', data.id)}>详情</Link>
                     </Button>
                 );
             },

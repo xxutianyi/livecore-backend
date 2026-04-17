@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 export type MessageListProps = ReturnType<typeof useMessage> & {
     title: string;
     event: LiveEvent;
+    className?: string;
 };
 
 export type MessageSenderProps = Pick<MessageListProps, 'event' | 'handleMessageUpdate'>;
@@ -62,7 +63,7 @@ export function MessageSender({ event, handleMessageUpdate }: MessageSenderProps
     );
 }
 
-export function LiveMessageList({ title, users, event, messages, handleMessageUpdate }: MessageListProps) {
+export function LiveMessageList({ title, users, event, messages, handleMessageUpdate, className }: MessageListProps) {
     const { bottomRef, viewportRef, isAtBottom, scrollToBottom } = useScrollToBottom();
 
     useEffect(() => {
@@ -70,7 +71,7 @@ export function LiveMessageList({ title, users, event, messages, handleMessageUp
     }, [messages]);
 
     return (
-        <RightContent>
+        <RightContent className={className}>
             <CardHeader className="-mt-1">
                 <CardTitle className="flex items-center justify-between max-md:text-sm">
                     <div className="flex items-center space-x-2 md:hidden">

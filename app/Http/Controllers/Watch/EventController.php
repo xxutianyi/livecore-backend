@@ -21,7 +21,8 @@ class EventController extends Controller
         return inertia('watch/events/show', [
             'room' => $room,
             'event' => $event,
-            'events' => $room->events
+            'events' => $room->events,
+            'messages' => $event->messages,
         ]);
     }
 }

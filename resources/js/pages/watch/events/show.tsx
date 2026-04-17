@@ -1,5 +1,3 @@
-import { Breadcrumb } from '@/components/breadcrumb';
-import { CommentList } from '@/components/live-comments';
 import { PlaybackPlayer } from '@/components/player';
 import { EventItemList } from '@/components/rooms';
 import { Button } from '@/components/ui/button';
@@ -7,11 +5,15 @@ import { CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PlayerCard, RightContent, WatchLayout } from '@/components/watch/layouts';
+import { MessageList } from '@/components/watch/message';
+import { Breadcrumb } from '@/components/winglab/breadcrumb';
 import { WebsiteLayout } from '@/layouts/website-layout';
-import { LiveEvent, LiveRoom } from '@/services/model';
+import { LiveEvent, LiveMessage, LiveRoom } from '@/services/model';
 import { Link } from '@inertiajs/react';
 
-export default function Event({ room, event, events }: { room: LiveRoom; event: LiveEvent; events: LiveEvent[] }) {
+type PageProps = { room: LiveRoom; event: LiveEvent; events: LiveEvent[]; messages: LiveMessage[] };
+
+export default function Event({ room, event, events, messages }: PageProps) {
     const breadcrumbItem = [
         {
             label: '全部直播间',
@@ -54,7 +56,9 @@ export default function Event({ room, event, events }: { room: LiveRoom; event: 
                         </TabsContent>
                         <TabsContent value="comments">
                             <CardContent className="absolute top-16 bottom-7 w-full border-y bg-muted/50 md:bottom-0">
-                                <CommentList className="-mr-4 h-full py-2 pr-4" />
+                                <ScrollArea className="-mr-4 h-full py-2 pr-4">
+                                    <MessageList messages={messages} />
+                                </ScrollArea>
                             </CardContent>
                         </TabsContent>
                     </Tabs>

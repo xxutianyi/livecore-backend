@@ -23,10 +23,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('rooms.events', Watch\EventController::class)->only(['index', 'show']);
     Route::post('events/{event}/message', [Watch\MessageController::class, 'store'])->name('messages.store');
 
-    Route::prefix('console')->group(function () {
+    Route::prefix('console')->name('console.')->group(function () {
         Route::get('/', Console\DashboardController::class);
-
-
+        
         Route::resource('live-room/rooms', Console\LiveRoom\RoomController::class);
 
         Route::resource('live-room/users', Console\LiveRoom\UserController::class)

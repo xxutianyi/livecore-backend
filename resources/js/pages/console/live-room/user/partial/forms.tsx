@@ -1,8 +1,8 @@
-import { Description, DescriptionItem } from '@/components/description';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
+import { Description, DescriptionItem } from '@/components/winglab/description';
 import { FormFieldMutiSelect, FormFieldText } from '@/components/winglab/form';
 import { formatDate, formatDatetime } from '@/lib/utils';
 import { User, UserGroup } from '@/services/model';
@@ -72,7 +72,7 @@ export function UserCreate() {
             <DialogContent>
                 <DialogHeader>新建用户</DialogHeader>
                 <Form
-                    action={route('users.store')}
+                    action={route('console.users.store')}
                     method="POST"
                     onSuccess={() => {
                         setOpen(false);
@@ -111,7 +111,7 @@ export function UserUpdate({ user }: { user: User }) {
             <DialogContent>
                 <DialogHeader>编辑用户</DialogHeader>
                 <Form
-                    action={route('users.update', user.id)}
+                    action={route('console.users.update', user.id)}
                     method="PUT"
                     onSuccess={() => {
                         setOpen(false);
@@ -151,7 +151,7 @@ export function UserBatchGroup({ ids }: { ids: string[] }) {
             <DialogContent>
                 <DialogHeader>批量移动到...</DialogHeader>
                 <Form
-                    action={route('users.batch.group')}
+                    action={route('console.users.batch.group')}
                     method="POST"
                     transform={(data) => ({ ...data, user_ids: ids })}
                     onSuccess={() => {

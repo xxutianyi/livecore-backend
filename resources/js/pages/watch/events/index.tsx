@@ -1,6 +1,6 @@
-import { Breadcrumb } from '@/components/breadcrumb';
 import { EventCardList } from '@/components/rooms';
 import { GridLayout } from '@/components/watch/layouts';
+import { Breadcrumb } from '@/components/winglab/breadcrumb';
 import { WebsiteLayout } from '@/layouts/website-layout';
 import { LiveEvent, LiveRoom } from '@/services/model';
 

@@ -1,4 +1,5 @@
 import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 import { Video } from 'lucide-react';
 import { PropsWithChildren } from 'react';
 
@@ -6,8 +7,8 @@ export function GridLayout({ children }: PropsWithChildren) {
     return <div className="grid gap-x-4 gap-y-8 md:grid-cols-4">{children}</div>;
 }
 
-export function WatchLayout({ children }: PropsWithChildren) {
-    return <div className="max-md:-m-4 max-md:flex-col md:flex md:gap-x-4">{children}</div>;
+export function WatchLayout({ children, className }: PropsWithChildren<{ className?: string }>) {
+    return <div className={cn(className, 'max-md:-m-4 max-md:flex-col md:flex md:gap-x-4')}>{children}</div>;
 }
 
 export function PlayerCard({ children, title }: PropsWithChildren<{ title?: string }>) {
@@ -22,9 +23,9 @@ export function PlayerCard({ children, title }: PropsWithChildren<{ title?: stri
     );
 }
 
-export function RightContent({ children }: PropsWithChildren) {
+export function RightContent({ className, children }: PropsWithChildren<{ className?: string }>) {
     return (
-        <Card className="relative max-md:h-[calc(100svh-64px-56.25vw)] max-md:rounded-none md:w-1/4">
+        <Card className={cn(className, 'relative max-md:h-[calc(100svh-64px-56.25vw)] max-md:rounded-none md:w-1/4')}>
             {children}
         </Card>
     );

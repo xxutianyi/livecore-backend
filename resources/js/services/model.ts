@@ -67,8 +67,9 @@ export interface LiveEvent extends Model {
     push_url?: string;
     pull_url?: string;
     playback_url?: string;
-    live_started_at?: string;
-    live_finished_at?: string;
+    expired_at?: string;
+    started_at?: string;
+    finished_at?: string;
     expires_at: string;
     room?: LiveRoom;
     room_id: LiveRoom['id'];

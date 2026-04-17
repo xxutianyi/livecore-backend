@@ -1,6 +1,6 @@
-import { Breadcrumb } from '@/components/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Breadcrumb } from '@/components/winglab/breadcrumb';
 import { useGroupMenuItemBreadcrumb } from '@/hooks/use-menu';
 
 export function ConsoleHeader({ title }: { title?: string }) {

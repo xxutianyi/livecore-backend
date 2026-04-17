@@ -2,6 +2,8 @@
 
 namespace App\Models\Live;
 
+use App\Traits\Searchable;
+use App\Traits\Sortable;
 use App\Utils\LiveRoomPrefix;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LiveRoom extends Model
 {
-    use HasUuids, HasFactory;
+    use HasUuids, HasFactory, Searchable, Sortable;
 
     protected $fillable = [
         'name',
@@ -28,8 +30,8 @@ class LiveRoom extends Model
     {
         static::creating(function (LiveRoom $room) {
 
-            if (empty($room->prefix)) {
-                $room->prefix = LiveRoomPrefix::generate();
+            if (empty($room->slug)) {
+                $room->slug = LiveRoomPrefix::generate();
             }
 
         });
