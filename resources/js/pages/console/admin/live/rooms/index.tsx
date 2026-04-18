@@ -33,11 +33,10 @@ export default function Room({ data }: { data: PaginateData<LiveRoom> }) {
     return (
         <AdminLayout className="p-4">
             <div className="w-full space-y-4">
-                <div className="flex items-center justify-between font-heading text-base font-bold">
+                <div className="font-heading text-base font-bold">
                     <span>直播间列表</span>
-                    <RoomCreate />
                 </div>
-                <DataTable columns={columns} paginateData={data} />
+                <DataTable columns={columns} paginateData={data} toolbarAction={<RoomCreate />} />
             </div>
         </AdminLayout>
     );

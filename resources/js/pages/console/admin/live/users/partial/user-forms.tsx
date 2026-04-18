@@ -34,6 +34,7 @@ export function UserCreate() {
                         <FormFieldText name="email" label="电子邮件" />
                         <FormFieldText name="invitation_code" label="邀请人代码" />
                         <FormFieldMutiSelect
+                            label="分组"
                             name="group_ids"
                             options={options.groups}
                             optionsKey={{ label: 'name', value: 'id' }}
@@ -74,6 +75,7 @@ export function UserUpdate({ user }: { user: User }) {
                         <FormFieldText name="email" label="电子邮件" defaultValue={user.email} />
                         <FormFieldText name="invitation_code" label="邀请人代码" defaultValue={user.invitation_code} />
                         <FormFieldMutiSelect
+                            label="分组"
                             name="group_ids"
                             options={options.groups}
                             optionsKey={{ label: 'name', value: 'id' }}

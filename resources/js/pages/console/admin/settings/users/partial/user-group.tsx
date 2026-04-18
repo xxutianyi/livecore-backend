@@ -31,7 +31,7 @@ export function GroupIndex() {
                 <Button>用户分组</Button>
             </DialogTrigger>
             <DialogContent className="max-w-xl!" showCloseButton={false}>
-                <DialogHeader className="mb-4 flex flex-row items-center justify-between">
+                <DialogHeader className="flex flex-row items-center justify-between">
                     <span>用户分组</span>
                     <GroupCreate />
                 </DialogHeader>

@@ -74,18 +74,20 @@ export default function Users({ data }: { data: PaginateData<User> }) {
     return (
         <AdminLayout className="p-4">
             <div className="w-full space-y-4">
-                <div className="flex items-center justify-between font-heading text-base font-bold">
+                <div className="font-heading text-base font-bold">
                     <span>观众列表</span>
-                    <div className="flex items-center gap-x-4">
-                        <UserCreate />
-                        <GroupIndex />
-                    </div>
                 </div>
                 <DataTable
                     columns={columns}
                     paginateData={data}
                     onRowSelection={setSelect}
-                    toolbarAction={<>{select && select?.length > 0 && <UserBatchGroup ids={select} />}</>}
+                    toolbarAction={
+                        <div className="flex items-center gap-x-2">
+                            <UserCreate />
+                            <GroupIndex />
+                            {select && select?.length > 0 && <UserBatchGroup ids={select} />}
+                        </div>
+                    }
                 />
             </div>
         </AdminLayout>

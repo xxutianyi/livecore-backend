@@ -54,9 +54,8 @@ export default function Users({ data }: { data: PaginateData<User> }) {
             <div className="w-full space-y-4">
                 <div className="flex items-center justify-between font-heading text-base font-bold">
                     <span>管理员列表</span>
-                    <UserCreate />
                 </div>
-                <DataTable columns={columns} paginateData={data} />
+                <DataTable columns={columns} paginateData={data} toolbarAction={<UserCreate />} />
             </div>
         </AdminLayout>
     );

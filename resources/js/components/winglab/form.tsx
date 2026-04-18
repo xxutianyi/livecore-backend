@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
@@ -8,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { useFormContext } from '@inertiajs/react';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 
 export type BaseFieldProps = {
     name: string;
@@ -138,14 +139,9 @@ export function FormFieldMutiSelect({
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button variant="outline" className="h-auto min-h-10 w-full justify-between bg-muted px-3 py-2">
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 overflow-hidden">
                             {selectedItems.length > 0 ? (
-                                selectedItems.map((item, index) => (
-                                    <Fragment key={index}>
-                                        {item[optionsKey.label]}
-                                        {index !== selectedItems.length - 1 && <>&nbsp;,&nbsp;</>}
-                                    </Fragment>
-                                ))
+                                selectedItems.map((item, index) => <Badge key={index}>{item[optionsKey.label]}</Badge>)
                             ) : (
                                 <span className="text-muted-foreground">{placeholder ?? '请选择'}</span>
                             )}

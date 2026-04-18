@@ -175,7 +175,7 @@ export function DataTableToolbar<TData>({
     showSearch,
 }: WithTable<TData, { actions?: ReactNode; showSearch?: boolean }>) {
     return (
-        <div className="rounded-lg border bg-muted/50 px-4 py-2">
+        <div className="rounded-lg py-2">
             <div className="flex items-center justify-between">
                 <div className="flex flex-1 items-center gap-2">
                     {showSearch && (
@@ -184,7 +184,7 @@ export function DataTableToolbar<TData>({
                                 placeholder="搜索..."
                                 value={table.getSearch()}
                                 onChange={(event) => table.onSearchChange(event.target.value)}
-                                className="h-8 w-37.5 lg:w-62.5"
+                                className="mx-1 h-8 w-37.5 border-border lg:w-62.5"
                             />
                             {table.getSearch() && (
                                 <Button
@@ -204,11 +204,9 @@ export function DataTableToolbar<TData>({
                     ))}
                 </div>
                 <div className="flex items-center gap-2">
-                    {actions}
-
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm" className="ml-auto hidden h-8 lg:flex">
+                            <Button variant="outline" className="ml-auto hidden lg:flex">
                                 <Settings2Icon className="mr-2 size-4" />
                                 视图
                             </Button>
@@ -230,6 +228,8 @@ export function DataTableToolbar<TData>({
                             })}
                         </DropdownMenuContent>
                     </DropdownMenu>
+
+                    {actions}
                 </div>
             </div>
         </div>
@@ -249,7 +249,7 @@ export function DataTableFooter<TData>({
     }
 
     return (
-        <div className="rounded-lg border bg-muted/50 px-4 py-2">
+        <div className="rounded-lg py-2">
             <div className="flex items-center justify-between px-2">
                 <div className="flex items-center gap-4">
                     {table.getSelectedRows() && table.getSelectedRows().length > 0 && (
@@ -424,8 +424,8 @@ export function DataTable<TData>({
         <div className={cn(className, 'w-full space-y-4')}>
             <DataTableToolbar table={table} actions={toolbarAction} showSearch={showSearch} />
 
-            <div className="overflow-hidden rounded-md border">
-                <Table className="bg-muted/50">
+            <div className="overflow-hidden rounded-3xl border">
+                <Table className="">
                     <TableHeader>
                         <TableRow>
                             {renderedColumns.map((column, index) => (
@@ -471,8 +471,8 @@ export function SimpleTable<TData>({ data, columns, sizeOptions, className }: Si
 
     return (
         <div className={cn(className, 'w-full space-y-4')}>
-            <div className="overflow-hidden rounded-md border">
-                <Table className="bg-muted/50">
+            <div className="overflow-hidden rounded-3xl border">
+                <Table className="">
                     <TableHeader>
                         <TableRow>
                             {columns.map((column, index) => (
@@ -513,7 +513,7 @@ export function SimpleTable<TData>({ data, columns, sizeOptions, className }: Si
                 </Table>
             </div>
 
-            <div className="rounded-lg border bg-muted/50 px-4 py-2">
+            <div className="rounded-lg py-2">
                 <div className="flex items-center justify-between px-2">
                     <div className="flex items-center gap-4">
                         <div className="flex items-center space-x-2">
