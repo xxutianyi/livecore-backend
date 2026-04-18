@@ -43,6 +43,7 @@ const routes: Record<Sets, RouteItemGroup[]> = {
                 {
                     title: '管理员',
                     icon: Lock,
+                    href: route('admin.settings.users.index'),
                 },
                 {
                     title: '操作记录',

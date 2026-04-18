@@ -45,6 +45,14 @@ Route::middleware('auth')->group(function () {
             Route::put('groups/{group}', [Console\Admin\Live\UserGroupController::class, 'update'])->name('groups.update');
             Route::delete('groups/{group}', [Console\Admin\Live\UserGroupController::class, 'destroy'])->name('groups.destroy');
         });
+
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::get('users', [Console\Admin\Settings\UserController::class, 'index'])->name('users.index');
+            Route::post('users', [Console\Admin\Settings\UserController::class, 'store'])->name('users.store');
+            Route::get('users/{user}', [Console\Admin\Settings\UserController::class, 'show'])->name('users.show');
+            Route::put('users/{user}', [Console\Admin\Settings\UserController::class, 'update'])->name('users.update');
+            Route::delete('users/{user}', [Console\Admin\Settings\UserController::class, 'destroy'])->name('users.destroy');
+        });
     });
 
     Route::prefix('broadcast')->name('broadcast.')->group(function () {

@@ -1,0 +1,63 @@
+import { Button } from '@/components/ui/button';
+import { DataTable, defineColumns } from '@/components/winglab/table';
+import { AdminLayout } from '@/layouts/admin-layout';
+import { User } from '@/services/model';
+import { PaginateData } from '@/types';
+import { Link } from '@inertiajs/react';
+import { UserCreate } from './partial/user-forms';
+
+export default function Users({ data }: { data: PaginateData<User> }) {
+    const columns = defineColumns<User>([
+        {
+            dataKey: 'name',
+            title: '名字',
+            sortable: true,
+        },
+        {
+            dataKey: 'phone',
+            title: '手机号',
+            sortable: true,
+        },
+        {
+            dataKey: 'email',
+            title: '电子邮箱',
+            sortable: true,
+        },
+        {
+            dataKey: 'role',
+            title: '用户角色',
+            tableRowRender: (data) => (
+                <>
+                    {data.role === 'admin' && '系统管理员'}
+                    {data.role === 'director' && '直播间导播'}
+                </>
+            ),
+            filter: [
+                { label: '系统管理员', value: 'admin' },
+                { label: '直播间导播', value: 'director' },
+            ],
+        },
+        {
+            index: 'actions',
+            tableRowRender: (data) => {
+                return (
+                    <Button asChild variant="secondary">
+                        <Link href={route('admin.settings.users.show', data.id)}>详情</Link>
+                    </Button>
+                );
+            },
+        },
+    ]);
+
+    return (
+        <AdminLayout className="p-4">
+            <div className="w-full space-y-4">
+                <div className="flex items-center justify-between font-heading text-base font-bold">
+                    <span>管理员列表</span>
+                    <UserCreate />
+                </div>
+                <DataTable columns={columns} paginateData={data} />
+            </div>
+        </AdminLayout>
+    );
+}

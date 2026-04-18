@@ -19,13 +19,13 @@ export type BaseFieldProps = {
 
 export type SelectProps = BaseFieldProps & {
     options: Record<string, any>[];
-    optionsKey: { label: string; value: string };
+    optionsKey?: { label: string; value: string };
 };
 
 export type MutiSelectProps = Omit<BaseFieldProps, 'defaultValue'> & {
     defaultValue?: string[];
     options: Record<string, any>[];
-    optionsKey: { label: string; value: string };
+    optionsKey?: { label: string; value: string };
 };
 
 export function FormFieldText({ name, label, placeholder, defaultValue }: BaseFieldProps) {
@@ -60,9 +60,16 @@ export function FormFieldTextarea({ name, label, placeholder, defaultValue }: Ba
     );
 }
 
-export function FormFieldSelect({ name, label, placeholder, defaultValue, options, optionsKey }: SelectProps) {
+export function FormFieldSelect({
+    name,
+    label,
+    placeholder,
+    defaultValue,
+    options,
+    optionsKey = { value: 'value', label: 'label' },
+}: SelectProps) {
     const form = useFormContext();
-    const [value, setValue] = useState<string>();
+    const [value, setValue] = useState<string>(defaultValue ?? '');
 
     if (!form) {
         return null;
@@ -94,7 +101,14 @@ export function FormFieldSelect({ name, label, placeholder, defaultValue, option
     );
 }
 
-export function FormFieldMutiSelect({ name, label, placeholder, defaultValue, options, optionsKey }: MutiSelectProps) {
+export function FormFieldMutiSelect({
+    name,
+    label,
+    placeholder,
+    defaultValue,
+    options,
+    optionsKey = { value: 'value', label: 'label' },
+}: MutiSelectProps) {
     const form = useFormContext();
     const [open, setOpen] = useState(false);
     const [selectedValues, setSelectedValues] = useState<string[]>(defaultValue ?? []);

@@ -1,15 +1,18 @@
 import { RouteItemGroup } from '@/constant/routes';
 
-export type GroupedMenuItemBreadcrumb = {
-    link?: string;
-    label: string;
-};
-
 export function useRoutes(routes: RouteItemGroup[]): RouteItemGroup[] {
-    const pathname = window.location.href;
+    const pathname = () => {
+        const href = window.location.href;
+
+        if (href.indexOf('?') !== -1) {
+            return href.slice(0, href.indexOf('?'));
+        }
+
+        return href;
+    };
 
     function isActive(href?: string) {
-        return (href && pathname === href) || pathname.startsWith(href + '/');
+        return (href && pathname() === href) || pathname().startsWith(href + '/');
     }
 
     return routes.map((group) => ({

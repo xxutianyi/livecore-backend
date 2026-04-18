@@ -3,12 +3,15 @@ import { WebsiteUserAction } from '@/layouts/components/website-header';
 import configs from '@/lib/configs';
 import { PropsWithChildren } from 'react';
 
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import styles from './website.module.css';
 
-export function WebsiteLayout({ children }: PropsWithChildren) {
+export function WebsiteLayout({ children, title }: PropsWithChildren<{ title?: string }>) {
     return (
         <div>
+            <Head>
+                <title>{title}</title>
+            </Head>
             <div className={styles.header}>
                 <Link href="/">
                     <div className={styles.title}>
