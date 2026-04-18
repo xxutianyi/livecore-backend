@@ -1,5 +1,5 @@
-import { ConsoleLayout } from '@/layouts/console-layout';
+import { AdminLayout } from '@/layouts/admin-layout';
 
 export default function Dashboard() {
-    return <ConsoleLayout />;
+    return <AdminLayout />;
 }

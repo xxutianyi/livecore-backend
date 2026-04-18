@@ -1,6 +1,6 @@
-import { PlaybackPlayer } from '@/components/player';
 import { PlayerCard, WatchLayout } from '@/components/watch/layouts';
 import { LiveMessageList } from '@/components/watch/message';
+import { PlaybackPlayer } from '@/components/watch/player';
 import { Breadcrumb } from '@/components/winglab/breadcrumb';
 import { useMessage } from '@/hooks/use-message';
 import { WebsiteLayout } from '@/layouts/website-layout';

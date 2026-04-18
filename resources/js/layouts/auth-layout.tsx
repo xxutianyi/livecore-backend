@@ -1,6 +1,6 @@
-import placeholderImage from '@/assets/placeholder.svg';
 import { Card, CardContent } from '@/components/ui/card';
 import { FieldDescription } from '@/components/ui/field';
+import configs from '@/lib/configs';
 import { PropsWithChildren } from 'react';
 
 export function AuthLayout({ children }: PropsWithChildren) {
@@ -10,11 +10,11 @@ export function AuthLayout({ children }: PropsWithChildren) {
                 <div className="flex flex-col gap-6">
                     <Card className="overflow-hidden p-0">
                         <CardContent className="grid p-0 md:grid-cols-2">
-                            {children}{' '}
+                            {children}
                             <div className="relative hidden bg-muted md:block">
                                 <img
                                     alt="Image"
-                                    src={placeholderImage}
+                                    src={configs.APP_LOGIN_IMAGE}
                                     className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
                                 />
                             </div>

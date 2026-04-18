@@ -71,6 +71,7 @@ export type TableColumn<TData> = {
     title?: string;
     dataKey?: keyof TData | string[];
     hidden?: boolean;
+    width?: string;
     colSpan?: number;
     hideable?: boolean;
     filter?: Filter[];
@@ -475,7 +476,12 @@ export function SimpleTable<TData>({ data, columns, sizeOptions, className }: Si
                     <TableHeader>
                         <TableRow>
                             {columns.map((column, index) => (
-                                <TableHead key={index} id={column.index} colSpan={column.colSpan}>
+                                <TableHead
+                                    key={index}
+                                    id={column.index}
+                                    colSpan={column.colSpan}
+                                    className={column?.width && `w-${column?.width}`}
+                                >
                                     {column.titleRender ? column.titleRender() : column.title}
                                 </TableHead>
                             ))}

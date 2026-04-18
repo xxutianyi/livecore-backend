@@ -1,5 +1,5 @@
-import { RoomCardList } from '@/components/rooms';
 import { GridLayout } from '@/components/watch/layouts';
+import { RoomCardList } from '@/components/watch/rooms';
 import { Breadcrumb } from '@/components/winglab/breadcrumb';
 import { WebsiteLayout } from '@/layouts/website-layout';
 import { LiveRoom } from '@/services/model';

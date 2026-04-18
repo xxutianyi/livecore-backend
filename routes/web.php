@@ -23,19 +23,31 @@ Route::middleware('auth')->group(function () {
     Route::resource('rooms.events', Watch\EventController::class)->only(['index', 'show']);
     Route::post('events/{event}/message', [Watch\MessageController::class, 'store'])->name('messages.store');
 
-    Route::prefix('console')->name('console.')->group(function () {
-        Route::get('/', Console\DashboardController::class);
-        
-        Route::resource('live-room/rooms', Console\LiveRoom\RoomController::class);
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('dashboard', Console\DashboardController::class)->name('dashboard');
+        Route::get('monitor/pulse', Console\Admin\MonitorController::class)->name('monitor');
 
-        Route::resource('live-room/users', Console\LiveRoom\UserController::class)
-            ->only(['index', 'show', 'store', 'update', 'destroy']);
+        Route::prefix('live')->name('live.')->group(function () {
+            Route::get('rooms', [Console\Admin\Live\RoomController::class, 'index'])->name('rooms.index');
+            Route::post('rooms', [Console\Admin\Live\RoomController::class, 'store'])->name('rooms.store');
+            Route::get('rooms/{room}', [Console\Admin\Live\RoomController::class, 'show'])->name('rooms.show');
+            Route::put('rooms/{room}', [Console\Admin\Live\RoomController::class, 'update'])->name('rooms.update');
+            Route::delete('rooms/{room}', [Console\Admin\Live\RoomController::class, 'destroy'])->name('rooms.destroy');
 
-        Route::resource('live-room/groups', Console\LiveRoom\UserGroupController::class)
-            ->only(['index', 'store', 'update', 'destroy']);
+            Route::get('users', [Console\Admin\Live\UserController::class, 'index'])->name('users.index');
+            Route::post('users', [Console\Admin\Live\UserController::class, 'store'])->name('users.store');
+            Route::get('users/{user}', [Console\Admin\Live\UserController::class, 'show'])->name('users.show');
+            Route::put('users/{user}', [Console\Admin\Live\UserController::class, 'update'])->name('users.update');
+            Route::delete('users/{user}', [Console\Admin\Live\UserController::class, 'destroy'])->name('users.destroy');
+            Route::post('users/batch/group', [Console\Admin\Live\UserBatchController::class, 'group'])->name('users.batch.group');
 
-        Route::post('live-room/users/batch/group', [Console\LiveRoom\UserBatchController::class, 'group'])
-            ->name('users.batch.group');
+            Route::post('groups', [Console\Admin\Live\UserGroupController::class, 'store'])->name('groups.store');
+            Route::put('groups/{group}', [Console\Admin\Live\UserGroupController::class, 'update'])->name('groups.update');
+            Route::delete('groups/{group}', [Console\Admin\Live\UserGroupController::class, 'destroy'])->name('groups.destroy');
+        });
+    });
+
+    Route::prefix('broadcast')->name('broadcast.')->group(function () {
 
     });
 });

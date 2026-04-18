@@ -1,11 +1,11 @@
-import { PlaybackPlayer } from '@/components/player';
-import { EventItemList } from '@/components/rooms';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PlayerCard, RightContent, WatchLayout } from '@/components/watch/layouts';
 import { MessageList } from '@/components/watch/message';
+import { PlaybackPlayer } from '@/components/watch/player';
+import { EventItemList } from '@/components/watch/rooms';
 import { Breadcrumb } from '@/components/winglab/breadcrumb';
 import { WebsiteLayout } from '@/layouts/website-layout';
 import { LiveEvent, LiveMessage, LiveRoom } from '@/services/model';

@@ -1,7 +1,13 @@
-import { User } from '@/services/model';
+import { LiveRoom, User, UserGroup } from '@/services/model';
 
 export type SharedProps = {
-    user?: User;
+    auth: {
+        user?: User;
+    };
+    options: {
+        rooms: Pick<LiveRoom, 'id' | 'name'>[];
+        groups: Pick<UserGroup, 'id' | 'name'>[];
+    };
 };
 
 export type PaginateLink = {
