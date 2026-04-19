@@ -150,7 +150,11 @@ export function FormFieldMutiSelect({
                     </Button>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-(--radix-popover-trigger-width) p-0" align="start">
+                <PopoverContent
+                    align="start"
+                    onWheel={(e) => e.stopPropagation()}
+                    className="w-(--radix-popover-trigger-width) p-0"
+                >
                     <Command>
                         <CommandInput placeholder="搜索..." />
                         <CommandList>

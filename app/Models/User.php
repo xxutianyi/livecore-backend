@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Live\LiveMessage;
+use App\Models\Live\LiveRoom;
 use App\Traits\Filterable;
 use App\Traits\Searchable;
 use App\Traits\Sortable;
@@ -126,6 +127,11 @@ class User extends Authenticatable
         return Attribute::get(function () {
             return $this->onlines()->first()?->leaving_at;
         });
+    }
+
+    public function directable(): BelongsToMany
+    {
+        return $this->belongsToMany(LiveRoom::class, 'live_room_directors');
     }
 
     public function scopeWhereOnline(Builder $builder, bool $online): Builder

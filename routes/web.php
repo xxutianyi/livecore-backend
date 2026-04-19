@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
             Route::get('users/{user}', [Console\Admin\Settings\UserController::class, 'show'])->name('users.show');
             Route::put('users/{user}', [Console\Admin\Settings\UserController::class, 'update'])->name('users.update');
             Route::delete('users/{user}', [Console\Admin\Settings\UserController::class, 'destroy'])->name('users.destroy');
+            Route::put('/users/{user}/directable',Console\Admin\Settings\UserDirectableController::class)->name('users.directable');
         });
     });
 

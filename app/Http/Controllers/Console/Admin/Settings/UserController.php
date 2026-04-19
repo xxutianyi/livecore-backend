@@ -28,6 +28,7 @@ class UserController extends Controller
     {
         return inertia('console/admin/settings/users/show', [
             'user' => $user,
+            'directable' => $user->directable
         ]);
     }
 

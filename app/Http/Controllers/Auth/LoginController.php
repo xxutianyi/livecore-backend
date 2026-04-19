@@ -18,9 +18,7 @@ class LoginController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        $defaultRoute = $request->user()->role == 'admin'
-            ? '/console/dashboard'
-            : '/rooms';
+        $defaultRoute = '/rooms';
 
         return redirect()->intended($defaultRoute);
     }

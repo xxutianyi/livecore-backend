@@ -2,6 +2,7 @@
 
 namespace App\Models\Live;
 
+use App\Traits\Optionable;
 use App\Traits\Searchable;
 use App\Traits\Sortable;
 use App\Utils\LiveRoomPrefix;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LiveRoom extends Model
 {
-    use HasUuids, HasFactory, Searchable, Sortable;
+    use HasUuids, HasFactory, Searchable, Sortable, Optionable;
 
     protected $fillable = [
         'name',

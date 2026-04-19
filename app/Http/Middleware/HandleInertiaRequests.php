@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Live\LiveRoom;
 use App\Models\UserGroup;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -42,7 +43,8 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'options' => [
-                'groups' => UserGroup::all(),
+                'rooms' => LiveRoom::options(),
+                'groups' => UserGroup::options(),
             ],
         ];
     }

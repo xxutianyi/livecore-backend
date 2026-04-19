@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Optionable;
 use App\Traits\Searchable;
 use App\Traits\Sortable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class UserGroup extends Model
 {
-    use HasUuids, Sortable, Searchable;
+    use HasUuids, Sortable, Searchable, Optionable;
 
     protected $fillable = [
         'name',
