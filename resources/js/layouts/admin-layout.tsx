@@ -30,7 +30,7 @@ export function AdminLayout({ children, title, routesSets = 'admin', className, 
                 <AdminSidebar menu={menuItems} />
                 <SidebarInset className="h-screen overflow-hidden">
                     <AdminHeader title={breadcrumbTitle} menu={menuItems} />
-                    <ScrollArea className={cn(className, 'h-[calc(100vh-64px)] w-full')}>{children}</ScrollArea>
+                    <ScrollArea className={cn(className, 'h-[calc(100vh-64px)] w-full p-4')}>{children}</ScrollArea>
                 </SidebarInset>
             </SidebarProvider>
         </RootLayout>

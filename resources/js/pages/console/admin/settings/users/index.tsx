@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { SectionHeader } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { User } from '@/services/model';
 import { Link } from '@inertiajs/react';
@@ -49,13 +50,9 @@ export default function Users({ data }: { data: PaginateData<User> }) {
     ]);
 
     return (
-        <AdminLayout className="p-4">
-            <div className="w-full space-y-4">
-                <div className="flex items-center justify-between font-heading text-base font-bold">
-                    <span>管理员列表</span>
-                </div>
-                <DataTable columns={columns} paginateData={data} toolbarAction={<UserCreate />} />
-            </div>
+        <AdminLayout>
+            <SectionHeader title="管理员列表" />
+            <DataTable columns={columns} paginateData={data} toolbarAction={<UserCreate />} />
         </AdminLayout>
     );
 }

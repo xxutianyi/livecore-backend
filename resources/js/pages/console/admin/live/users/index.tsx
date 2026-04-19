@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { SectionHeader } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { formatDatetime } from '@/lib/utils';
 import { User } from '@/services/model';
@@ -71,24 +72,20 @@ export default function Users({ data }: { data: PaginateData<User> }) {
     ]);
 
     return (
-        <AdminLayout className="p-4">
-            <div className="w-full space-y-4">
-                <div className="font-heading text-base font-bold">
-                    <span>观众列表</span>
-                </div>
-                <DataTable
-                    columns={columns}
-                    paginateData={data}
-                    onRowSelection={setSelect}
-                    toolbarAction={
-                        <div className="flex items-center gap-x-2">
-                            <UserCreate />
-                            <GroupIndex />
-                            {select && select?.length > 0 && <UserBatchGroup ids={select} />}
-                        </div>
-                    }
-                />
-            </div>
+        <AdminLayout>
+            <SectionHeader title="观众列表" />
+            <DataTable
+                columns={columns}
+                paginateData={data}
+                onRowSelection={setSelect}
+                toolbarAction={
+                    <div className="flex items-center gap-x-2">
+                        <UserCreate />
+                        <GroupIndex />
+                        {select && select?.length > 0 && <UserBatchGroup ids={select} />}
+                    </div>
+                }
+            />
         </AdminLayout>
     );
 }

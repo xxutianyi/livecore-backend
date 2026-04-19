@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Description, DescriptionItem } from '@/components/winglab/description';
+import { SectionHeader, Space } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { diffDatetime } from '@/lib/utils';
 import { LiveEvent, LiveRoom } from '@/services/model';
@@ -52,24 +53,27 @@ export default function Show({ room, events }: PageProps) {
     ]);
 
     return (
-        <AdminLayout breadcrumbTitle={room.name} className="p-4">
-            <div className="w-full space-y-4">
-                <div className="flex items-center justify-between font-heading text-base font-bold">
-                    <span>直播间信息</span>
-                    <RoomUpdate room={room} />
+        <AdminLayout breadcrumbTitle={room.name}>
+            <Space>
+                <div>
+                    <SectionHeader title="直播间信息">
+                        <RoomUpdate room={room} />
+                    </SectionHeader>
+                    <Description>
+                        <DescriptionItem label="名称" className="col-span-1">
+                            {room.name}
+                        </DescriptionItem>
+                        <DescriptionItem label="简介" className="col-span-3">
+                            {room.description}
+                        </DescriptionItem>
+                    </Description>
                 </div>
-                <Description>
-                    <DescriptionItem label="名称" className="col-span-1">
-                        {room.name}
-                    </DescriptionItem>
-                    <DescriptionItem label="简介" className="col-span-3">
-                        {room.description}
-                    </DescriptionItem>
-                </Description>
                 <Separator />
-                <div className="font-heading text-base font-bold">场次信息</div>
-                <SimpleTable columns={columns} data={events} />
-            </div>
+                <div>
+                    <SectionHeader title="场次信息" />
+                    <SimpleTable columns={columns} data={events} />
+                </div>
+            </Space>
         </AdminLayout>
     );
 }

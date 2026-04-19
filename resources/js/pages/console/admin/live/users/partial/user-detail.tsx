@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Description, DescriptionItem } from '@/components/winglab/description';
+import { SectionHeader } from '@/components/winglab/layout';
 import { formatDate, formatDatetime } from '@/lib/utils';
 import { User } from '@/services/model';
 import { UserUpdate } from './user-forms';
@@ -7,10 +8,9 @@ import { UserUpdate } from './user-forms';
 export function UserDetail({ user }: { user: User }) {
     return (
         <>
-            <div className="flex items-center justify-between font-heading text-base font-bold">
-                <span>用户信息</span>
+            <SectionHeader title="用户信息">
                 <UserUpdate user={user} />
-            </div>
+            </SectionHeader>
             <Description>
                 <DescriptionItem label="姓名">{user.name}</DescriptionItem>
                 <DescriptionItem label="手机号">

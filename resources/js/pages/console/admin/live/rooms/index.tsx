@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { SectionHeader } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { LiveRoom } from '@/services/model';
 import { Link } from '@inertiajs/react';
@@ -30,13 +31,9 @@ export default function Room({ data }: { data: PaginateData<LiveRoom> }) {
     ]);
 
     return (
-        <AdminLayout className="p-4">
-            <div className="w-full space-y-4">
-                <div className="font-heading text-base font-bold">
-                    <span>直播间列表</span>
-                </div>
-                <DataTable columns={columns} paginateData={data} toolbarAction={<RoomCreate />} />
-            </div>
+        <AdminLayout>
+            <SectionHeader title="直播间列表" />
+            <DataTable columns={columns} paginateData={data} toolbarAction={<RoomCreate />} />
         </AdminLayout>
     );
 }

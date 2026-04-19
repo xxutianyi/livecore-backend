@@ -1,4 +1,5 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { SectionHeader } from '@/components/winglab/layout';
 import { formatDatetime } from '@/lib/utils';
 import { LiveMessage } from '@/services/model';
 import { defineColumns, SimpleTable } from '@winglab/inertia-table';
@@ -39,7 +40,7 @@ export function MessageTable({ messages }: { messages: LiveMessage[] }) {
 
     return (
         <>
-            <div className="font-heading text-base font-bold">评论记录</div>
+            <SectionHeader title="评论记录" />
             <SimpleTable data={messages} columns={messagesColumns} />
         </>
     );

@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { FormFieldMutiSelect } from '@/components/winglab/form';
+import { SectionHeader } from '@/components/winglab/layout';
 import { LiveRoom, User } from '@/services/model';
 import { SharedProps } from '@/types';
 import { Form, Link, usePage } from '@inertiajs/react';
@@ -35,10 +36,9 @@ export function RoomIndex({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
 
     return (
         <>
-            <div className="flex items-center justify-between font-heading text-base font-bold">
-                <span>可管理的直播间</span>
+            <SectionHeader title="可管理的直播间">
                 <RoomUpdate user={user} rooms={rooms} />
-            </div>
+            </SectionHeader>
             <SimpleTable data={rooms} columns={columns} />
         </>
     );
