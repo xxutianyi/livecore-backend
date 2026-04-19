@@ -12,17 +12,21 @@ class EventController extends Controller
     {
         return inertia('watch/events/index', [
             'room' => $room,
-            'events' => $room->events
+            'events' => $room->events()->published()->get()
         ]);
     }
 
     public function show(LiveRoom $room, LiveEvent $event)
     {
+        if (!$event->published) {
+            abort(403);
+        }
+
         return inertia('watch/events/show', [
             'room' => $room,
             'event' => $event,
-            'events' => $room->events,
-            'messages' => $event->messages,
+            'events' => $room->events()->published()->get(),
+            'messages' => $event->messages()->published()->get(),
         ]);
     }
 }

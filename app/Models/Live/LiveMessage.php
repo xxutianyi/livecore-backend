@@ -4,6 +4,7 @@ namespace App\Models\Live;
 
 use App\Events\LiveMessagePublished;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,7 +42,7 @@ class LiveMessage extends Model
     public function event(): BelongsTo
     {
         return $this->belongsTo(LiveEvent::class, 'event_id')
-            ->select(['id', 'name','room_id']);
+            ->select(['id', 'name', 'room_id']);
     }
 
     public function review(User $reviewer, string $reviewedAt): void
@@ -52,5 +53,12 @@ class LiveMessage extends Model
         ]);
 
         LiveMessagePublished::dispatch($this);
+    }
+
+    public function scopePublished(Builder $query, bool $published = true): Builder
+    {
+        return $published
+            ? $query->whereNotNull('reviewed_at')
+            : $query->whereNull('reviewed_at');
     }
 }

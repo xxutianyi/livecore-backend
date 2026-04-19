@@ -6,10 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { cn, csrfToken } from '@/lib/utils';
 import { useFormContext } from '@inertiajs/react';
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { useState } from 'react';
+import { FilePond, registerPlugin } from 'react-filepond';
 
 export type BaseFieldProps = {
     name: string;
@@ -27,6 +30,10 @@ export type MutiSelectProps = Omit<BaseFieldProps, 'defaultValue'> & {
     defaultValue?: string[];
     options: Record<string, any>[];
     optionsKey?: { label: string; value: string };
+};
+
+export type UploadProps = Omit<BaseFieldProps, 'defaultValue'> & {
+    accept?: string;
 };
 
 export function FormFieldText({ name, label, placeholder, defaultValue }: BaseFieldProps) {
@@ -183,6 +190,57 @@ export function FormFieldMutiSelect({
                 </PopoverContent>
             </Popover>
 
+            {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
+        </Field>
+    );
+}
+
+export function FormFieldUpload({ name, label, accept }: UploadProps) {
+    registerPlugin(FilePondPluginImagePreview);
+    registerPlugin(FilePondPluginFileValidateType);
+
+    const form = useFormContext();
+
+    if (!form) {
+        return null;
+    }
+
+    return (
+        <Field>
+            <FieldLabel htmlFor={name}>{label}</FieldLabel>
+            <FilePond
+                id={name}
+                name={name}
+                chunkUploads
+                acceptedFileTypes={[accept ?? '*']}
+                server={{
+                    url: '/filepond',
+                    headers: { 'X-CSRF-TOKEN': csrfToken() },
+                }}
+                credits={false}
+                labelIdle='拖拽文件到此处或 <span class="filepond--label-action"> 浏览文件 </span>'
+                labelInvalidField="文件校验失败"
+                labelFileWaitingForSize="检测文件大小"
+                labelFileSizeNotAvailable="文件大小检测失败"
+                labelFileLoading="加载中"
+                labelFileLoadError="加载失败"
+                labelFileProcessing="上传中"
+                labelFileProcessingComplete="上传完成"
+                labelFileProcessingAborted="上传中断"
+                labelFileProcessingError="上传失败"
+                labelFileProcessingRevertError="恢复失败"
+                labelFileRemoveError="移除失败"
+                labelTapToCancel="点击取消"
+                labelTapToRetry="点击重试"
+                labelTapToUndo="点击撤销"
+                labelButtonRemoveItem="移除"
+                labelButtonAbortItemLoad="中断"
+                labelButtonRetryItemLoad="重试"
+                labelButtonAbortItemProcessing="取消"
+                labelButtonUndoItemProcessing="撤销"
+                labelButtonRetryItemProcessing="重试"
+                labelButtonProcessItem="上传"
+            />
             {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
         </Field>
     );

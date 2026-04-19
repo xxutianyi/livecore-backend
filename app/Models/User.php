@@ -16,10 +16,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use RahulHaque\Filepond\Traits\HasFilepond;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuids, Searchable, Filterable, Sortable;
+    use HasFactory, Notifiable, HasUuids, Searchable, Filterable, Sortable, HasFilepond;
 
     protected $fillable = [
         'name',

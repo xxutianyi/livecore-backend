@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { Description, DescriptionItem } from '@/components/winglab/description';
 import { PageContainer, SectionHeader } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { diffDatetime } from '@/lib/utils';
-import { GroupIndex, GroupUpdate } from '@/pages/console/admin/live/rooms/partial/group';
 import { LiveEvent, LiveRoom, UserGroup } from '@/services/model';
-import { defineColumns } from '@winglab/inertia-table';
-import { SimpleTable } from '@winglab/inertia-table/components/luma';
+import { defineColumns, SimpleTable } from '@winglab/inertia-table';
 import { RoomUpdate } from './partial/forms';
+import { GroupIndex, GroupUpdate } from './partial/group';
 import { Playback } from './partial/playback';
 
 type PageProps = { room: LiveRoom; events: LiveEvent[]; groups: UserGroup[] };
@@ -22,6 +22,14 @@ export default function Show({ room, events, groups }: PageProps) {
         {
             title: '场次简介',
             dataKey: 'description',
+            tableRowRender: (data) => (
+                <Tooltip>
+                    <TooltipTrigger className="block max-w-32 overflow-hidden text-ellipsis">
+                        {data.description}
+                    </TooltipTrigger>
+                    <TooltipContent className="break-all">{data.description}</TooltipContent>
+                </Tooltip>
+            ),
         },
         {
             title: '开始直播',

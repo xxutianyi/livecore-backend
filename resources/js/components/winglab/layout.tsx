@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { Head } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode } from 'react';
 
 export function Space({ className, children }: PropsWithChildren<{ className?: string }>) {
@@ -19,23 +20,26 @@ export function SectionHeader({
 }
 
 export type PageContainerProps = PropsWithChildren<{
-    title?: ReactNode;
-    subTitle?: ReactNode;
+    title?: string;
+    subTitle?: string;
     actions?: ReactNode[];
     className?: string;
 }>;
 
 export function PageContainer({ title, subTitle, actions, children, className }: PageContainerProps) {
     return (
-        <div className={cn(className, 'mx-auto flex h-full min-h-full max-w-7xl flex-col gap-6 px-4 py-6')}>
-            <div className="flex flex-wrap items-end justify-between gap-2">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-                    <p className="mt-1 text-muted-foreground">{subTitle}</p>
+        <>
+            <Head title={title} />
+            <div className={cn(className, 'mx-auto flex h-full min-h-full max-w-7xl flex-col gap-6 px-4 py-6')}>
+                <div className="flex flex-wrap items-end justify-between gap-2">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+                        <p className="mt-1 text-muted-foreground">{subTitle}</p>
+                    </div>
+                    <div className="flex gap-2">{actions?.map((action) => action)}</div>
                 </div>
-                <div className="flex gap-2">{actions?.map((action) => action)}</div>
+                {children}
             </div>
-            {children}
-        </div>
+        </>
     );
 }

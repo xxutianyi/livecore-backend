@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 function Player({ className, ...props }: Omit<MediaPlayerProps, 'children'>) {
     return (
         <div className={className}>
-            <MediaPlayer {...props} autoPlay={false} playsInline>
+            <MediaPlayer {...props} autoPlay playsInline>
                 <MediaProvider />
                 <PlyrLayout icons={plyrLayoutIcons} translations={Chinese} />
             </MediaPlayer>
@@ -53,13 +53,7 @@ export function LivePlayer({ className, src }: { className?: string; src: string
 
 export function PlaybackPlayer({ className, src }: { className?: string; src: string }) {
     const player = useRef<MediaPlayerInstance>(null);
-    const { ended, error } = useMediaStore(player);
-
-    useEffect(() => {
-        if (ended) {
-            toast.info('视频已播放结束', { position: 'top-right' });
-        }
-    }, [ended]);
+    const { error } = useMediaStore(player);
 
     useEffect(() => {
         if (error) {

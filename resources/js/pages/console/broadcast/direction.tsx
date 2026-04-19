@@ -14,7 +14,9 @@ export default function DirectionPage({ room }: { room?: LiveRoom }) {
             <PageContainer
                 title="开始直播"
                 actions={[<RoomSelect route={route('broadcast.direction')} key="select" />]}
-            ></PageContainer>
+            >
+                <div className="min-h-64 w-full border border-dashed"></div>
+            </PageContainer>
         </AdminLayout>
     );
 }

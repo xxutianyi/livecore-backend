@@ -29,3 +29,7 @@ export function diffDatetime(from?: string, to?: string) {
 
     return duration.minutes() + '分钟';
 }
+
+export function csrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '';
+}

@@ -29,6 +29,19 @@ class LiveRoom extends Model
         'manageable_users' => 'array',
     ];
 
+    protected array $sortable = [
+
+    ];
+
+    protected array $searchable = [
+        'name',
+        'description',
+    ];
+
+    protected array $filterable = [
+
+    ];
+
     protected static function booted(): void
     {
         static::creating(function (LiveRoom $room) {

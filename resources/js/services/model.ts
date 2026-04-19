@@ -71,6 +71,7 @@ export interface LiveEvent extends Model {
     started_at?: string;
     finished_at?: string;
     expires_at: string;
+    published?: boolean;
     room?: LiveRoom;
     room_id: LiveRoom['id'];
 }

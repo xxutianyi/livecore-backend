@@ -43,7 +43,9 @@ Route::middleware('auth')->group(function () {
 
     Route::prefix('broadcast')->name('broadcast.')->middleware('broadcast')->group(function () {
         Route::get('direction/{room?}', Console\Broadcast\DirectionController::class)->name('direction');
-        Route::get('playbacks/{room?}', Console\Broadcast\PlaybacksController::class)->name('playbacks');
+        Route::get('playbacks/{room?}', [Console\Broadcast\PlaybacksController::class, 'index'])->name('playbacks');
+        Route::put('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'update'])->name('playbacks.update');
+        Route::post('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'upload'])->name('playbacks.upload');
         Route::get('statistics/{room?}', Console\Broadcast\StatisticsController::class)->name('statistics');
     });
 });

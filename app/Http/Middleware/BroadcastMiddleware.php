@@ -20,7 +20,7 @@ class BroadcastMiddleware
         $cacheKey = "broadcast-room-{$request->user()->id}";
 
         if ($room) {
-            Cache::put($cacheKey, $room->id);
+            Cache::put($cacheKey,  $room->id);
         }
 
         if (!$room && Cache::has($cacheKey)) {

@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->timestamp('expired_at')->nullable();
             $table->timestamp('started_at')->nullable();
             $table->timestamp('finished_at')->nullable();
+            $table->boolean('published')->default(false);
             $table->foreignUuid('room_id')->constrained('live_rooms');
             $table->timestamps();
         });

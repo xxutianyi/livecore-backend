@@ -12,7 +12,7 @@
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 @theme inline {
@@ -128,19 +128,29 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+    * {
+        @apply border-border outline-ring/50;
     }
-  body {
-    @apply bg-background text-foreground;
+
+    body {
+        @apply bg-background text-foreground;
     }
-  html {
-    @apply font-sans;
+
+    html {
+        @apply font-sans;
     }
 }
 
 :root {
-    [data-media-player][data-layout="plyr"]:not([data-fullscreen]){
+    [data-media-player][data-layout="plyr"]:not([data-fullscreen]) {
         border-radius: 0 !important;
+    }
+
+    .filepond--panel-root {
+        @apply bg-muted;
+    }
+
+    .filepond--drop-label {
+        @apply text-foreground;
     }
 }

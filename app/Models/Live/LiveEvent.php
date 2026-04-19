@@ -2,6 +2,9 @@
 
 namespace App\Models\Live;
 
+use App\Traits\Searchable;
+use App\Traits\Sortable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LiveEvent extends Model
 {
-    use HasUuids, HasFactory;
+    use HasUuids, HasFactory, Sortable, Searchable;
 
     protected $fillable = [
         'name',
@@ -22,13 +25,26 @@ class LiveEvent extends Model
         'expired_at',
         'started_at',
         'finished_at',
+        'published',
         'room_id',
-        'sender_id',
-        'content',
     ];
 
     protected $with = [
         'room'
+    ];
+
+    protected array $sortable = [
+        'started_at',
+        'finished_at',
+    ];
+
+    protected array $searchable = [
+        'name',
+        'description',
+    ];
+
+    protected array $filterable = [
+
     ];
 
     public function room(): BelongsTo
@@ -41,5 +57,10 @@ class LiveEvent extends Model
     {
         return $this->hasMany(LiveMessage::class, 'event_id')
             ->oldest('reviewed_at')->oldest();
+    }
+
+    public function scopePublished(Builder $query, bool $published = true): Builder
+    {
+        return $query->where('published', $published);
     }
 }

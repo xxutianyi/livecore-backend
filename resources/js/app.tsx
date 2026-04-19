@@ -5,6 +5,7 @@ import dayjsDuration from 'dayjs/plugin/duration';
 import dayjsTimezone from 'dayjs/plugin/timezone';
 import dayjsUtc from 'dayjs/plugin/utc';
 
+import 'filepond/dist/filepond.min.css';
 import './app.css';
 
 const appName = import.meta.env.VITE_APP_NAME;
