@@ -49,8 +49,6 @@ export function RoomUpdate({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
 
     const { options } = usePage<SharedProps>().props;
 
-    console.log(options);
-
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
