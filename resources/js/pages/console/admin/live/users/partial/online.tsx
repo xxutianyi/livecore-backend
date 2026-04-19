@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { SectionHeader } from '@/components/winglab/layout';
 import { diffDatetime, formatDatetime } from '@/lib/utils';
 import { UserHeartbeat, UserOnline } from '@/services/model';
 import { defineColumns, SimpleTable } from '@winglab/inertia-table';
@@ -32,12 +31,7 @@ export function Online({ onlines }: { onlines: UserOnline[] }) {
         },
     ]);
 
-    return (
-        <>
-            <SectionHeader title="访问记录" />
-            <SimpleTable data={onlines} columns={onlineColumns} />
-        </>
-    );
+    return <SimpleTable data={onlines} columns={onlineColumns} />;
 }
 
 export function OnlineMetas({ metas }: { metas?: UserHeartbeat[] }) {

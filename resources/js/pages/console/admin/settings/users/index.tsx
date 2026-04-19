@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { SectionHeader } from '@/components/winglab/layout';
+import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { User } from '@/services/model';
 import { Link } from '@inertiajs/react';
@@ -51,8 +51,9 @@ export default function Users({ data }: { data: PaginateData<User> }) {
 
     return (
         <AdminLayout>
-            <SectionHeader title="管理员列表" />
-            <DataTable columns={columns} paginateData={data} toolbarAction={<UserCreate />} />
+            <PageContainer title="管理员列表" actions={[<UserCreate key="create" />]}>
+                <DataTable columns={columns} paginateData={data} />
+            </PageContainer>
         </AdminLayout>
     );
 }

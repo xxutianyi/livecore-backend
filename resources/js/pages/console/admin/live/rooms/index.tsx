@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { SectionHeader } from '@/components/winglab/layout';
+import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { LiveRoom } from '@/services/model';
 import { Link } from '@inertiajs/react';
@@ -32,8 +32,9 @@ export default function Room({ data }: { data: PaginateData<LiveRoom> }) {
 
     return (
         <AdminLayout>
-            <SectionHeader title="直播间列表" />
-            <DataTable columns={columns} paginateData={data} toolbarAction={<RoomCreate />} />
+            <PageContainer title="直播间列表" actions={[<RoomCreate key="create" />]}>
+                <DataTable columns={columns} paginateData={data} />
+            </PageContainer>
         </AdminLayout>
     );
 }

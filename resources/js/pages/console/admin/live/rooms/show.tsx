@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Description, DescriptionItem } from '@/components/winglab/description';
-import { SectionHeader, Space } from '@/components/winglab/layout';
+import { PageContainer, SectionHeader } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { diffDatetime } from '@/lib/utils';
-import { GroupIndex } from '@/pages/console/admin/live/rooms/partial/group';
+import { GroupIndex, GroupUpdate } from '@/pages/console/admin/live/rooms/partial/group';
 import { LiveEvent, LiveRoom, UserGroup } from '@/services/model';
 import { defineColumns } from '@winglab/inertia-table';
 import { SimpleTable } from '@winglab/inertia-table/components/luma';
@@ -55,11 +55,16 @@ export default function Show({ room, events, groups }: PageProps) {
 
     return (
         <AdminLayout breadcrumbTitle={room.name}>
-            <Space>
+            <PageContainer
+                title="直播间信息"
+                actions={[
+                    <RoomUpdate room={room} key="update" />,
+                    <GroupUpdate room={room} groups={groups} key="group" />,
+                ]}
+            >
+                <Separator />
                 <div>
-                    <SectionHeader title="直播间信息">
-                        <RoomUpdate room={room} />
-                    </SectionHeader>
+                    <SectionHeader title="基本信息" />
                     <Description>
                         <DescriptionItem label="名称" className="col-span-1">
                             {room.name}
@@ -75,8 +80,11 @@ export default function Show({ room, events, groups }: PageProps) {
                     <SimpleTable columns={columns} data={events} />
                 </div>
                 <Separator />
-                <GroupIndex room={room} groups={groups} />
-            </Space>
+                <div>
+                    <SectionHeader title="授权用户组" />
+                    <GroupIndex groups={groups} />
+                </div>
+            </PageContainer>
         </AdminLayout>
     );
 }

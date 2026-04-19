@@ -1,23 +1,34 @@
 import { Separator } from '@/components/ui/separator';
-import { Space } from '@/components/winglab/layout';
+import { PageContainer, SectionHeader } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { LiveMessage, User, UserOnline } from '@/services/model';
 import { MessageTable } from './partial/message';
 import { Online } from './partial/online';
 import { UserDetail } from './partial/user-detail';
+import { UserUpdate } from './partial/user-forms';
 
 type PageProps = { user: User; onlines: UserOnline[]; messages: LiveMessage[] };
 
 export default function Show({ user, onlines, messages }: PageProps) {
     return (
         <AdminLayout breadcrumbTitle={user.name}>
-            <Space>
-                <UserDetail user={user} />
+            <PageContainer title="观众信息" actions={[<UserUpdate user={user} key="update" />]}>
                 <Separator />
-                <Online onlines={onlines} />
+                <div>
+                    <SectionHeader title="用户信息" />
+                    <UserDetail user={user} />
+                </div>
                 <Separator />
-                <MessageTable messages={messages} />
-            </Space>
+                <div>
+                    <SectionHeader title="访问记录" />
+                    <Online onlines={onlines} />
+                </div>
+                <Separator />
+                <div>
+                    <SectionHeader title="评论记录" />
+                    <MessageTable messages={messages} />
+                </div>
+            </PageContainer>
         </AdminLayout>
     );
 }

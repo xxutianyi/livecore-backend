@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { FormFieldMutiSelect } from '@/components/winglab/form';
-import { SectionHeader } from '@/components/winglab/layout';
 import { LiveRoom, UserGroup } from '@/services/model';
 import { SharedProps } from '@/types';
 import { Form, Link, usePage } from '@inertiajs/react';
@@ -10,7 +9,7 @@ import { defineColumns, SimpleTable } from '@winglab/inertia-table';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-export function GroupIndex({ room, groups }: { room: LiveRoom; groups: UserGroup[] }) {
+export function GroupIndex({ groups }: { groups: UserGroup[] }) {
     const columns = defineColumns<UserGroup>([
         {
             dataKey: 'name',
@@ -34,17 +33,10 @@ export function GroupIndex({ room, groups }: { room: LiveRoom; groups: UserGroup
         },
     ]);
 
-    return (
-        <>
-            <SectionHeader title="授权用户组">
-                <RoomUpdate room={room} groups={groups} />
-            </SectionHeader>
-            <SimpleTable data={groups} columns={columns} />
-        </>
-    );
+    return <SimpleTable data={groups} columns={columns} />;
 }
 
-export function RoomUpdate({ room, groups }: { room: LiveRoom; groups: UserGroup[] }) {
+export function GroupUpdate({ room, groups }: { room: LiveRoom; groups: UserGroup[] }) {
     const [open, setOpen] = useState(false);
 
     const { options } = usePage<SharedProps>().props;
