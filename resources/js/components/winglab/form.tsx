@@ -32,7 +32,7 @@ export type MutiSelectProps = Omit<BaseFieldProps, 'defaultValue'> & {
     optionsKey?: { label: string; value: string };
 };
 
-export type UploadProps = Omit<BaseFieldProps, 'defaultValue'> & {
+export type UploadProps = Omit<BaseFieldProps, 'placeholder' | 'defaultValue'> & {
     accept?: string;
 };
 
@@ -212,12 +212,12 @@ export function FormFieldUpload({ name, label, accept }: UploadProps) {
                 id={name}
                 name={name}
                 chunkUploads
+                credits={false}
                 acceptedFileTypes={[accept ?? '*']}
                 server={{
                     url: '/filepond',
                     headers: { 'X-CSRF-TOKEN': csrfToken() },
                 }}
-                credits={false}
                 labelIdle='拖拽文件到此处或 <span class="filepond--label-action"> 浏览文件 </span>'
                 labelInvalidField="文件校验失败"
                 labelFileWaitingForSize="检测文件大小"

@@ -196,10 +196,11 @@ return [
     */
 
     'attributes' => [
-        'name' => '用户姓名',
+        'name' => '名字',
         'phone' => '手机号',
         'email' => '电子邮件',
         'invitation_code' => '邀请人代码',
+        'cover' => '封面',
 
         'new_password' => '新密码',
         'current_password' => '当前密码',

@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Console\Broadcast;
 use App\Http\Controllers\Controller;
 use App\Models\Live\LiveEvent;
 use App\Models\Live\LiveRoom;
+use App\Utils\FilepondSave;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use RahulHaque\Filepond\Facades\Filepond;
 
 class PlaybacksController extends Controller
 {
@@ -46,9 +46,9 @@ class PlaybacksController extends Controller
             'file' => ['required', Rule::filepond(['mimetypes:video/mp4'])],
         ]);
 
-        $fileInfo = Filepond::field($request->file)->moveTo("playback/$room->id/$event->id");
-
-        $event->update(['playback_url' => $fileInfo['url']]);
+        $event->update([
+            'playback_url' => FilepondSave::save($request->file, "playback/$room->id/$event->id")
+        ]);
 
         return back();
     }

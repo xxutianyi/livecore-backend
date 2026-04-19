@@ -7,7 +7,7 @@ import { AdminLayout } from '@/layouts/admin-layout';
 import { diffDatetime } from '@/lib/utils';
 import { LiveEvent, LiveRoom, UserGroup } from '@/services/model';
 import { defineColumns, SimpleTable } from '@winglab/inertia-table';
-import { RoomUpdate } from './partial/forms';
+import { CoverUpdate, RoomUpdate } from './partial/forms';
 import { GroupIndex, GroupUpdate } from './partial/group';
 import { Playback } from './partial/playback';
 
@@ -67,20 +67,24 @@ export default function Show({ room, events, groups }: PageProps) {
                 title="直播间信息"
                 actions={[
                     <RoomUpdate room={room} key="update" />,
+                    <CoverUpdate room={room} key="cover" />,
                     <GroupUpdate room={room} groups={groups} key="group" />,
                 ]}
             >
                 <Separator />
                 <div>
                     <SectionHeader title="基本信息" />
-                    <Description>
-                        <DescriptionItem label="名称" className="col-span-1">
-                            {room.name}
-                        </DescriptionItem>
-                        <DescriptionItem label="简介" className="col-span-3">
-                            {room.description}
-                        </DescriptionItem>
-                    </Description>
+                    <div className="flex w-full items-stretch gap-x-4">
+                        <img alt="cover" src={room.cover} className="aspect-video w-1/6 rounded-3xl" />
+                        <Description className="w-full">
+                            <DescriptionItem label="名称" className="col-span-4">
+                                {room.name}
+                            </DescriptionItem>
+                            <DescriptionItem label="简介" className="col-span-4">
+                                {room.description}
+                            </DescriptionItem>
+                        </Description>
+                    </div>
                 </div>
                 <Separator />
                 <div>

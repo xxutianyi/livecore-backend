@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('live')->name('live.')->group(function () {
             Route::resource('rooms', Console\Admin\Live\RoomController::class)->except(['create', 'edit']);
+            Route::put('rooms/{room}/cover', Console\Admin\Live\RoomCoverController::class)->name('rooms.cover');
             Route::put('rooms/{room}/groups', Console\Admin\Live\RoomGroupController::class)->name('rooms.groups');
             Route::resource('users', Console\Admin\Live\UserController::class)->except(['create', 'edit']);
             Route::post('users/batch/group', [Console\Admin\Live\UserBatchController::class, 'group'])->name('users.batch.group');

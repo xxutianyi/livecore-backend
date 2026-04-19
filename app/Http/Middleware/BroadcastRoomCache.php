@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
-class BroadcastMiddleware
+class BroadcastRoomCache
 {
     /**
      * Handle an incoming request.

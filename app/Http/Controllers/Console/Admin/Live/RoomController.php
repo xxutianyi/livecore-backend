@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Console\Admin\Live;
 
 use App\Http\Controllers\Controller;
 use App\Models\Live\LiveRoom;
+use App\Utils\FilepondSave;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class RoomController extends Controller
 {
@@ -21,7 +23,7 @@ class RoomController extends Controller
             'data' => $query->paginate($size)->withQueryString()
         ]);
     }
-    
+
     public function show(LiveRoom $room)
     {
         return inertia('console/admin/live/rooms/show', [
@@ -33,24 +35,27 @@ class RoomController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:255'],
+            'cover' => ['required', Rule::filepond(['mimetypes:image/*'])],
         ]);
 
-        LiveRoom::create($validated);
+        $room = LiveRoom::create($request->only(['name', 'description']));
+        $cover = FilepondSave::save($request->cover, "cover/$room->id");
+        $room->update(['cover' => $cover]);
 
         return back();
     }
 
     public function update(Request $request, LiveRoom $room)
     {
-        $validated = $request->validate([
+        $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $room->update($validated);
+        $room->update($request->only(['name', 'description']));
 
         return back();
     }

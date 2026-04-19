@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { FormFieldText, FormFieldTextarea } from '@/components/winglab/form';
+import { FormFieldText, FormFieldTextarea, FormFieldUpload } from '@/components/winglab/form';
 import { LiveRoom } from '@/services/model';
 import { Form } from '@inertiajs/react';
 import { useState } from 'react';
@@ -26,6 +26,7 @@ export function RoomCreate() {
                     }}
                 >
                     <FieldGroup>
+                        <FormFieldUpload name="cover" label="封面" accept="image/*" />
                         <FormFieldText name="name" label="名称" />
                         <FormFieldTextarea name="description" label="简介" />
                         <Field>
@@ -59,6 +60,36 @@ export function RoomUpdate({ room }: { room: LiveRoom }) {
                     <FieldGroup>
                         <FormFieldText name="name" label="名称" defaultValue={room.name} />
                         <FormFieldTextarea name="description" label="简介" defaultValue={room.description} />
+                        <Field>
+                            <Button type="submit">保存</Button>
+                        </Field>
+                    </FieldGroup>
+                </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+export function CoverUpdate({ room }: { room: LiveRoom }) {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button>更新封面</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>更新封面</DialogHeader>
+                <Form
+                    action={route('admin.live.rooms.cover', room.id)}
+                    method="PUT"
+                    onSuccess={() => {
+                        setOpen(false);
+                        toast.success('保存成功');
+                    }}
+                >
+                    <FieldGroup>
+                        <FormFieldUpload name="file" accept="image/*" />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>
