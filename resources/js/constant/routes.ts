@@ -1,4 +1,4 @@
-import { HeartPulse, Lock, ShieldAlert, TvMinimal, TvMinimalPlay, Users } from 'lucide-react';
+import { ChartBar, HeartPulse, Lock, Play, ShieldAlert, TvMinimal, TvMinimalPlay, Users, Video } from 'lucide-react';
 import { FunctionComponent } from 'react';
 
 export type RouteItemGroup = {
@@ -18,12 +18,32 @@ export type RouteItemGroup = {
     }[];
 };
 
-export type Sets = 'admin' | 'broadcast';
+export type Sets = 'admin';
 
 const routes: Record<Sets, RouteItemGroup[]> = {
     admin: [
         {
-            title: '直播配置',
+            title: '直播控制',
+            items: [
+                {
+                    title: '开始直播',
+                    icon: Play,
+                    href: route('broadcast.direction'),
+                },
+                {
+                    title: '直播回放',
+                    icon: Video,
+                    href: route('broadcast.playbacks'),
+                },
+                {
+                    title: '观看数据',
+                    icon: ChartBar,
+                    href: route('broadcast.statistics'),
+                },
+            ],
+        },
+        {
+            title: '观看设置',
             items: [
                 {
                     title: '直播间',
@@ -73,7 +93,6 @@ const routes: Record<Sets, RouteItemGroup[]> = {
             ],
         },
     ],
-    broadcast: [],
 };
 
 export default routes;

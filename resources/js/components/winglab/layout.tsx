@@ -31,7 +31,7 @@ export function PageContainer({ title, subTitle, actions, children, className }:
             <div className="flex flex-wrap items-end justify-between gap-2">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-                    <p className="text-muted-foreground">{subTitle}</p>
+                    <p className="mt-1 text-muted-foreground">{subTitle}</p>
                 </div>
                 <div className="flex gap-2">{actions?.map((action) => action)}</div>
             </div>

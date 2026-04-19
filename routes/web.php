@@ -41,7 +41,9 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    Route::prefix('broadcast')->name('broadcast.')->group(function () {
-
+    Route::prefix('broadcast')->name('broadcast.')->middleware('broadcast')->group(function () {
+        Route::get('direction/{room?}', Console\Broadcast\DirectionController::class)->name('direction');
+        Route::get('playbacks/{room?}', Console\Broadcast\PlaybacksController::class)->name('playbacks');
+        Route::get('statistics/{room?}', Console\Broadcast\StatisticsController::class)->name('statistics');
     });
 });
