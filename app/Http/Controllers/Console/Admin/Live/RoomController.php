@@ -21,12 +21,13 @@ class RoomController extends Controller
             'data' => $query->paginate($size)->withQueryString()
         ]);
     }
-
+    
     public function show(LiveRoom $room)
     {
         return inertia('console/admin/live/rooms/show', [
             'room' => $room,
             'events' => $room->events,
+            'groups' => $room->groups,
         ]);
     }
 

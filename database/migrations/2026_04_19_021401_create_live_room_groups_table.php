@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('live_room_groups', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('group_id')->constrained('user_groups');
+            $table->foreignUuid('user_group_id')->constrained('user_groups');
             $table->foreignUuid('live_room_id')->constrained('live_rooms');
             $table->timestamps();
         });

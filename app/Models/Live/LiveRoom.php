@@ -2,6 +2,7 @@
 
 namespace App\Models\Live;
 
+use App\Models\UserGroup;
 use App\Traits\Optionable;
 use App\Traits\Searchable;
 use App\Traits\Sortable;
@@ -9,6 +10,7 @@ use App\Utils\LiveRoomPrefix;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LiveRoom extends Model
@@ -41,5 +43,10 @@ class LiveRoom extends Model
     public function events(): HasMany|LiveRoom
     {
         return $this->hasMany(LiveEvent::class, 'room_id');
+    }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(UserGroup::class,'live_room_groups');
     }
 }

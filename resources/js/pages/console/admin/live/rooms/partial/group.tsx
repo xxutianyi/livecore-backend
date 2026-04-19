@@ -3,23 +3,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components
 import { Field, FieldGroup } from '@/components/ui/field';
 import { FormFieldMutiSelect } from '@/components/winglab/form';
 import { SectionHeader } from '@/components/winglab/layout';
-import { LiveRoom, User } from '@/services/model';
+import { LiveRoom, UserGroup } from '@/services/model';
 import { SharedProps } from '@/types';
 import { Form, Link, usePage } from '@inertiajs/react';
 import { defineColumns, SimpleTable } from '@winglab/inertia-table';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-export function RoomIndex({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
-    const columns = defineColumns<LiveRoom>([
+export function GroupIndex({ room, groups }: { room: LiveRoom; groups: UserGroup[] }) {
+    const columns = defineColumns<UserGroup>([
         {
             dataKey: 'name',
             title: '名称',
             sortable: true,
         },
         {
-            dataKey: 'description',
-            title: '简介',
+            dataKey: 'users_count',
+            title: '用户数',
             sortable: true,
         },
         {
@@ -36,15 +36,15 @@ export function RoomIndex({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
 
     return (
         <>
-            <SectionHeader title="可管理的直播间">
-                <RoomUpdate user={user} rooms={rooms} />
+            <SectionHeader title="授权用户组">
+                <RoomUpdate room={room} groups={groups} />
             </SectionHeader>
-            <SimpleTable data={rooms} columns={columns} />
+            <SimpleTable data={groups} columns={columns} />
         </>
     );
 }
 
-export function RoomUpdate({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
+export function RoomUpdate({ room, groups }: { room: LiveRoom; groups: UserGroup[] }) {
     const [open, setOpen] = useState(false);
 
     const { options } = usePage<SharedProps>().props;
@@ -55,9 +55,9 @@ export function RoomUpdate({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
                 <Button>修改授权</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>授权直播间</DialogHeader>
+                <DialogHeader>授权用户组</DialogHeader>
                 <Form
-                    action={route('admin.settings.users.directable', user.id)}
+                    action={route('admin.live.rooms.groups', room.id)}
                     method="PUT"
                     onSuccess={() => {
                         setOpen(false);
@@ -66,10 +66,10 @@ export function RoomUpdate({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
                 >
                     <FieldGroup>
                         <FormFieldMutiSelect
-                            name="room_ids"
-                            options={options.rooms}
+                            name="group_ids"
+                            options={options.groups}
                             optionsKey={{ label: 'name', value: 'id' }}
-                            defaultValue={rooms.map((room) => room.id)}
+                            defaultValue={groups.map((g) => g.id)}
                         />
                         <Field>
                             <Button type="submit">保存</Button>

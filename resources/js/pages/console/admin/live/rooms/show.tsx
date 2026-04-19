@@ -4,15 +4,16 @@ import { Description, DescriptionItem } from '@/components/winglab/description';
 import { SectionHeader, Space } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { diffDatetime } from '@/lib/utils';
-import { LiveEvent, LiveRoom } from '@/services/model';
+import { GroupIndex } from '@/pages/console/admin/live/rooms/partial/group';
+import { LiveEvent, LiveRoom, UserGroup } from '@/services/model';
 import { defineColumns } from '@winglab/inertia-table';
 import { SimpleTable } from '@winglab/inertia-table/components/luma';
 import { RoomUpdate } from './partial/forms';
 import { Playback } from './partial/playback';
 
-type PageProps = { room: LiveRoom; events: LiveEvent[] };
+type PageProps = { room: LiveRoom; events: LiveEvent[]; groups: UserGroup[] };
 
-export default function Show({ room, events }: PageProps) {
+export default function Show({ room, events, groups }: PageProps) {
     const columns = defineColumns<LiveEvent>([
         {
             title: '场次名称',
@@ -73,6 +74,8 @@ export default function Show({ room, events }: PageProps) {
                     <SectionHeader title="场次信息" />
                     <SimpleTable columns={columns} data={events} />
                 </div>
+                <Separator />
+                <GroupIndex room={room} groups={groups} />
             </Space>
         </AdminLayout>
     );
