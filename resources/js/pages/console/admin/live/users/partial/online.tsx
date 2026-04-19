@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
-import { defineColumns, SimpleTable } from '@/components/winglab/table';
 import { diffDatetime, formatDatetime } from '@/lib/utils';
 import { UserHeartbeat, UserOnline } from '@/services/model';
+import { defineColumns, SimpleTable } from '@winglab/inertia-table';
 
 export function Online({ onlines }: { onlines: UserOnline[] }) {
     const onlineColumns = defineColumns<UserOnline>([

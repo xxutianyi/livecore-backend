@@ -1,11 +1,10 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DataTable, defineColumns } from '@/components/winglab/table';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { formatDatetime } from '@/lib/utils';
 import { User } from '@/services/model';
-import { PaginateData } from '@/types';
 import { Link } from '@inertiajs/react';
+import { DataTable, defineColumns, type PaginateData } from '@winglab/inertia-table';
 import { useState } from 'react';
 import { UserBatchGroup, UserCreate } from './partial/user-forms';
 import { GroupIndex } from './partial/user-group';

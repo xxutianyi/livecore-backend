@@ -1,9 +1,8 @@
 import { Button } from '@/components/ui/button';
-import { DataTable, defineColumns } from '@/components/winglab/table';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { User } from '@/services/model';
-import { PaginateData } from '@/types';
 import { Link } from '@inertiajs/react';
+import { DataTable, defineColumns, type PaginateData } from '@winglab/inertia-table';
 import { UserCreate } from './partial/user-forms';
 
 export default function Users({ data }: { data: PaginateData<User> }) {

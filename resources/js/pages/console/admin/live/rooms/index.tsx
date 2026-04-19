@@ -1,9 +1,8 @@
 import { Button } from '@/components/ui/button';
-import { DataTable, defineColumns } from '@/components/winglab/table';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { LiveRoom } from '@/services/model';
-import { PaginateData } from '@/types';
 import { Link } from '@inertiajs/react';
+import { DataTable, defineColumns, type PaginateData } from '@winglab/inertia-table';
 import { RoomCreate } from './partial/forms';
 
 export default function Room({ data }: { data: PaginateData<LiveRoom> }) {

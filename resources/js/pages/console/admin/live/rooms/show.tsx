@@ -1,12 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Description, DescriptionItem } from '@/components/winglab/description';
-import { defineColumns, SimpleTable } from '@/components/winglab/table';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { diffDatetime } from '@/lib/utils';
-import { Playback } from '@/pages/console/live-room/room/partial/playback';
 import { LiveEvent, LiveRoom } from '@/services/model';
+import { defineColumns } from '@winglab/inertia-table';
+import { SimpleTable } from '@winglab/inertia-table/components/luma';
 import { RoomUpdate } from './partial/forms';
+import { Playback } from './partial/playback';
 
 type PageProps = { room: LiveRoom; events: LiveEvent[] };
 

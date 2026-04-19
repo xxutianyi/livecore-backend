@@ -2,10 +2,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { FormFieldText } from '@/components/winglab/form';
-import { defineColumns, SimpleTable } from '@/components/winglab/table';
 import { UserGroup } from '@/services/model';
 import { SharedProps } from '@/types';
 import { Form, usePage } from '@inertiajs/react';
+import { defineColumns, SimpleTable } from '@winglab/inertia-table';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
