@@ -1,6 +1,6 @@
 {
     "$schema": "https://www.schemastore.org/package.json",
-    "name": "@winglab/live-system",
+    "name": "@winglab/livecore",
     "private": true,
     "type": "module",
     "scripts": {
