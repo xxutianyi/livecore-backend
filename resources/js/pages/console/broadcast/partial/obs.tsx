@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Section, SectionTitle } from '@/components/winglab/layout';
 import { useOBS } from '@/hooks/use-obs';
 import { LiveEvent } from '@/services/model';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -91,7 +92,7 @@ export function ObsController({ event }: { event: LiveEvent }) {
     }
 
     const disableStop = !states.isConnected || !states.isStreaming;
-    const disableStart = !states.isConnected || states.isStreaming;
+    const disableStart = !states.isConnected || states.isStreaming || dayjs(event.expired_at).isBefore(dayjs());
     const disableConnect = !server || !password || states.isConnected;
     const disableSetConfig = !states.isConnected || states.isStreaming;
 
