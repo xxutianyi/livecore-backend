@@ -21,6 +21,10 @@ export type BaseFieldProps = {
     defaultValue?: string;
 };
 
+export type TextFieldProps = BaseFieldProps & {
+    type?: 'text' | 'password';
+};
+
 export type SelectProps = BaseFieldProps & {
     options: Record<string, any>[];
     optionsKey?: { label: string; value: string };
@@ -36,7 +40,7 @@ export type UploadProps = Omit<BaseFieldProps, 'placeholder' | 'defaultValue'> &
     accept?: string;
 };
 
-export function FormFieldText({ name, label, placeholder, defaultValue }: BaseFieldProps) {
+export function FormFieldText({ name, label, placeholder, defaultValue, type }: TextFieldProps) {
     const form = useFormContext();
 
     if (!form) {
@@ -46,7 +50,13 @@ export function FormFieldText({ name, label, placeholder, defaultValue }: BaseFi
     return (
         <Field>
             <FieldLabel htmlFor={name}>{label}</FieldLabel>
-            <Input id={name} name={name} placeholder={placeholder ?? '请输入'} defaultValue={defaultValue} />
+            <Input
+                id={name}
+                name={name}
+                placeholder={placeholder ?? '请输入'}
+                defaultValue={defaultValue}
+                type={type}
+            />
             {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
         </Field>
     );

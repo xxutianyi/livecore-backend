@@ -1,14 +1,15 @@
 import { ModeToggle } from '@/components/theme-provider';
+import { RootLayout } from '@/layouts/_root';
 import { WebsiteUserAction } from '@/layouts/components/website-header';
 import configs from '@/lib/configs';
+import { Head, Link } from '@inertiajs/react';
 import { PropsWithChildren } from 'react';
 
-import { Head, Link } from '@inertiajs/react';
 import styles from './website.module.css';
 
 export function WebsiteLayout({ children, title }: PropsWithChildren<{ title?: string }>) {
     return (
-        <div>
+        <RootLayout>
             <Head>
                 <title>{title}</title>
             </Head>
@@ -25,6 +26,6 @@ export function WebsiteLayout({ children, title }: PropsWithChildren<{ title?: s
                 </div>
             </div>
             <div className={styles.content}>{children}</div>
-        </div>
+        </RootLayout>
     );
 }

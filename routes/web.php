@@ -10,14 +10,13 @@ Route::middleware('guest')->group(function () {
     Route::get('/', fn() => inertia('welcome'));
     Route::get('login', [Auth\LoginController::class, 'show']);
     Route::post('login', [Auth\LoginController::class, 'store']);
-
 });
 
 Route::middleware('auth')->group(function () {
-    Route::post('logout', [Auth\LoginController::class, 'destroy']);
-    Route::get('profile', [Auth\ProfileController::class, 'show']);
-    Route::put('profile', [Auth\ProfileController::class, 'update']);
-    Route::put('password', [Auth\ProfileController::class, 'password']);
+    Route::post('logout', [Auth\LoginController::class, 'destroy'])->name('logout');
+    Route::get('profile', [Auth\ProfileController::class, 'show'])->name('profile.show');
+    Route::put('profile', [Auth\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('password', [Auth\ProfileController::class, 'password'])->name('password.update');
 
     Route::resource('rooms', Watch\RoomController::class)->only(['index', 'show']);
     Route::resource('rooms.events', Watch\EventController::class)->only(['index', 'show']);

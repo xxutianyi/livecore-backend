@@ -11,7 +11,7 @@ class ProfileController extends Controller
 {
     public function show()
     {
-        return inertia('profile/show');
+        return inertia('website/profile/show');
     }
 
     public function update(ProfileRequest $request)
