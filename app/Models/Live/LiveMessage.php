@@ -16,6 +16,7 @@ class LiveMessage extends Model
 
     protected $fillable = [
         'content',
+        'room_id',
         'event_id',
         'sender_id',
         'reviewer_id',
@@ -39,10 +40,16 @@ class LiveMessage extends Model
             ->select(['id', 'name']);
     }
 
+    public function room(): BelongsTo
+    {
+        return $this->belongsTo(LiveRoom::class, 'room_id')
+            ->select(['id', 'name']);
+    }
+
     public function event(): BelongsTo
     {
         return $this->belongsTo(LiveEvent::class, 'event_id')
-            ->select(['id', 'name', 'room_id']);
+            ->select(['id', 'name']);
     }
 
     public function review(User $reviewer, string $reviewedAt): void

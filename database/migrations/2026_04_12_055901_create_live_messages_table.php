@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('live_messages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->longText('content');
+            $table->foreignUuid('room_id')->constrained('live_rooms');
             $table->foreignUuid('event_id')->constrained('live_events');
             $table->foreignUuid('sender_id')->constrained('users');
             $table->foreignUuid('reviewer_id')->nullable()->constrained('users');

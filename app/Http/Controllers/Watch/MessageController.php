@@ -11,6 +11,7 @@ class MessageController extends Controller
     public function store(LiveEvent $event, Request $request)
     {
         $message = $event->messages()->create([
+            'room_id' => $event->room_id,
             'content' => $request->input('content'),
             'sender_id' => $request->user()->id,
         ]);

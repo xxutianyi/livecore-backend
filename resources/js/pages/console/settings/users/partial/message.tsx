@@ -8,7 +8,7 @@ export function MessageTable({ messages }: { messages: LiveMessage[] }) {
     const messagesColumns = defineColumns<LiveMessage>([
         {
             title: '直播间',
-            dataKey: ['event', 'room', 'name'],
+            dataKey: ['room', 'name'],
         },
         {
             title: '场次名称',

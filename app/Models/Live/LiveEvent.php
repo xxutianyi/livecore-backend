@@ -36,10 +36,6 @@ class LiveEvent extends Model
         'finished_at' => 'datetime',
     ];
 
-    protected $with = [
-        'room'
-    ];
-
     protected array $sortable = [
         'started_at',
         'finished_at',

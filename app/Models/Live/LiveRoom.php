@@ -6,7 +6,6 @@ use App\Models\UserGroup;
 use App\Traits\Optionable;
 use App\Traits\Searchable;
 use App\Traits\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,15 +46,15 @@ class LiveRoom extends Model
 
     protected function living(): Attribute
     {
-        $event = $this->whereRelation('events',
-            function (Builder $builder) {
-                $builder
-                    ->whereNull('finished_at')
-                    ->whereNotNull('started_at');
-            });
+        $event = LiveEvent::without('room')
+            ->where('room_id', $this->id)
+            ->whereNull('finished_at')
+            ->whereNotNull('started_at')
+            ->whereTime('expired_at', '>', now())
+            ->latest()->first();
 
         return Attribute::get(function () use ($event) {
-            return $event->latest()->first();
+            return $event;
         });
     }
 
