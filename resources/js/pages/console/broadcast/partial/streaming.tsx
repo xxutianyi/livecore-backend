@@ -7,14 +7,10 @@ import { formatDatetime } from '@/lib/utils';
 import { LiveEvent, LiveMessage } from '@/services/model';
 import { defineColumns, SimpleTable } from '@winglab/inertia-table';
 
-export function StreamingPlay() {
+export function StreamingPlay({ event }: { event: LiveEvent }) {
     return (
         <FloatingWindow title="直播监看">
-            <LivePlayer
-                src={
-                    'https://1500009007.vod2.myqcloud.com/6c9c6038vodcq1500009007/2fb02795387702305297108918/w3C7ZwlsPNYA.mp4'
-                }
-            />
+            <LivePlayer src={event.pull_url} />
         </FloatingWindow>
     );
 }

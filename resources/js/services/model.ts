@@ -64,15 +64,14 @@ export interface LiveRoom extends Model {
 export interface LiveEvent extends Model {
     name: string;
     cover?: string;
+    published?: boolean;
     description?: string;
-    push_url?: string;
-    pull_url?: string;
-    playback_url?: string;
+    push_url: string;
+    pull_url: string;
     expired_at?: string;
     started_at?: string;
     finished_at?: string;
-    expires_at: string;
-    published?: boolean;
+    playback_url?: string;
     room?: LiveRoom;
     room_id: LiveRoom['id'];
 }

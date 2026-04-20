@@ -1,10 +1,10 @@
 import { Separator } from '@/components/ui/separator';
 import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
-import { EventCreate, EventHistory } from '@/pages/console/broadcast/partial/events';
-import { RoomSelect } from '@/pages/console/broadcast/partial/room-select';
-import { StreamingConfig, StreamingMessage, StreamingPlay } from '@/pages/console/broadcast/partial/streaming';
 import { LiveEvent, LiveRoom } from '@/services/model';
+import { EventCreate, EventHistory } from './partial/events';
+import { RoomSelect } from './partial/room-select';
+import { StreamingConfig, StreamingMessage, StreamingPlay } from './partial/streaming';
 import Welcome from './welcome';
 
 type PageProps = { room?: LiveRoom; event?: LiveEvent; events: LiveEvent[] };
@@ -21,7 +21,7 @@ export default function DirectionPage({ room, event, events }: PageProps) {
                 <Separator />
                 {event && (
                     <>
-                        <StreamingPlay />
+                        <StreamingPlay event={event} />
                         <StreamingMessage />
                         <Separator />
                         <StreamingConfig event={event} />

@@ -20,7 +20,10 @@ class LiveCallbackController extends Controller
         ]);
 
         $event = LiveEvent::find($validated['stream_id']);
-        $event->update(['started_at' => Carbon::createFromTimestamp($validated['event_time'])]);
+        $event->update([
+            'started_at' => Carbon::createFromTimestamp($validated['event_time']),
+            'finished_at' => null,
+        ]);
 
         return response()->json();
     }
