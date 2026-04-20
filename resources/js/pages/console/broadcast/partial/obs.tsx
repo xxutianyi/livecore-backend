@@ -91,8 +91,9 @@ export function ObsController({ event }: { event: LiveEvent }) {
         functions.setStreamingConfig({ server: pushServer, key: pushSecret });
     }
 
+    const expired = dayjs(event.expired_at).isBefore(dayjs());
     const disableStop = !states.isConnected || !states.isStreaming;
-    const disableStart = !states.isConnected || states.isStreaming || dayjs(event.expired_at).isBefore(dayjs());
+    const disableStart = !states.isConnected || states.isStreaming || expired;
     const disableConnect = !server || !password || states.isConnected;
     const disableSetConfig = !states.isConnected || states.isStreaming;
 
@@ -107,6 +108,9 @@ export function ObsController({ event }: { event: LiveEvent }) {
                         </Badge>,
                         <Badge key="streaming" variant={states.isStreaming ? 'destructive' : 'secondary'}>
                             {states.isStreaming ? '正在直播' : '未直播'}
+                        </Badge>,
+                        <Badge key="expired" variant={expired ? 'destructive' : 'default'}>
+                            {expired ? '请刷新过期时间' : '未过期'}
                         </Badge>,
                     ]}
                 />
