@@ -40,11 +40,20 @@ export function PageContainer({ title, subTitle, actions, children, className }:
     );
 }
 
-export function Section({ title, children }: PropsWithChildren<{ title?: string }>) {
+export function Section({ title, children }: PropsWithChildren<{ title?: ReactNode }>) {
     return (
         <div className="flex flex-col gap-y-4">
             <span className="font-heading text-lg font-bold">{title}</span>
             {children}
+        </div>
+    );
+}
+
+export function SectionTitle({ title, actions }: { title?: string; actions?: ReactNode[] }) {
+    return (
+        <div className="flex items-center justify-between">
+            <div>{title}</div>
+            <div className="flex items-center gap-x-2">{actions}</div>
         </div>
     );
 }

@@ -1,6 +1,7 @@
 import { Separator } from '@/components/ui/separator';
 import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
+import { ObsController } from '@/pages/console/broadcast/partial/obs';
 import { LiveEvent, LiveRoom } from '@/services/model';
 import { EventCreate, EventHistory } from './partial/events';
 import { RoomSelect } from './partial/room-select';
@@ -22,6 +23,8 @@ export default function DirectionPage({ room, event, events }: PageProps) {
                 {event && (
                     <>
                         <StreamingPlay event={event} />
+                        <ObsController event={event} />
+                        <Separator />
                         <StreamingMessage />
                         <Separator />
                         <StreamingConfig event={event} />
