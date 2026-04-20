@@ -5,6 +5,7 @@ import { Field, FieldGroup } from '@/components/ui/field';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { FormFieldText, FormFieldTextarea, FormFieldUpload } from '@/components/winglab/form';
 import { Section } from '@/components/winglab/layout';
+import { formatDatetime } from '@/lib/utils';
 import { LiveEvent, LiveRoom } from '@/services/model';
 import { Form, router } from '@inertiajs/react';
 import { defineColumns, SimpleTable } from '@winglab/inertia-table';
@@ -85,10 +86,12 @@ export function EventHistory({ events }: { events: LiveEvent[] }) {
         {
             title: '开始直播',
             dataKey: 'started_at',
+            tableRowRender: (data) => formatDatetime(data.started_at),
         },
         {
             title: '结束直播',
             dataKey: 'finished_at',
+            tableRowRender: (data) => formatDatetime(data.finished_at),
         },
         {
             index: 'actions',
