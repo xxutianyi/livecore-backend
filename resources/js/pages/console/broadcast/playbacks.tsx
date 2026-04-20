@@ -8,7 +8,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
-import { diffDatetime } from '@/lib/utils';
+import { diffDatetime, formatDatetime } from '@/lib/utils';
 import { LiveEvent, LiveRoom } from '@/services/model';
 import { router } from '@inertiajs/react';
 import { DataTable, defineColumns, PaginateData } from '@winglab/inertia-table';
@@ -44,10 +44,12 @@ export default function PlaybacksPage({ room, events }: { room?: LiveRoom; event
         {
             title: '开始直播',
             dataKey: 'started_at',
+            tableRowRender: (data) => formatDatetime(data.started_at),
         },
         {
             title: '结束直播',
             dataKey: 'finished_at',
+            tableRowRender: (data) => formatDatetime(data.finished_at),
         },
         {
             title: '直播时长',
@@ -58,7 +60,7 @@ export default function PlaybacksPage({ room, events }: { room?: LiveRoom; event
             index: 'actions',
             tableRowRender: (data) => {
                 return (
-                    <div className="flex w-40 items-center gap-x-2">
+                    <div className="flex items-center gap-x-2">
                         <ViewPlayback event={data} />
                         <UploadPlayback event={data} />
                         <Button
