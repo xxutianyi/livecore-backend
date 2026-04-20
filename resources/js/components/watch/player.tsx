@@ -24,7 +24,7 @@ export function LivePlayer({ className, src }: { className?: string; src: string
 
     useEffect(() => {
         if (ended && streamType === 'live') {
-            toast.info('直播未开始或已结束', { position: 'top-right' });
+            toast.info('直播未开始或已结束');
         }
     }, [ended, streamType]);
 
@@ -34,7 +34,7 @@ export function LivePlayer({ className, src }: { className?: string; src: string
         if (waiting && streamType === 'live') {
             timer = setTimeout(() => {
                 if (waiting) {
-                    toast.info('直播未开始或已结束', { position: 'top-right' });
+                    toast.info('直播未开始或已结束');
                 }
             }, 5000);
         }
@@ -44,7 +44,7 @@ export function LivePlayer({ className, src }: { className?: string; src: string
 
     useEffect(() => {
         if (error) {
-            toast.info('直播未开始或已结束', { position: 'top-right' });
+            toast.info('直播未开始或已结束');
         }
     }, [error]);
 
@@ -57,7 +57,7 @@ export function PlaybackPlayer({ className, src }: { className?: string; src: st
 
     useEffect(() => {
         if (error) {
-            toast.info('播放错误，请稍后重试', { position: 'top-right' });
+            toast.info('播放错误，请稍后重试');
         }
     }, [error]);
 

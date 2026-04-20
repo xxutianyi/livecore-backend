@@ -2,7 +2,7 @@ import { PlayerCard, WatchLayout } from '@/components/watch/layouts';
 import { LiveMessageList } from '@/components/watch/message';
 import { PlaybackPlayer } from '@/components/watch/player';
 import { Breadcrumb } from '@/components/winglab/breadcrumb';
-import { useMessage } from '@/hooks/use-message';
+import { useLive } from '@/hooks/use-live';
 import { WebsiteLayout } from '@/layouts/website-layout';
 import { cn } from '@/lib/utils';
 import { Waiting, WaitingProps } from '@/pages/website/rooms/partial/waiting';
@@ -21,7 +21,7 @@ export default function Room({ room, event, messages = [] }: RoomPageProps) {
         },
     ];
 
-    const { users, messages: liveMessages, handleMessageUpdate } = useMessage(event?.id, messages);
+    const { users, messages: liveMessages, handleMessageUpdate } = useLive(event?.id, messages);
 
     return (
         <WebsiteLayout title={`观看直播：${room.name}`}>

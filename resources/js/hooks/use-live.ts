@@ -1,9 +1,10 @@
 import { LiveMessage, User } from '@/services/model';
+import { router } from '@inertiajs/react';
 import { useEchoPresence } from '@laravel/echo-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-export function useMessage(eventId?: string, initMessages: LiveMessage[] = []) {
+export function useLive(eventId?: string, initMessages: LiveMessage[] = []) {
     const channelId = `live.message.${eventId}`;
 
     const [users, setUsers] = useState<User[]>([]);
@@ -35,12 +36,18 @@ export function useMessage(eventId?: string, initMessages: LiveMessage[] = []) {
         });
     }
 
+    function handleStreamingStop() {
+        toast.info('直播已结束，即将为您刷新页面');
+        router.reload();
+    }
+
     function setChannelListener() {
         channel()
             .here(handleHere)
             .joining(handleUserJoining)
             .leaving(handleUserLeaving)
             .error(handleChannelError)
+            .listen('LiveStreamingStop', handleStreamingStop)
             .listen('LiveMessagePublished', handleMessageUpdate);
     }
 

@@ -4,14 +4,14 @@ import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { RightContent } from '@/components/watch/layouts';
-import { useMessage } from '@/hooks/use-message';
+import { useLive } from '@/hooks/use-live';
 import { LiveEvent, LiveMessage } from '@/services/model';
 import { router } from '@inertiajs/react';
 import { ArrowDown, Send, Users, Video } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-export type MessageListProps = ReturnType<typeof useMessage> & {
+export type MessageListProps = ReturnType<typeof useLive> & {
     title: string;
     event: LiveEvent;
     className?: string;

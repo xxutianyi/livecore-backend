@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\LiveStreamingStop;
 use App\Http\Controllers\Controller;
 use App\Models\Live\LiveEvent;
 use Illuminate\Http\Request;
@@ -39,6 +40,7 @@ class LiveCallbackController extends Controller
 
         $event = LiveEvent::find($validated['stream_id']);
         $event->update(['finished_at' => Carbon::createFromTimestamp($validated['event_time'])]);
+        LiveStreamingStop::dispatch($event);
 
         return response()->json();
     }

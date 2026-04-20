@@ -1,4 +1,4 @@
-import { ModeToggle } from '@/components/theme-provider';
+import { ThemeToggle } from '@/components/theme';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar';
 import { RouteItemGroup } from '@/constant/routes';
 import configs from '@/lib/configs';
@@ -20,7 +20,7 @@ export function AdminSidebar({ menu }: { menu: RouteItemGroup[] }) {
                             <span className="truncate font-medium">{configs.APP_NAME}</span>
                         </div>
                     </div>
-                    <ModeToggle />
+                    <ThemeToggle />
                 </div>
             </SidebarHeader>
             <SidebarContent>
