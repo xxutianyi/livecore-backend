@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\UserOnline;
-use App\Models\UserOnlineHeartbeat;
+use App\Models\Online\UserOnline;
+use App\Models\Online\UserOnlineHeartbeat;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 

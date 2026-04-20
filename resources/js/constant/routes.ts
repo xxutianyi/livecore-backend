@@ -48,12 +48,12 @@ const routes: Record<Sets, RouteItemGroup[]> = {
                 {
                     title: '直播间',
                     icon: TvMinimal,
-                    href: route('admin.live.rooms.index'),
+                    href: route('settings.rooms.index'),
                 },
                 {
                     title: '观众管理',
                     icon: Users,
-                    href: route('admin.live.users.index'),
+                    href: route('settings.users.index'),
                 },
             ],
         },
@@ -63,7 +63,7 @@ const routes: Record<Sets, RouteItemGroup[]> = {
                 {
                     title: '管理员',
                     icon: Lock,
-                    href: route('admin.settings.users.index'),
+                    href: route('systems.users.index'),
                 },
                 {
                     title: '操作记录',
@@ -77,7 +77,7 @@ const routes: Record<Sets, RouteItemGroup[]> = {
                 {
                     title: 'Pulse',
                     icon: HeartPulse,
-                    href: route('admin.monitor'),
+                    href: route('monitor.pulse'),
                 },
             ],
         },

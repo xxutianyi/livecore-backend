@@ -29,7 +29,7 @@
         "@types/react-dom": "^19.2.3",
         "@vidstack/react": "^1.12.13",
         "@vitejs/plugin-react": "^6.0.1",
-        "@winglab/inertia-table": "^1.0.1",
+        "@winglab/inertia-table": "^1.0.2",
         "axios": "^1.15.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",

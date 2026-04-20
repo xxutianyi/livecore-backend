@@ -18,7 +18,11 @@ class LoginController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        $defaultRoute = '/rooms';
+        $defaultRoute = route('rooms.index');
+
+        if ($request->user()->role === 'admin' || $request->user()->role === 'director') {
+            $defaultRoute = route('broadcast.direction');
+        }
 
         return redirect()->intended($defaultRoute);
     }

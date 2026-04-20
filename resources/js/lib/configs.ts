@@ -15,8 +15,8 @@ function env(key: string, defaultValue: string) {
 const configs: Configs = {
     VERSION: env('VERSION', '1.0.0'),
     APP_NAME: env('APP_NAME', 'WingLab直播'),
-    APP_LOGO: env('APP_LOGO', '/assets/app.png'),
-    APP_ADMIN_LOGO: env('APP_ADMIN_LOGO', '/assets/app-admin.png'),
+    APP_LOGO: env('APP_LOGO', '/assets/icon-website.png'),
+    APP_ADMIN_LOGO: env('APP_ADMIN_LOGO', '/assets/icon-admin.png'),
     APP_LOGIN_IMAGE: env('APP_LOGIN_IMAGE', '/assets/placeholder.svg'),
 };
 

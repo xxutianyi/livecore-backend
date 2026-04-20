@@ -23,30 +23,30 @@ Route::middleware('auth')->group(function () {
     Route::resource('rooms.events', Watch\EventController::class)->only(['index', 'show']);
     Route::post('events/{event}/message', [Watch\MessageController::class, 'store'])->name('messages.store');
 
-    Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('dashboard', Console\DashboardController::class)->name('dashboard');
-        Route::get('monitor/pulse', Console\Admin\MonitorController::class)->name('monitor');
-
-        Route::prefix('live')->name('live.')->group(function () {
-            Route::resource('rooms', Console\Admin\Live\RoomController::class)->except(['create', 'edit']);
-            Route::put('rooms/{room}/cover', Console\Admin\Live\RoomCoverController::class)->name('rooms.cover');
-            Route::put('rooms/{room}/groups', Console\Admin\Live\RoomGroupController::class)->name('rooms.groups');
-            Route::resource('users', Console\Admin\Live\UserController::class)->except(['create', 'edit']);
-            Route::post('users/batch/group', [Console\Admin\Live\UserBatchController::class, 'group'])->name('users.batch.group');
-            Route::resource('groups', Console\Admin\Live\UserGroupController::class)->only(['store', 'update', 'destroy']);
-        });
+    Route::middleware('can:viewAdmin')->group(function () {
+        Route::get('monitor/pulse', Console\Monitor\PulseController::class)->name('monitor.pulse');
 
         Route::prefix('settings')->name('settings.')->group(function () {
-            Route::resource('users', Console\Admin\Settings\UserController::class)->except(['create', 'edit']);
-            Route::put('/users/{user}/directable', Console\Admin\Settings\UserDirectableController::class)->name('users.directable');
+            Route::resource('rooms', Console\Settings\RoomController::class)->except(['create', 'edit']);
+            Route::put('rooms/{room}/cover', Console\Settings\RoomCoverController::class)->name('rooms.cover');
+            Route::put('rooms/{room}/groups', Console\Settings\RoomGroupController::class)->name('rooms.groups');
+            Route::resource('users', Console\Settings\UserController::class)->except(['create', 'edit']);
+            Route::post('users/batch/group', [Console\Settings\UserBatchController::class, 'group'])->name('users.batch.group');
+            Route::resource('groups', Console\Settings\UserGroupController::class)->only(['store', 'update', 'destroy']);
+        });
+
+        Route::prefix('systems')->name('systems.')->group(function () {
+            Route::resource('users', Console\Systems\UserController::class)->except(['create', 'edit']);
+            Route::put('/users/{user}/directable', Console\Systems\UserDirectableController::class)->name('users.directable');
         });
     });
 
-    Route::prefix('broadcast')->name('broadcast.')->middleware('broadcast')->group(function () {
+    Route::prefix('broadcast')->name('broadcast.')->middleware(['broadcast', 'can:viewBroadcast'])->group(function () {
         Route::get('direction/{room?}', Console\Broadcast\DirectionController::class)->name('direction');
         Route::get('playbacks/{room?}', [Console\Broadcast\PlaybacksController::class, 'index'])->name('playbacks');
         Route::put('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'update'])->name('playbacks.update');
         Route::post('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'upload'])->name('playbacks.upload');
         Route::get('statistics/{room?}', Console\Broadcast\StatisticsController::class)->name('statistics');
     });
+
 });

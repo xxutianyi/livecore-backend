@@ -2,10 +2,6 @@ import { cn } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode } from 'react';
 
-export function Space({ className, children }: PropsWithChildren<{ className?: string }>) {
-    return <div className={cn(className, 'w-full space-y-8')}>{children}</div>;
-}
-
 export function SectionHeader({
     title,
     className,
@@ -41,5 +37,14 @@ export function PageContainer({ title, subTitle, actions, children, className }:
                 {children}
             </div>
         </>
+    );
+}
+
+export function Section({ title, children }: PropsWithChildren<{ title?: string }>) {
+    return (
+        <div className="flex flex-col gap-y-4">
+            <span className="font-heading text-lg font-bold">{title}</span>
+            {children}
+        </div>
     );
 }

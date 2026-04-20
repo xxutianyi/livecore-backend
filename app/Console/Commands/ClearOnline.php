@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\UserOnline;
+use App\Models\Online\UserOnline;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;

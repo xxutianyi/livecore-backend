@@ -21,8 +21,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::define('viewAdmin', function (User $user) {
+            return $user->role === 'admin';
+        });
+
         Gate::define('viewPulse', function (User $user) {
             return $user->role === 'admin';
+        });
+
+        Gate::define('viewBroadcast', function (User $user) {
+            return $user->role === 'admin' || $user->role === 'director';
         });
     }
 }

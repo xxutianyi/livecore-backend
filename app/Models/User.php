@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Live\LiveMessage;
 use App\Models\Live\LiveRoom;
+use App\Models\Online\UserOnline;
 use App\Traits\Filterable;
 use App\Traits\Searchable;
 use App\Traits\Sortable;
@@ -133,6 +134,23 @@ class User extends Authenticatable
     public function directable(): BelongsToMany
     {
         return $this->belongsToMany(LiveRoom::class, 'live_room_directors');
+    }
+
+    public function scopeAudiences(Builder $builder): Builder
+    {
+        return $builder->where('role', 'audience');
+    }
+
+    public function scopeWhereGroup(Builder $builder, ?string $group): Builder
+    {
+        if ($group) {
+            $builder->whereRelation('groups',
+                function (Builder $builder) use ($group) {
+                    $builder->where('user_groups.id', $group);
+                });
+        }
+
+        return $builder;
     }
 
     public function scopeWhereOnline(Builder $builder, bool $online): Builder
