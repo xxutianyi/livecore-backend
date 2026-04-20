@@ -1,5 +1,6 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { LivePlayer } from '@/components/watch/player';
+import FloatingWindow from '@/components/window';
 import { Section } from '@/components/winglab/layout';
 import { formatDatetime } from '@/lib/utils';
 import { LiveMessage } from '@/services/model';
@@ -7,13 +8,13 @@ import { defineColumns, SimpleTable } from '@winglab/inertia-table';
 
 export function StreamingPlay() {
     return (
-        <Section title="直播监看">
+        <FloatingWindow title="直播监看">
             <LivePlayer
                 src={
                     'https://1500009007.vod2.myqcloud.com/6c9c6038vodcq1500009007/2fb02795387702305297108918/w3C7ZwlsPNYA.mp4'
                 }
             />
-        </Section>
+        </FloatingWindow>
     );
 }
 

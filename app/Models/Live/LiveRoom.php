@@ -7,6 +7,8 @@ use App\Traits\Optionable;
 use App\Traits\Searchable;
 use App\Traits\Sortable;
 use App\Utils\LiveRoomPrefix;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,6 +44,10 @@ class LiveRoom extends Model
 
     ];
 
+    protected $appends = [
+        'living'
+    ];
+
     protected $withCount = [
         'events'
     ];
@@ -54,6 +60,20 @@ class LiveRoom extends Model
                 $room->slug = LiveRoomPrefix::generate();
             }
 
+        });
+    }
+
+    protected function living(): Attribute
+    {
+        $event = $this->whereRelation('events',
+            function (Builder $builder) {
+                $builder
+                    ->whereNull('finished_at')
+                    ->whereNotNull('started_at');
+            });
+
+        return Attribute::get(function () use ($event) {
+            return $event->latest()->first();
         });
     }
 

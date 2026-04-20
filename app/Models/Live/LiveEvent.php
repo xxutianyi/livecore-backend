@@ -18,6 +18,8 @@ class LiveEvent extends Model
     protected $fillable = [
         'name',
         'cover',
+        'room_id',
+        'published',
         'description',
         'push_url',
         'pull_url',
@@ -25,8 +27,6 @@ class LiveEvent extends Model
         'expired_at',
         'started_at',
         'finished_at',
-        'published',
-        'room_id',
     ];
 
     protected $with = [
