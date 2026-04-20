@@ -84,7 +84,7 @@ export function StreamingConfig({ event }: { event: LiveEvent }) {
     }
 
     function onRefreshExpire() {
-        if (refreshDisabled) {
+        if (!refreshDisabled) {
             router.put(route('broadcast.direction.update', [event.room_id, event.id]));
             toast.success('刷新成功，请重新推送推流参数');
         } else {
