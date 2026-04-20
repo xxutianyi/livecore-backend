@@ -6,7 +6,6 @@ use App\Models\UserGroup;
 use App\Traits\Optionable;
 use App\Traits\Searchable;
 use App\Traits\Sortable;
-use App\Utils\LiveRoomPrefix;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -21,14 +20,8 @@ class LiveRoom extends Model
 
     protected $fillable = [
         'name',
-        'slug',
         'cover',
         'description',
-        'manageable_users',
-    ];
-
-    protected $casts = [
-        'manageable_users' => 'array',
     ];
 
     protected array $sortable = [
@@ -51,17 +44,6 @@ class LiveRoom extends Model
     protected $withCount = [
         'events'
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (LiveRoom $room) {
-
-            if (empty($room->slug)) {
-                $room->slug = LiveRoomPrefix::generate();
-            }
-
-        });
-    }
 
     protected function living(): Attribute
     {

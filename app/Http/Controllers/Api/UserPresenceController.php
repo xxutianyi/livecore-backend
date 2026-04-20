@@ -8,7 +8,7 @@ use App\Models\Online\UserOnlineHeartbeat;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 
-class OnlineController extends Controller
+class UserPresenceController extends Controller
 {
     #[Middleware('auth:sanctum')]
     public function joined(Request $request)

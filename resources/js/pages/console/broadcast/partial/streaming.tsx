@@ -3,7 +3,7 @@ import { LivePlayer } from '@/components/watch/player';
 import FloatingWindow from '@/components/window';
 import { Section } from '@/components/winglab/layout';
 import { formatDatetime } from '@/lib/utils';
-import { LiveMessage } from '@/services/model';
+import { LiveEvent, LiveMessage } from '@/services/model';
 import { defineColumns, SimpleTable } from '@winglab/inertia-table';
 
 export function StreamingPlay() {
@@ -54,6 +54,6 @@ export function StreamingMessage() {
     );
 }
 
-export function StreamingConfig() {
+export function StreamingConfig({ event }: { event: LiveEvent }) {
     return <Section title="推流参数"></Section>;
 }

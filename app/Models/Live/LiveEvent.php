@@ -4,6 +4,7 @@ namespace App\Models\Live;
 
 use App\Traits\Searchable;
 use App\Traits\Sortable;
+use App\Utils\TencentLive;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +30,12 @@ class LiveEvent extends Model
         'finished_at',
     ];
 
+    protected $casts = [
+        'expired_at' => 'datetime',
+        'started_at' => 'datetime',
+        'finished_at' => 'datetime',
+    ];
+
     protected $with = [
         'room'
     ];
@@ -46,6 +53,19 @@ class LiveEvent extends Model
     protected array $filterable = [
 
     ];
+
+
+    protected static function booted(): void
+    {
+        static::creating(function (LiveEvent $event) {
+            $expire = now()->addHours(4);
+            $tencent = new TencentLive($event, $expire);
+
+            $event->push_url = $tencent->generatePushUrl();
+            $event->pull_url = $tencent->generatePullUrl();
+            $event->expired_at = $expire;
+        });
+    }
 
     public function room(): BelongsTo
     {

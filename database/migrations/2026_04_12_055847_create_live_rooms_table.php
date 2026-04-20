@@ -13,10 +13,8 @@ return new class extends Migration {
         Schema::create('live_rooms', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('slug')->unique();
             $table->string('cover')->nullable();
             $table->longText('description')->nullable();
-            $table->jsonb('manageable_users')->nullable();
             $table->timestamps();
         });
     }
