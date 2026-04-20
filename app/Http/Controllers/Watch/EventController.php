@@ -10,7 +10,7 @@ class EventController extends Controller
 {
     public function index(LiveRoom $room)
     {
-        return inertia('watch/events/index', [
+        return inertia('website/events/index', [
             'room' => $room,
             'events' => $room->events()->published()->get()
         ]);
@@ -22,7 +22,7 @@ class EventController extends Controller
             abort(403);
         }
 
-        return inertia('watch/events/show', [
+        return inertia('website/events/show', [
             'room' => $room,
             'event' => $event,
             'events' => $room->events()->published()->get(),

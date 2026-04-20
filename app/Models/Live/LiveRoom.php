@@ -42,6 +42,10 @@ class LiveRoom extends Model
 
     ];
 
+    protected $withCount = [
+        'events'
+    ];
+
     protected static function booted(): void
     {
         static::creating(function (LiveRoom $room) {
@@ -55,11 +59,12 @@ class LiveRoom extends Model
 
     public function events(): HasMany|LiveRoom
     {
-        return $this->hasMany(LiveEvent::class, 'room_id');
+        return $this->hasMany(LiveEvent::class, 'room_id')
+            ->latest('started_at')->latest();
     }
 
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(UserGroup::class,'live_room_groups');
+        return $this->belongsToMany(UserGroup::class, 'live_room_groups');
     }
 }

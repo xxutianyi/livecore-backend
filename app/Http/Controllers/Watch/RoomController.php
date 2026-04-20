@@ -9,17 +9,17 @@ class RoomController extends Controller
 {
     public function index()
     {
-        return inertia('watch/rooms/index', [
+        return inertia('website/rooms/index', [
             'rooms' => LiveRoom::all()
         ]);
     }
 
     public function show(LiveRoom $room)
     {
-        return inertia('watch/rooms/show', [
+        return inertia('website/rooms/show', [
             'room' => $room,
             //'event' => $room->events->first(),
-            'messages' => $room->events->first()->messages
+            'messages' => $room->events->first()?->messages
         ]);
     }
 }
