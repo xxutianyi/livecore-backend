@@ -24,7 +24,7 @@ export default function DirectionPage({ room, event, events }: PageProps) {
                         <StreamingPlay />
                         <StreamingMessage />
                         <Separator />
-                        <StreamingConfig />
+                        <StreamingConfig event={event} />
                     </>
                 )}
                 {!event && (

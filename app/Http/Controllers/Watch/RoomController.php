@@ -18,8 +18,8 @@ class RoomController extends Controller
     {
         return inertia('website/rooms/show', [
             'room' => $room,
-            //'event' => $room->events->first(),
-            'messages' => $room->events->first()?->messages
+            'event' => $room->living,
+            'messages' => $room->living?->messages
         ]);
     }
 }
