@@ -12,13 +12,10 @@ use Laravel\Octane\Events\WorkerErrorOccurred;
 use Laravel\Octane\Events\WorkerStarting;
 use Laravel\Octane\Events\WorkerStopping;
 use Laravel\Octane\Listeners\CloseMonologHandlers;
-use Laravel\Octane\Listeners\CollectGarbage;
-use Laravel\Octane\Listeners\DisconnectFromDatabases;
 use Laravel\Octane\Listeners\EnsureUploadedFilesAreValid;
 use Laravel\Octane\Listeners\EnsureUploadedFilesCanBeMoved;
 use Laravel\Octane\Listeners\FlushOnce;
 use Laravel\Octane\Listeners\FlushTemporaryContainerInstances;
-use Laravel\Octane\Listeners\FlushUploadedFiles;
 use Laravel\Octane\Listeners\ReportException;
 use Laravel\Octane\Listeners\StopWorkerIfNecessary;
 use Laravel\Octane\Octane;
@@ -221,4 +218,15 @@ return [
 
     'max_execution_time' => 30,
 
+    'swoole' => [
+        'options' => [
+            // Increase this to your desired maximum upload size (in bytes)
+            // Example: 100MB = 100 * 1024 * 1024
+            'package_max_length' => 100 * 1024 * 1024,
+
+            // Optional: tell Swoole to use temporary files for large uploads
+            // instead of keeping them entirely in memory
+            'upload_max_filesize' => 100 * 1024 * 1024,
+        ],
+    ],
 ];
