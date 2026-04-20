@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
         Route::get('direction/{room?}', [Console\Broadcast\DirectionController::class,'create'])->name('direction');
         Route::post('direction/{room}', [Console\Broadcast\DirectionController::class,'store'])->name('direction.store');
         Route::get('direction/{room}/{event}', [Console\Broadcast\DirectionController::class,'show'])->name('direction.show');
+        Route::put('direction/{room}/{event}', [Console\Broadcast\DirectionController::class,'update'])->name('direction.update');
         Route::delete('direction/{room}/{event}', [Console\Broadcast\DirectionController::class,'destroy'])->name('direction.destroy');
 
         Route::get('playbacks/{room?}', [Console\Broadcast\PlaybacksController::class, 'index'])->name('playbacks');
