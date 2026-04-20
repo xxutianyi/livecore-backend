@@ -60,7 +60,7 @@ class LiveRoom extends Model
     public function events(): HasMany|LiveRoom
     {
         return $this->hasMany(LiveEvent::class, 'room_id')
-            ->latest('started_at')->latest();
+            ->latest()->latest('started_at');
     }
 
     public function groups(): BelongsToMany
