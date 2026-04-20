@@ -46,11 +46,10 @@ class LiveRoom extends Model
 
     protected function living(): Attribute
     {
-        $event = LiveEvent::without('room')
-            ->where('room_id', $this->id)
+        $event = LiveEvent::where('room_id', $this->id)
             ->whereNull('finished_at')
             ->whereNotNull('started_at')
-            ->whereTime('expired_at', '>', now())
+            ->whereFuture('expired_at')
             ->latest()->first();
 
         return Attribute::get(function () use ($event) {

@@ -26,6 +26,17 @@ class DirectionController extends Controller
 
     public function show(LiveRoom $room, LiveEvent $event)
     {
+        if ($event->expired_at->isPast()){
+            $expire = now()->addHours(4);
+            $tencent = new TencentLive($event, $expire);
+
+            $event->update([
+                'push_url' => $tencent->generatePushUrl(),
+                'pull_url' => $tencent->generatePullUrl(),
+                'expired_at' => $expire,
+            ]);
+        }
+
         return inertia('console/broadcast/direction', [
             'room' => $room,
             'event' => $event,

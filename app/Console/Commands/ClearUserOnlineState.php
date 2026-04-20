@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 
 #[Signature('app:clear-online')]
 #[Description('清除掉线用户在线状态')]
-class ClearOnline extends Command
+class ClearUserOnlineState extends Command
 {
     /**
      * Execute the console command.
