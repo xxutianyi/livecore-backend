@@ -23,7 +23,7 @@ class PlaybacksController extends Controller
             ->search($request->string('search'))
             ->paginate($size)->withQueryString();
 
-        return inertia('console/broadcast/playbacks', [
+        return inertia('console/broadcast/playbacks/index', [
             'room' => $room,
             'events' => $events,
         ]);

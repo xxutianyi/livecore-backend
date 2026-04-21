@@ -2,18 +2,18 @@ import { Separator } from '@/components/ui/separator';
 import { Toggle } from '@/components/ui/toggle';
 import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
-import { RoomSelect } from '@/pages/console/broadcast/partial/room-select';
-import { EventIndex, StatsEvent } from '@/pages/console/broadcast/partial/stats-event';
-import { StatsRoom } from '@/pages/console/broadcast/partial/stats-room';
-import Welcome from '@/pages/console/broadcast/welcome';
 import { LiveEvent, LiveEventStat, LiveRoom, LiveRoomStat } from '@/services/model';
 import { usePoll } from '@inertiajs/react';
 import { RefreshCw } from 'lucide-react';
 import { useState } from 'react';
+import { RoomSelect } from '../room-select';
+import Welcome from '../welcome';
+import { EventIndex, StatsEvent } from './stats-event';
+import { StatsRoom } from './stats-room';
 
 type PageProps = {
     room?: LiveRoom;
-    event: LiveEvent;
+    event?: LiveEvent;
     events: LiveEvent[];
     room_stats: LiveRoomStat[];
     event_stats: LiveEventStat[];
@@ -34,7 +34,7 @@ export default function StatisticsPage({ room, event, events, room_stats, event_
     if (!room) return <Welcome />;
 
     return (
-        <AdminLayout>
+        <AdminLayout breadcrumbTitle={event?.name}>
             <PageContainer
                 title="观看数据"
                 actions={[

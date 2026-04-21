@@ -13,9 +13,9 @@ import { LiveEvent, LiveRoom } from '@/services/model';
 import { router } from '@inertiajs/react';
 import { DataTable, defineColumns, PaginateData } from '@winglab/inertia-table';
 import { MoreHorizontal } from 'lucide-react';
-import { UploadPlayback, ViewPlayback } from './partial/playback';
-import { RoomSelect } from './partial/room-select';
-import Welcome from './welcome';
+import { RoomSelect } from '../room-select';
+import Welcome from '../welcome';
+import { UploadPlayback, ViewPlayback } from './playback';
 
 export default function PlaybacksPage({ room, events }: { room?: LiveRoom; events: PaginateData<LiveEvent> }) {
     if (!room) return <Welcome />;

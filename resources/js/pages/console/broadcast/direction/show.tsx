@@ -2,16 +2,16 @@ import { Separator } from '@/components/ui/separator';
 import { PageContainer } from '@/components/winglab/layout';
 import { useReview } from '@/hooks/use-review';
 import { AdminLayout } from '@/layouts/admin-layout';
-import { ObsController } from '@/pages/console/broadcast/partial/obs';
-import { RoomSelect } from '@/pages/console/broadcast/partial/room-select';
-import { StreamingConfig, StreamingMessage, StreamingPlay } from '@/pages/console/broadcast/partial/streaming';
 import { LiveEvent, LiveMessage } from '@/services/model';
+import { RoomSelect } from '../room-select';
+import { ObsController } from './partial/obs';
+import { StreamingConfig, StreamingMessage, StreamingPlay } from './partial/streaming';
 
 export default function ShowEvent({ event, messages: initMessages }: { event: LiveEvent; messages: LiveMessage[] }) {
-    const { users, messages } = useReview(event.id, initMessages);
+    const { messages } = useReview(event.id, initMessages);
 
     return (
-        <AdminLayout>
+        <AdminLayout breadcrumbTitle={event.name}>
             <PageContainer
                 title="开始直播"
                 actions={[<RoomSelect route={route('broadcast.direction')} key="select" />]}

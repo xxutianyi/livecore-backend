@@ -37,7 +37,7 @@ class StatisticsController extends Controller
         $eventStat = LiveEventStat::where('event_id', $event?->id)
             ->whereBetween('created_at', $range)->get();
 
-        return inertia('console/broadcast/statistics', [
+        return inertia('console/broadcast/statistics/show', [
             'room' => $room,
             'event' => $event,
             'events' => $room?->events,

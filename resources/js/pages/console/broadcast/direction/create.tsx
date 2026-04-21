@@ -1,11 +1,14 @@
 import { Separator } from '@/components/ui/separator';
 import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
-import { RoomSelect } from '@/pages/console/broadcast/partial/room-select';
 import { LiveEvent, LiveRoom } from '@/services/model';
+import { RoomSelect } from '../room-select';
+import Welcome from '../welcome';
 import { EventCreate, EventHistory } from './partial/events';
 
-export default function CreateEvent({ room, events }: { room: LiveRoom; events: LiveEvent[] }) {
+export default function CreateEvent({ room, events }: { room?: LiveRoom; events: LiveEvent[] }) {
+    if (!room) return <Welcome />;
+
     return (
         <AdminLayout>
             <PageContainer

@@ -2,7 +2,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/
 import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { Info } from 'lucide-react';
-import { RoomSelect } from './partial/room-select';
+import { RoomSelect } from './room-select';
 
 export default function Welcome() {
     return (
