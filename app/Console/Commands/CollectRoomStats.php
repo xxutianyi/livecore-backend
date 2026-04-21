@@ -23,7 +23,7 @@ class CollectRoomStats extends Command
 
             $messageCount = LiveMessage::where('room_id', $room->id)->count();
             $messageReviewedCount = LiveMessage::where('room_id', $room->id)->whereNotNull('reviewed_at')->count();
-            $audienceCount = UserOnline::where('room_id', $room->id)->distinct()->pluck('user_id')->count();
+            $audienceCount = UserOnline::where('room_id', $room->id)->whereNull('leaving_at')->distinct()->pluck('user_id')->count();
 
             LiveRoomStat::create([
                 'room_id' => $room->id,

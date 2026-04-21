@@ -23,7 +23,7 @@ class CollectEventStats extends Command
 
             $messageCount = LiveMessage::where('event_id', $event->id)->count();
             $messageReviewedCount = LiveMessage::where('event_id', $event->id)->whereNotNull('reviewed_at')->count();
-            $audienceCount = UserOnline::where('event_id', $event->id)->distinct()->pluck('user_id')->count();
+            $audienceCount = UserOnline::where('event_id', $event->id)->whereNull('leaving_at')->distinct()->pluck('user_id')->count();
 
             LiveEventStat::create([
                 'event_id' => $event->id,
