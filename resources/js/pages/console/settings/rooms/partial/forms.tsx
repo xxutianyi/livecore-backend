@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { FormFieldText, FormFieldTextarea, FormFieldUpload } from '@/components/winglab/form';
 import { LiveRoom } from '@/services/model';
@@ -16,7 +16,9 @@ export function RoomCreate() {
                 <Button>新建直播间</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>新建直播间</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>新建直播间</DialogTitle>
+                </DialogHeader>
                 <Form
                     action={route('settings.rooms.store')}
                     method="POST"
@@ -48,7 +50,9 @@ export function RoomUpdate({ room }: { room: LiveRoom }) {
                 <Button>编辑直播间</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>编辑直播间</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>编辑直播间</DialogTitle>
+                </DialogHeader>
                 <Form
                     action={route('settings.rooms.update', room.id)}
                     method="PUT"
@@ -79,7 +83,9 @@ export function CoverUpdate({ room }: { room: LiveRoom }) {
                 <Button>更新封面</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>更新封面</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>更新封面</DialogTitle>
+                </DialogHeader>
                 <Form
                     action={route('settings.rooms.cover', room.id)}
                     method="PUT"

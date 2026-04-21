@@ -1,5 +1,12 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { PlaybackPlayer } from '@/components/watch/player';
 import { FormFieldUpload } from '@/components/winglab/form';
@@ -15,7 +22,9 @@ export function ViewPlayback({ event }: { event: LiveEvent }) {
                 <Button variant="outline">预览回放</Button>
             </DialogTrigger>
             <DialogContent className="block h-[36vw]! w-[60vw]! max-w-screen!">
-                <DialogHeader className="mb-4">预览回放</DialogHeader>
+                <DialogHeader className="mb-4">
+                    <DialogTitle>预览回放</DialogTitle>
+                </DialogHeader>
                 {event.playback_url ? <PlaybackPlayer src={event.playback_url} /> : '回放未生成'}
             </DialogContent>
         </Dialog>
@@ -32,8 +41,8 @@ export function UploadPlayback({ event }: { event: LiveEvent }) {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <span>覆盖回放视频</span>
-                    <span className="text-destructive">保存后无法恢复，请谨慎操作</span>
+                    <DialogTitle>覆盖回放视频</DialogTitle>
+                    <DialogDescription className="text-destructive">保存后无法恢复，请谨慎操作</DialogDescription>
                 </DialogHeader>
                 <Form
                     action={route('broadcast.playbacks.upload', [event.room_id, event.id])}

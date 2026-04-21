@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { FormFieldMutiSelect } from '@/components/winglab/form';
@@ -65,7 +65,9 @@ export function RoomUpdate({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
                 <Button>修改授权</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>授权直播间</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>授权直播间</DialogTitle>
+                </DialogHeader>
                 <Form
                     action={route('systems.users.manageable', user.id)}
                     method="PUT"

@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { FormFieldText } from '@/components/winglab/form';
 import { UserGroup } from '@/services/model';
@@ -32,7 +32,7 @@ export function GroupIndex() {
             </DialogTrigger>
             <DialogContent className="max-w-xl!" showCloseButton={false}>
                 <DialogHeader className="mb-4 flex flex-row items-center justify-between">
-                    <span>用户分组</span>
+                    <DialogTitle>用户分组</DialogTitle>
                     <GroupCreate />
                 </DialogHeader>
                 <SimpleTable columns={columns} data={options.groups as UserGroup[]} />
@@ -50,7 +50,9 @@ export function GroupCreate() {
                 <Button>新建分组</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>新建分组</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>新建分组</DialogTitle>
+                </DialogHeader>
                 <Form
                     action={route('settings.groups.store')}
                     method="POST"
@@ -80,7 +82,9 @@ export function GroupUpdate({ group }: { group: UserGroup }) {
                 <Button variant="secondary">编辑</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>编辑分组</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>编辑分组</DialogTitle>
+                </DialogHeader>
                 <Form
                     action={route('settings.groups.update', group.id)}
                     method="PUT"

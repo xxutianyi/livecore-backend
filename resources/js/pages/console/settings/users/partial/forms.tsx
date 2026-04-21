@@ -1,5 +1,12 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { FormFieldMutiSelect, FormFieldText } from '@/components/winglab/form';
 import { User } from '@/services/model';
@@ -19,7 +26,10 @@ export function UserCreate() {
                 <Button>新建用户</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>新建用户</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>新建用户</DialogTitle>
+                    <DialogDescription>默认密码 Password!@ ，请提示用户修改</DialogDescription>
+                </DialogHeader>
                 <Form
                     action={route('settings.users.store')}
                     method="POST"
@@ -60,7 +70,9 @@ export function UserUpdate({ user }: { user: User }) {
                 <Button>编辑用户</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>编辑用户</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>编辑用户</DialogTitle>
+                </DialogHeader>
                 <Form
                     action={route('settings.users.update', user.id)}
                     method="PUT"
@@ -102,7 +114,9 @@ export function UserBatchGroup({ ids }: { ids: string[] }) {
                 <Button>批量分组</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>批量移动到...</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>批量移动到...</DialogTitle>
+                </DialogHeader>
                 <Form
                     action={route('settings.users.batch.group')}
                     method="POST"

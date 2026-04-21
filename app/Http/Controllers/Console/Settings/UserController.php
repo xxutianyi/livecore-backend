@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Console\Settings;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -44,7 +45,7 @@ class UserController extends Controller
             'group_ids.*' => ['nullable', 'exists:user_groups,id'],
         ]);
 
-        $user = User::create($validated);
+        $user = User::create([...$validated, 'password' => Hash::make('Password!@')]);
         $user->groups()->sync($request->group_ids);
 
         return back();

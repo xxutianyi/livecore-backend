@@ -1,5 +1,12 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { FormFieldSelect, FormFieldText } from '@/components/winglab/form';
 import { User } from '@/services/model';
@@ -16,7 +23,10 @@ export function UserCreate() {
                 <Button>新建用户</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>新建用户</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>新建用户</DialogTitle>
+                    <DialogDescription>默认密码 Password!@ ，请提示用户修改</DialogDescription>
+                </DialogHeader>
                 <Form
                     action={route('systems.users.store')}
                     method="POST"

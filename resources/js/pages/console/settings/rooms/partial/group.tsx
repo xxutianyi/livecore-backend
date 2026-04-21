@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { FormFieldMutiSelect } from '@/components/winglab/form';
 import { Section } from '@/components/winglab/layout';
@@ -50,7 +50,9 @@ export function GroupUpdate({ room, groups }: { room: LiveRoom; groups: UserGrou
                 <Button>修改授权</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>授权用户组</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>授权用户组</DialogTitle>
+                </DialogHeader>
                 <Form
                     action={route('settings.rooms.groups', room.id)}
                     method="PUT"

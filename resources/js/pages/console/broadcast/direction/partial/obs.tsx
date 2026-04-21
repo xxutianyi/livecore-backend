@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Section, SectionTitle } from '@/components/winglab/layout';
@@ -21,7 +21,9 @@ export function ObsSettings({ handleSubmit }: { handleSubmit: (data: ObsSettingD
                 <Button>设置OBS</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>设置连接参数</DialogHeader>
+                <DialogHeader>
+                    <DialogTitle>设置连接参数</DialogTitle>
+                </DialogHeader>
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
