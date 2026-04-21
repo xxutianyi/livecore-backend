@@ -2,6 +2,7 @@
 
 namespace App\Broadcasting;
 
+use App\Models\Live\LiveEvent;
 use App\Models\User;
 
 class LiveMessageReviewChannel
@@ -17,7 +18,7 @@ class LiveMessageReviewChannel
     /**
      * Authenticate the user's access to the channel.
      */
-    public function join(User $user): array|bool
+    public function join(User $user, LiveEvent $event): array|bool
     {
         return $user->toArray();
     }

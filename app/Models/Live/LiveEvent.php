@@ -72,7 +72,7 @@ class LiveEvent extends Model
     public function messages(): LiveEvent|HasMany
     {
         return $this->hasMany(LiveMessage::class, 'event_id')
-            ->oldest('reviewed_at')->oldest();
+            ->oldest()->oldest('reviewed_at');
     }
 
     public function scopePublished(Builder $query, bool $published = true): Builder

@@ -41,17 +41,22 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('broadcast')->name('broadcast.')->middleware(['broadcast', 'can:viewBroadcast'])->group(function () {
-        Route::get('direction/{room?}', [Console\Broadcast\DirectionController::class,'create'])->name('direction');
-        Route::post('direction/{room}', [Console\Broadcast\DirectionController::class,'store'])->name('direction.store');
-        Route::get('direction/{room}/{event}', [Console\Broadcast\DirectionController::class,'show'])->name('direction.show');
-        Route::put('direction/{room}/{event}', [Console\Broadcast\DirectionController::class,'update'])->name('direction.update');
-        Route::delete('direction/{room}/{event}', [Console\Broadcast\DirectionController::class,'destroy'])->name('direction.destroy');
+        Route::get('statistics/{room?}/{event?}', [Console\Broadcast\StatisticsController::class,'show'])->name('statistics');
 
         Route::get('playbacks/{room?}', [Console\Broadcast\PlaybacksController::class, 'index'])->name('playbacks');
         Route::put('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'update'])->name('playbacks.update');
         Route::post('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'upload'])->name('playbacks.upload');
 
-        Route::get('statistics/{room?}/{event?}', [Console\Broadcast\StatisticsController::class,'show'])->name('statistics');
+        Route::get('direction/{room?}', [Console\Broadcast\DirectionController::class,'create'])->name('direction');
+
+        Route::post('direction/{room}/events', [Console\Broadcast\DirectionController::class,'store'])->name('direction.store');
+        Route::get('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class,'show'])->name('direction.show');
+        Route::put('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class,'update'])->name('direction.update');
+        Route::delete('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class,'destroy'])->name('direction.destroy');
+
+        Route::post('direction/{room}/messages', [Console\Broadcast\MessageController::class, 'store'])->name('message.store');
+        Route::put('direction/{room}/messages/{message}', [Console\Broadcast\MessageController::class, 'review'])->name('message.review');
+
     });
 
 });

@@ -2,8 +2,8 @@
 
 namespace App\Models\Live;
 
-use App\Events\LiveMessagePublished;
 use App\Models\User;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +26,10 @@ class LiveMessage extends Model
     protected $with = [
         'sender',
         'reviewer'
+    ];
+
+    protected $casts = [
+        'reviewed_at' => 'datetime',
     ];
 
     public function sender(): BelongsTo
@@ -52,20 +56,16 @@ class LiveMessage extends Model
             ->select(['id', 'name']);
     }
 
-    public function review(User $reviewer, string $reviewedAt): void
+    public function review(User $reviewer, CarbonInterface $reviewedAt): void
     {
         $this->update([
             'reviewed_at' => $reviewedAt,
             'reviewer_id' => $reviewer->id,
         ]);
-
-        LiveMessagePublished::dispatch($this);
     }
 
-    public function scopePublished(Builder $query, bool $published = true): Builder
+    public function scopePublished(Builder $query): Builder
     {
-        return $published
-            ? $query->whereNotNull('reviewed_at')
-            : $query->whereNull('reviewed_at');
+        return $query->whereNotNull('reviewed_at');
     }
 }

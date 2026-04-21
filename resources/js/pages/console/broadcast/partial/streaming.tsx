@@ -18,10 +18,15 @@ export function StreamingPlay({ event }: { event: LiveEvent }) {
     );
 }
 
-export function StreamingMessage() {
+export function StreamingMessage({ messages }: { messages: LiveMessage[] }) {
+    function handleReview(message: LiveMessage) {
+        router.put(route('broadcast.message.review', [message.room_id, message.id]));
+    }
+
     const columns = defineColumns<LiveMessage>([
         {
             title: '发送人',
+            dataKey: ['sender', 'name'],
         },
         {
             title: '评论内容',
@@ -45,11 +50,25 @@ export function StreamingMessage() {
             dataKey: 'reviewed_at',
             tableRowRender: (data) => formatDatetime(data?.reviewed_at),
         },
+        {
+            index: 'actions',
+            tableRowRender: (data) => {
+                return (
+                    <Button
+                        disabled={!!data.reviewed_at}
+                        onClick={() => handleReview(data)}
+                        variant={!data.reviewed_at ? 'destructive' : 'secondary'}
+                    >
+                        {data.reviewed_at ? '已审核' : '通过'}
+                    </Button>
+                );
+            },
+        },
     ]);
 
     return (
         <Section title="评论审核">
-            <SimpleTable data={[]} columns={columns} />
+            <SimpleTable data={messages} columns={columns} />
         </Section>
     );
 }

@@ -19,7 +19,7 @@ class CollectEventStats extends Command
      */
     public function handle(): void
     {
-        LiveEvent::each(function (LiveEvent $event) {
+        LiveEvent::whereNotNull('started_at')->each(function (LiveEvent $event) {
 
             $messageCount = LiveMessage::where('event_id', $event->id)->count();
             $messageReviewedCount = LiveMessage::where('event_id', $event->id)->whereNotNull('reviewed_at')->count();

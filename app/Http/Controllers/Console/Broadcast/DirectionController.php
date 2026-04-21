@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Console\Broadcast;
 
 use App\Http\Controllers\Controller;
 use App\Models\Live\LiveEvent;
+use App\Models\Live\LiveMessage;
 use App\Models\Live\LiveRoom;
 use App\Utils\FilepondSave;
 use App\Utils\TencentLive;
@@ -17,8 +18,7 @@ class DirectionController extends Controller
      */
     public function create(?LiveRoom $room = null)
     {
-
-        return inertia('console/broadcast/direction', [
+        return inertia('console/broadcast/direction/create', [
             'room' => $room,
             'events' => $room?->events,
         ]);
@@ -26,7 +26,7 @@ class DirectionController extends Controller
 
     public function show(LiveRoom $room, LiveEvent $event)
     {
-        if ($event->expired_at->isPast()){
+        if ($event->expired_at->isPast()) {
             $expire = now()->addHours(4);
             $tencent = new TencentLive($event, $expire);
 
@@ -37,10 +37,13 @@ class DirectionController extends Controller
             ]);
         }
 
-        return inertia('console/broadcast/direction', [
+        $messages = LiveMessage::where('event_id', $event->id)
+            ->latest()->latest('reviewed_at')->get();
+
+        return inertia('console/broadcast/direction/show', [
             'room' => $room,
             'event' => $event,
-            'events' => $room->events,
+            'messages' => $messages,
         ]);
     }
 
@@ -64,7 +67,7 @@ class DirectionController extends Controller
             $event->update(['cover' => $room->cover]);
         }
 
-        return to_route('broadcast.direction.show', [$room, $event]);
+        return back();
     }
 
     public function update(LiveRoom $room, LiveEvent $event)
@@ -94,6 +97,6 @@ class DirectionController extends Controller
         $event->messages()->delete();
         $event->delete();
 
-        return to_route('broadcast.direction', $room);
+        return back();
     }
 }

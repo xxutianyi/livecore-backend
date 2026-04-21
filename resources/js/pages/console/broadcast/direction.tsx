@@ -3,7 +3,7 @@ import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { ObsController } from '@/pages/console/broadcast/partial/obs';
 import { LiveEvent, LiveRoom } from '@/services/model';
-import { EventCreate, EventHistory } from './partial/events';
+import { EventCreate, EventHistory } from './direction/partial/events';
 import { RoomSelect } from './partial/room-select';
 import { StreamingConfig, StreamingMessage, StreamingPlay } from './partial/streaming';
 import Welcome from './welcome';

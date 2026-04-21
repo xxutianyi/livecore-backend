@@ -23,7 +23,8 @@ class LiveMessagePublished implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PresenceChannel("live.message.{$this->message->event_id}")
+            new PresenceChannel("live.message.{$this->message->event_id}"),
+            new PresenceChannel("live.message.{$this->message->event_id}.review")
         ];
     }
 }
