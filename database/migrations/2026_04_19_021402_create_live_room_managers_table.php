@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('live_room_directors', function (Blueprint $table) {
+        Schema::create('live_room_managers', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('user_id')->constrained('users');
             $table->foreignUuid('live_room_id')->constrained('live_rooms');
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('live_room_directors');
+        Schema::dropIfExists('live_room_managers');
     }
 };

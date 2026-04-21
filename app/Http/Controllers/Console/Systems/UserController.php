@@ -28,7 +28,7 @@ class UserController extends Controller
     {
         return inertia('console/systems/users/show', [
             'user' => $user,
-            'directable' => $user->directable
+            'directable' => $user->manageable
         ]);
     }
 
@@ -41,7 +41,7 @@ class UserController extends Controller
             'phone' => ['nullable', 'string', Rule::unique('users')],
         ]);
 
-        $user = User::create($validated);
+        User::create($validated);
 
         return back();
     }

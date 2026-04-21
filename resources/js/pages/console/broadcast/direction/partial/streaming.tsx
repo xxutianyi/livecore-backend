@@ -74,8 +74,6 @@ export function StreamingMessage({ messages }: { messages: LiveMessage[] }) {
 }
 
 export function StreamingConfig({ event }: { event: LiveEvent }) {
-    console.log(event);
-
     const splitIndex = event.push_url.indexOf(event.id);
     const pushServer = event.push_url.slice(0, splitIndex);
     const pushSecret = event.push_url.slice(splitIndex);

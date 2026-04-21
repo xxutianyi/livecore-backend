@@ -9,6 +9,7 @@ use App\Models\Live\LiveRoom;
 use App\Utils\FilepondSave;
 use App\Utils\TencentLive;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class DirectionController extends Controller
@@ -18,6 +19,10 @@ class DirectionController extends Controller
      */
     public function create(?LiveRoom $room = null)
     {
+        if ($room){
+            Gate::authorize('manageLiveRoom', $room);
+        }
+
         return inertia('console/broadcast/direction/create', [
             'room' => $room,
             'events' => $room?->events,
@@ -26,6 +31,8 @@ class DirectionController extends Controller
 
     public function show(LiveRoom $room, LiveEvent $event)
     {
+        Gate::authorize('manageLiveRoom', $room);
+
         if ($event->expired_at->isPast()) {
             $expire = now()->addHours(4);
             $tencent = new TencentLive($event, $expire);
@@ -49,6 +56,8 @@ class DirectionController extends Controller
 
     public function store(Request $request, LiveRoom $room)
     {
+        Gate::authorize('manageLiveRoom', $room);
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:255'],
@@ -72,6 +81,8 @@ class DirectionController extends Controller
 
     public function update(LiveRoom $room, LiveEvent $event)
     {
+        Gate::authorize('manageLiveRoom', $room);
+
         if ($event->started_at && !$event->finished_at) {
             abort(403);
         }
@@ -90,6 +101,8 @@ class DirectionController extends Controller
 
     public function destroy(LiveRoom $room, LiveEvent $event)
     {
+        Gate::authorize('manageLiveRoom', $room);
+
         if ($event->started_at) {
             abort(403);
         }

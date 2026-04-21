@@ -6,16 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserDirectableController extends Controller
+class UserManageableController extends Controller
 {
     public function __invoke(Request $request, User $user)
     {
-        $validated = $request->validate([
-            'room_ids' => ['required', 'array'],
+        $request->validate([
+            'room_ids' => ['nullable', 'array'],
             'room_ids.*' => ['required', 'uuid', 'exists:live_rooms,id'],
         ]);
 
-        $user->directable()->sync($validated['room_ids']);
+        $user->manageable()->sync($request->room_ids);
 
         return back();
     }

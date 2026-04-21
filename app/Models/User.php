@@ -129,9 +129,9 @@ class User extends Authenticatable
         });
     }
 
-    public function directable(): BelongsToMany
+    public function manageable(): BelongsToMany
     {
-        return $this->belongsToMany(LiveRoom::class, 'live_room_directors');
+        return $this->belongsToMany(LiveRoom::class, 'live_room_managers');
     }
 
     public function scopeAudiences(Builder $builder): Builder

@@ -23,6 +23,8 @@ export default function StatisticsPage({ room, event, events, room_stats, event_
     const [polling, setPolling] = useState(false);
     const { stop, start } = usePoll(10000, {}, { autoStart: false });
 
+    if (!room) return <Welcome />;
+
     function togglePolling() {
         setPolling((prevState) => {
             if (prevState) stop();
@@ -30,8 +32,6 @@ export default function StatisticsPage({ room, event, events, room_stats, event_
             return !prevState;
         });
     }
-
-    if (!room) return <Welcome />;
 
     return (
         <AdminLayout breadcrumbTitle={event?.name}>

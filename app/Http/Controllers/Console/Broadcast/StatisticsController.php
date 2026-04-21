@@ -31,7 +31,7 @@ class StatisticsController extends Controller
                 : [now()->subHours(), now()],
         };
 
-        $roomStat = LiveRoomStat::where('room_id', $room->id)
+        $roomStat = LiveRoomStat::where('room_id', $room?->id)
             ->whereBetween('created_at', $range)->get();
 
         $eventStat = LiveEventStat::where('event_id', $event?->id)

@@ -1,6 +1,11 @@
 import { RouteItemGroup } from '@/constant/routes';
+import { SharedProps } from '@/types';
+import { usePage } from '@inertiajs/react';
 
 export function useRoutes(routes: RouteItemGroup[]): RouteItemGroup[] {
+    const { auth } = usePage<SharedProps>().props;
+    const userRole = auth.user?.role ?? '';
+
     const pathname = () => {
         const href = window.location.href;
 
@@ -15,28 +20,42 @@ export function useRoutes(routes: RouteItemGroup[]): RouteItemGroup[] {
         return (href && pathname() === href) || pathname().startsWith(href + '/');
     }
 
-    return routes.map((group) => ({
-        ...group,
-        items: group.items?.map((item) => {
-            if (item.children && item.children.length > 0) {
-                let hasActiveChild = false;
-
-                const children = item.children.map((child) => {
-                    const childActive = isActive(child.href);
-
-                    if (childActive) {
-                        hasActiveChild = true;
+    return routes
+        .map((group) => ({
+            ...group,
+            items: group.items
+                ?.map((item) => {
+                    if (item.roles && !item.roles.includes(userRole)) {
+                        return undefined;
                     }
 
-                    return { ...child, isActive: childActive };
-                });
+                    if (item.children && item.children.length > 0) {
+                        let hasActiveChild = false;
 
-                return { ...item, children, isActive: hasActiveChild };
-            }
+                        const children = item.children
+                            .map((child) => {
+                                const childActive = isActive(child.href);
 
-            return { ...item, isActive: isActive(item.href) };
-        }),
-    }));
+                                if (childActive) {
+                                    hasActiveChild = true;
+                                }
+
+                                if (child.roles && !child.roles.includes(userRole)) {
+                                    return undefined;
+                                }
+
+                                return { ...child, isActive: childActive };
+                            })
+                            .filter((child) => !!child);
+
+                        return { ...item, children, isActive: hasActiveChild };
+                    }
+
+                    return { ...item, isActive: isActive(item.href) };
+                })
+                .filter((item) => !!item),
+        }))
+        .filter((group) => group.items && group.items.length > 0);
 }
 
 export function useRouteBreadcrumbs(routes: RouteItemGroup[]) {

@@ -9,19 +9,6 @@ use Illuminate\Validation\Rule;
 
 class UserGroupController extends Controller
 {
-    public function index(Request $request)
-    {
-        $size = $request->input('size', 10);
-
-        $query = UserGroup::query()
-            ->sort($request->string('sorts'))
-            ->search($request->string('search'));
-
-        return inertia('console/settings/groups/index', [
-            'data' => $query->paginate($size)->withQueryString(),
-        ]);
-    }
-
     public function store(Request $request)
     {
         $validated = $request->validate([

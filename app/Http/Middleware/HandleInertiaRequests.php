@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Live\LiveRoom;
 use App\Models\UserGroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -43,7 +44,10 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'options' => [
-                'rooms' => LiveRoom::options(),
+                'rooms' => LiveRoom::options()
+                    ->reject(function (LiveRoom $room) {
+                        return Gate::denies('manageLiveRoom', $room);
+                    })->flatten(),
                 'groups' => UserGroup::options(),
             ],
         ];

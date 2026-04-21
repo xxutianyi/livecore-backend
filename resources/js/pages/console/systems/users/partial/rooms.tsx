@@ -67,7 +67,7 @@ export function RoomUpdate({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
             <DialogContent>
                 <DialogHeader>授权直播间</DialogHeader>
                 <Form
-                    action={route('systems.users.directable', user.id)}
+                    action={route('systems.users.manageable', user.id)}
                     method="PUT"
                     onSuccess={() => {
                         setOpen(false);

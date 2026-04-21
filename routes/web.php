@@ -26,9 +26,6 @@ Route::middleware('auth')->group(function () {
         Route::get('monitor/pulse', Console\Monitor\PulseController::class)->name('monitor.pulse');
 
         Route::prefix('settings')->name('settings.')->group(function () {
-            Route::resource('rooms', Console\Settings\RoomController::class)->except(['create', 'edit']);
-            Route::put('rooms/{room}/cover', Console\Settings\RoomCoverController::class)->name('rooms.cover');
-            Route::put('rooms/{room}/groups', Console\Settings\RoomGroupController::class)->name('rooms.groups');
             Route::resource('users', Console\Settings\UserController::class)->except(['create', 'edit']);
             Route::post('users/batch/group', [Console\Settings\UserBatchController::class, 'group'])->name('users.batch.group');
             Route::resource('groups', Console\Settings\UserGroupController::class)->only(['store', 'update', 'destroy']);
@@ -36,7 +33,15 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('systems')->name('systems.')->group(function () {
             Route::resource('users', Console\Systems\UserController::class)->except(['create', 'edit']);
-            Route::put('/users/{user}/directable', Console\Systems\UserDirectableController::class)->name('users.directable');
+            Route::put('/users/{user}/manageable', Console\Systems\UserManageableController::class)->name('users.manageable');
+        });
+    });
+
+    Route::middleware('can:viewBroadcast')->group(function () {
+        Route::prefix('settings')->name('settings.')->group(function () {
+            Route::resource('rooms', Console\Settings\RoomController::class)->except(['create', 'edit']);
+            Route::put('rooms/{room}/cover', Console\Settings\RoomCoverController::class)->name('rooms.cover');
+            Route::put('rooms/{room}/groups', Console\Settings\RoomGroupController::class)->name('rooms.groups');
         });
     });
 

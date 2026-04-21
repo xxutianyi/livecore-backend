@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Live\LiveRoom;
 use App\Utils\FilepondSave;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class RoomCoverController extends Controller
@@ -15,6 +16,8 @@ class RoomCoverController extends Controller
      */
     public function __invoke(Request $request, LiveRoom $room)
     {
+        Gate::authorize('manageLiveRoom', $room);
+        
         $request->validate([
             'file' => ['required', Rule::filepond(['mimetypes:image/*'])],
         ]);

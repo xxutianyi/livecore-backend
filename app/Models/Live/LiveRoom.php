@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 class LiveRoom extends Model
 {
@@ -37,7 +38,7 @@ class LiveRoom extends Model
     ];
 
     protected $appends = [
-        'living'
+        'living',
     ];
 
     protected $withCount = [
@@ -66,5 +67,30 @@ class LiveRoom extends Model
     public function groups(): BelongsToMany
     {
         return $this->belongsToMany(UserGroup::class, 'live_room_groups');
+    }
+
+    protected function audiences(): Attribute
+    {
+        $cacheKey = "room-audiences-$this->id";
+
+        if (Cache::has($cacheKey)) {
+            $users = Cache::get($cacheKey);
+        } else {
+            $users = collect();
+
+            $this->groups()->each(function (UserGroup $group) use ($users) {
+                $group->users()->each(function ($user) use ($users) {
+                    $users->push($user->id);
+                });
+            });
+            
+            $users = $users->unique();
+
+            Cache::put("room-audiences-$this->id", $users);
+        }
+
+        return Attribute::get(function () use ($users) {
+            return $users;
+        });
     }
 }

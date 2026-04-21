@@ -8,10 +8,12 @@ export type RouteItemGroup = {
         external?: boolean;
         icon?: FunctionComponent;
         title: string;
+        roles?: string[];
         isActive?: boolean;
         children?: {
             href?: string;
             title: string;
+            roles?: string;
             isActive?: boolean;
             external?: boolean;
         }[];
@@ -29,16 +31,19 @@ const routes: Record<Sets, RouteItemGroup[]> = {
                     title: '开始直播',
                     icon: Play,
                     href: route('broadcast.direction'),
+                    roles: ['admin', 'director'],
                 },
                 {
                     title: '直播回放',
                     icon: Video,
                     href: route('broadcast.playbacks'),
+                    roles: ['admin', 'director'],
                 },
                 {
                     title: '观看数据',
                     icon: ChartBar,
                     href: route('broadcast.statistics'),
+                    roles: ['admin', 'director'],
                 },
             ],
         },
@@ -49,11 +54,13 @@ const routes: Record<Sets, RouteItemGroup[]> = {
                     title: '直播间',
                     icon: TvMinimal,
                     href: route('settings.rooms.index'),
+                    roles: ['admin', 'director'],
                 },
                 {
                     title: '观众管理',
                     icon: Users,
                     href: route('settings.users.index'),
+                    roles: ['admin'],
                 },
             ],
         },
@@ -64,10 +71,12 @@ const routes: Record<Sets, RouteItemGroup[]> = {
                     title: '管理员',
                     icon: Lock,
                     href: route('systems.users.index'),
+                    roles: ['admin'],
                 },
                 {
                     title: '操作记录',
                     icon: ShieldAlert,
+                    roles: ['admin'],
                 },
             ],
         },
@@ -78,6 +87,7 @@ const routes: Record<Sets, RouteItemGroup[]> = {
                     title: 'Pulse',
                     icon: HeartPulse,
                     href: route('monitor.pulse'),
+                    roles: ['admin'],
                 },
             ],
         },
