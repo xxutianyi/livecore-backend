@@ -104,9 +104,7 @@ class User extends Authenticatable
     public function onlines(): HasMany
     {
         return $this->hasMany(UserOnline::class)
-            ->latest('joined_at')
-            ->withCount(['heartbeats'])
-            ->with(['heartbeats']);
+            ->latest('joined_at')->with(['room', 'event']);
     }
 
     public function groups(): BelongsToMany

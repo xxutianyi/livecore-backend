@@ -30,16 +30,15 @@ export interface User extends Model {
 
 export interface UserOnline extends Model {
     user_id: User['id'];
+    room?: LiveRoom;
+    event?: LiveEvent;
+    online?: UserOnline;
+    living?: boolean;
+    room_id: LiveRoom['id'];
+    event_id: LiveEvent['id'];
+    online_id: UserOnline['id'];
     joined_at?: string;
     leaving_at?: string;
-    heartbeats?: UserHeartbeat[];
-    heartbeats_count?: number;
-}
-
-export interface UserHeartbeat extends Model {
-    meta: object;
-    online?: UserOnline;
-    online_id: UserOnline['id'];
 }
 
 export interface UserGroup extends Model, WithChildren<UserGroup> {

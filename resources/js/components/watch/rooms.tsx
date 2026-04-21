@@ -8,7 +8,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { Play } from 'lucide-react';
 
 export function RoomBadge({ room }: { room: LiveRoom }) {
-    if (room.event) {
+    if (room.living) {
         return <Badge variant="default">正在直播</Badge>;
     }
     return <Badge variant="secondary">可看回放</Badge>;

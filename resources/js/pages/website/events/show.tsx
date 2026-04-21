@@ -7,6 +7,7 @@ import { MessageList } from '@/components/watch/message';
 import { PlaybackPlayer } from '@/components/watch/player';
 import { EventItemList } from '@/components/watch/rooms';
 import { Breadcrumb } from '@/components/winglab/breadcrumb';
+import useOnline from '@/hooks/use-online';
 import { WebsiteLayout } from '@/layouts/website-layout';
 import { LiveEvent, LiveMessage, LiveRoom } from '@/services/model';
 import { Link } from '@inertiajs/react';
@@ -14,30 +15,22 @@ import { Link } from '@inertiajs/react';
 type PageProps = { room: LiveRoom; event: LiveEvent; events: LiveEvent[]; messages: LiveMessage[] };
 
 export default function Event({ room, event, events, messages }: PageProps) {
-    const breadcrumbItem = [
-        {
-            label: '全部直播间',
-            link: `/rooms`,
-        },
-        {
-            label: room.name,
-            link: `/rooms/${room.id}`,
-        },
-        {
-            label: '直播回放',
-            link: `/rooms/${room.id}/events`,
-        },
-        {
-            label: event.name,
-        },
-    ];
+    useOnline({ event, living: false });
 
     return (
         <WebsiteLayout>
-            <Breadcrumb className="mb-4 max-md:hidden md:mb-8" items={breadcrumbItem} />
+            <Breadcrumb
+                className="mb-4 max-md:hidden md:mb-8"
+                items={[
+                    { label: '全部直播间', link: route('rooms.index') },
+                    { label: room.name, link: route('rooms.show', room.id) },
+                    { label: '直播回放', link: route('rooms.events.index', room.id) },
+                    { label: event.name },
+                ]}
+            />
             <WatchLayout>
                 <PlayerCard title={`${room.name}-${event.name}回放`}>
-                    <PlaybackPlayer src={event.playback_url!} />
+                    <PlaybackPlayer src={event.playback_url ?? ''} />
                 </PlayerCard>
                 <RightContent>
                     <Tabs defaultValue="events">

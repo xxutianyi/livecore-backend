@@ -14,7 +14,10 @@ return new class extends Migration {
             $table->uuid('id')->primary();
             $table->timestamp('joined_at')->nullable();
             $table->timestamp('leaving_at')->nullable();
+            $table->boolean('living')->default(false);
             $table->foreignUuid('user_id')->constrained('users');
+            $table->foreignUuid('room_id')->constrained('live_rooms');
+            $table->foreignUuid('event_id')->constrained('live_events');
             $table->timestamps();
         });
     }

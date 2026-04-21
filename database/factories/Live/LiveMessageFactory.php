@@ -10,9 +10,12 @@ class LiveMessageFactory extends Factory
 {
     public function definition(): array
     {
+        $event=LiveEvent::inRandomOrder()->first();
+
         return [
             'content' => $this->faker->paragraph(1),
-            'event_id' => LiveEvent::inRandomOrder()->first()->id,
+            'room_id' => $event->room_id,
+            'event_id' => $event->id,
             'sender_id' => User::inRandomOrder()->first()->id,
         ];
     }

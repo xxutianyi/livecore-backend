@@ -19,11 +19,10 @@ class ClearUserOnlineState extends Command
     {
         UserOnline::whereNull('leaving_at')->get()
             ->each(function (UserOnline $userOnline) {
-                $cacheKey = "user-online-$userOnline->user_id";
+                $cacheKey = "user-online-$userOnline->user_id-$userOnline->event_id";
 
-                if (!Cache::has($cacheKey) || Cache::get($cacheKey) != $userOnline->id) {
-                    $userOnline->leaving_at = $userOnline->heartbeats()->first()?->created_at ?? now();
-                    $userOnline->save();
+                if (!Cache::has($cacheKey)) {
+                    $userOnline->update(['leaving_at' => now()]);
                 }
             });
     }
