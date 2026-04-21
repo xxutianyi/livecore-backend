@@ -83,3 +83,15 @@ export interface LiveMessage extends Model {
     reviewer?: Pick<User, 'id' | 'name'>;
     reviewed_at?: string;
 }
+
+export interface LiveRoomStat extends Model {
+    users_count: number;
+    messages_count: number;
+    messages_reviewed_count: number;
+}
+
+export interface LiveEventStat extends Model {
+    users_count: number;
+    messages_count: number;
+    messages_reviewed_count: number;
+}

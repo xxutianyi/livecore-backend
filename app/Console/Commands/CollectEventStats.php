@@ -17,7 +17,7 @@ class CollectEventStats extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         LiveEvent::each(function (LiveEvent $event) {
 

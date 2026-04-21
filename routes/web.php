@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
         Route::put('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'update'])->name('playbacks.update');
         Route::post('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'upload'])->name('playbacks.upload');
 
-        Route::get('statistics/{room?}', Console\Broadcast\StatisticsController::class)->name('statistics');
+        Route::get('statistics/{room?}/{event?}', [Console\Broadcast\StatisticsController::class,'show'])->name('statistics');
     });
 
 });
