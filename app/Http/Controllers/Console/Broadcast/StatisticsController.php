@@ -17,7 +17,7 @@ class StatisticsController extends Controller
     public function show(Request $request, ?LiveRoom $room = null, ?LiveEvent $event = null)
     {
         $request->validate([
-            'range' => ['nullable', 'string', 'in:30min,1h,6h,24h,7d']
+            'range' => ['nullable', 'string', 'in:1h,6h,24h,7d,14d,live']
         ]);
 
         $range = match ($request->range) {
