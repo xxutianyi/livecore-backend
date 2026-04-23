@@ -2,19 +2,6 @@ import { cn } from '@/lib/utils';
 import { Head } from '@inertiajs/react';
 import { PropsWithChildren, ReactNode } from 'react';
 
-export function SectionHeader({
-    title,
-    className,
-    children,
-}: PropsWithChildren<{ title?: string; className?: string }>) {
-    return (
-        <div className={cn(className, 'mb-4 flex items-center justify-between px-1')}>
-            <span className="font-heading text-lg font-bold">{title}</span>
-            <div>{children}</div>
-        </div>
-    );
-}
-
 export type PageContainerProps = PropsWithChildren<{
     title?: string;
     subTitle?: string;

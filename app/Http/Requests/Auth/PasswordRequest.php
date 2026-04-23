@@ -27,4 +27,13 @@ class PasswordRequest extends FormRequest
             'password' => ['required', 'confirmed']
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'current_password' => '当前密码',
+            'password' => '新密码',
+            'password_confirmation' => '再次输入新密码'
+        ];
+    }
 }

@@ -5,11 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Online\UserOnline;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 class UserPresenceController extends Controller
 {
-    #[Middleware('auth:sanctum')]
     public function joined(Request $request)
     {
         $validated = $request->validate([
@@ -29,7 +27,6 @@ class UserPresenceController extends Controller
         return response()->json($online->id);
     }
 
-    #[Middleware('auth:sanctum')]
     public function heartbeat(Request $request)
     {
         $validated = $request->validate([
