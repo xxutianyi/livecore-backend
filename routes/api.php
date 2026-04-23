@@ -16,6 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('profile', [Api\Auth\UserProfileController::class, 'show']);
     Route::post('profile', [Api\Auth\UserProfileController::class, 'update']);
+    Route::post('password', [Api\Auth\UserProfileController::class, 'password']);
 
     Route::post('presence/joined', [Api\UserPresenceController::class, 'joined']);
     Route::post('presence/heartbeat', [Api\UserPresenceController::class, 'heartbeat']);
