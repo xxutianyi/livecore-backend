@@ -1,5 +1,7 @@
 <?php
 
+use App\Exceptions\RedirectGuestException;
+use App\Exceptions\RedirectUserException;
 use App\Http\Middleware\BroadcastRoomCache;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Response\ApiResponse;
@@ -24,11 +26,14 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
 
         $middleware->statefulApi();
+
         $middleware->redirectUsersTo(function (Request $request) {
-            return $request->expectsJson() ? ApiResponse::authenticated() : '/rooms';
+            if ($request->expectsJson()) throw new RedirectUserException();
+            return '/rooms';
         });
         $middleware->redirectGuestsTo(function (Request $request) {
-            return $request->expectsJson() ? ApiResponse::unAuthenticated() : '/login';
+            if ($request->expectsJson()) throw new AuthenticationException();
+            return '/login';
         });
 
         $middleware->web(append: [
@@ -45,6 +50,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->expectsJson()) {
                 return match (true) {
                     $e instanceof UnauthorizedException => ApiResponse::unAuthorized(),
+                    $e instanceof RedirectUserException => ApiResponse::authenticated(),
                     $e instanceof AuthenticationException => ApiResponse::unAuthenticated(),
                     $e instanceof ValidationException => ApiResponse::validationErrors($e),
                     $e instanceof NotFoundHttpException => ApiResponse::routeNotFound(),
