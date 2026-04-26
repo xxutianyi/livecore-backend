@@ -17,15 +17,14 @@ export interface User extends Model {
     role: string;
     email?: string;
     phone?: string;
-    email_verified_at?: string;
-    phone_verified_at?: string;
-    authorities: string[];
-    external_id?: string;
-    inviter_code: string;
-    invitation_code?: string;
     online?: boolean;
     leaving_at?: string;
+    inviter_code: string;
+    invitation_code?: string;
+    email_verified_at?: string;
+    phone_verified_at?: string;
     groups?: UserGroup[];
+    manageable?: LiveRoom[];
 }
 
 export interface UserOnline extends Model {
@@ -41,7 +40,7 @@ export interface UserOnline extends Model {
     leaving_at?: string;
 }
 
-export interface UserGroup extends Model, WithChildren<UserGroup> {
+export interface UserGroup extends Model {
     name: string;
     path: string;
     users?: User;
@@ -55,9 +54,9 @@ export interface LiveRoom extends Model {
     slug: string;
     cover?: string;
     description?: string;
-    manageable_users: User[];
     events?: LiveEvent[];
     events_count: number;
+    manageable_users: User[];
 }
 
 export interface LiveEvent extends Model {

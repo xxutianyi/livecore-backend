@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Live\LiveRoom;
 use App\Models\User;
+use App\Models\UserGroup;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -35,11 +36,18 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('viewLiveRoom', function (User $user, LiveRoom $room) {
-            return $user->can('manageLiveRoom', $room) || $room->audiences->contains($user->id);
+            return $user->can('manageLiveRoom', $room)
+                || $room->audiences->contains($user->id);
         });
 
         Gate::define('manageLiveRoom', function (User $user, LiveRoom $room) {
-            return $user->role === 'admin' || ($user->role === 'room-admin' && $user->manageable->contains($room));
+            return $user->role === 'admin' ||
+                ($user->role === 'room-admin' && $user->manageable->contains($room));
+        });
+
+        Gate::define('manageUserGroup', function (User $user, UserGroup $group) {
+            return $user->role === 'admin' ||
+                ($user->role === 'room-admin' && $user->manageable_groups->contains($group->id));
         });
     }
 }

@@ -12,7 +12,7 @@ import { ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-export function RoomIndex({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
+export function RoomIndex({ user }: { user: User }) {
     const columns = defineColumns<LiveRoom>([
         {
             dataKey: 'name',
@@ -49,12 +49,12 @@ export function RoomIndex({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
                     </EmptyHeader>
                 </Empty>
             )}
-            {user.role === 'director' && <SimpleTable data={rooms} columns={columns} />}
+            {user.role === 'room-admin' && <SimpleTable data={user.manageable} columns={columns} />}
         </Section>
     );
 }
 
-export function RoomUpdate({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
+export function RoomUpdate({ user }: { user: User }) {
     const [open, setOpen] = useState(false);
 
     const { options } = usePage<SharedProps>().props;
@@ -81,7 +81,7 @@ export function RoomUpdate({ user, rooms }: { user: User; rooms: LiveRoom[] }) {
                             name="room_ids"
                             options={options.rooms}
                             optionsKey={{ label: 'name', value: 'id' }}
-                            defaultValue={rooms.map((room) => room.id)}
+                            defaultValue={user.manageable?.map((room) => room.id)}
                         />
                         <Field>
                             <Button type="submit">保存</Button>

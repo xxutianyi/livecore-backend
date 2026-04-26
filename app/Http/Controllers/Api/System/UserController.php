@@ -7,7 +7,6 @@ use App\Http\Requests\System\UserRequest;
 use App\Models\User;
 use App\Response\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -31,10 +30,7 @@ class UserController extends Controller
 
     public function store(UserRequest $request)
     {
-        $user = User::create([
-            ...$request->validated(),
-            'password' => Hash::make('Password!@')
-        ]);
+        $user = User::create($request->validated());
 
         return ApiResponse::success($user);
     }

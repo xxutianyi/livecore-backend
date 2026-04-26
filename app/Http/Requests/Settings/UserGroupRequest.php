@@ -13,7 +13,7 @@ class UserGroupRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return $this->user()->can('viewRoomAdmin');
     }
 
     /**

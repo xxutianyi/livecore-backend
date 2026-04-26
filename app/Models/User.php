@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use RahulHaque\Filepond\Traits\HasFilepond;
 
 class User extends Authenticatable
@@ -28,13 +29,11 @@ class User extends Authenticatable
         'role',
         'email',
         'phone',
-        'email_verified_at',
-        'phone_verified_at',
-        'authorities',
-        'external_id',
         'password',
         'inviter_code',
         'invitation_code',
+        'email_verified_at',
+        'phone_verified_at',
     ];
 
     protected $hidden = [
@@ -48,7 +47,8 @@ class User extends Authenticatable
 
     protected $appends = [
         'online',
-        'leaving_at'
+        'leaving_at',
+        'manageable_groups'
     ];
 
     protected array $sortable = [
@@ -86,19 +86,15 @@ class User extends Authenticatable
     {
         static::creating(function (User $user) {
 
+            if (empty($user->password)) {
+                $user->password = Hash::make('Password!@');
+            }
+
             if (empty($user->inviter_code)) {
                 $user->inviter_code = InviterCode::generate();
             }
 
         });
-    }
-
-    public function messages(): HasMany
-    {
-        return $this->hasMany(LiveMessage::class, 'sender_id')
-            ->select(['id', 'content', 'event_id', 'sender_id', 'created_at'])
-            ->without(['sender', 'reviewer'])
-            ->with(['event']);
     }
 
     public function onlines(): HasMany
@@ -112,6 +108,19 @@ class User extends Authenticatable
         return $this->belongsToMany(UserGroup::class, 'users_groups')
             ->without(['users', 'parent', 'children'])
             ->withPivot('manageable');
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(LiveMessage::class, 'sender_id')
+            ->select(['id', 'content', 'event_id', 'sender_id', 'created_at'])
+            ->without(['sender', 'reviewer'])
+            ->with(['event']);
+    }
+
+    public function manageable(): BelongsToMany
+    {
+        return $this->belongsToMany(LiveRoom::class, 'live_room_managers');
     }
 
     protected function online(): Attribute
@@ -129,9 +138,32 @@ class User extends Authenticatable
         });
     }
 
-    public function manageable(): BelongsToMany
+    protected function manageableGroups(): Attribute
     {
-        return $this->belongsToMany(LiveRoom::class, 'live_room_managers');
+        $groups = collect();
+
+        $this->manageable->each(function (LiveRoom $room) use ($groups) {
+            $room->groups->each(function (UserGroup $group) use ($groups) {
+                $groups->push($group->id);
+            });
+        });
+
+        return Attribute::get(function () use ($groups) {
+            return $groups;
+        });
+    }
+
+
+    public function scopeCanViewBy(Builder $builder, User $user): Builder
+    {
+        if ($user->can('viewAdmin')) {
+            return $builder;
+        }
+
+        return $builder->whereRelation('groups',
+            function (Builder $builder) use ($user) {
+                $builder->whereIn('user_groups.id', $user->manageable_groups);
+            });
     }
 
     public function scopeAdmins(Builder $builder): Builder

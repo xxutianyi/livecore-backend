@@ -16,17 +16,16 @@ class RoomController extends Controller
     {
         $size = $request->input('size', 10);
 
-        $query = $request->user()->role === 'admin'
+        $data = $request->user()->can('viewAdmin')
             ? LiveRoom::query()
             : $request->user()->manageable();
 
-        $query = $query
+        $data = $data
             ->sort($request->string('sorts'))
-            ->search($request->string('search'));
+            ->search($request->string('search'))
+            ->paginate($size)->withQueryString();
 
-        return inertia('console/settings/rooms/index', [
-            'data' => $query->paginate($size)->withQueryString()
-        ]);
+        return inertia('console/settings/rooms/index', ['data' => $data]);
     }
 
     public function show(LiveRoom $room)

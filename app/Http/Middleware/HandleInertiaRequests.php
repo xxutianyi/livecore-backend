@@ -48,7 +48,10 @@ class HandleInertiaRequests extends Middleware
                     ->reject(function (LiveRoom $room) {
                         return Gate::denies('manageLiveRoom', $room);
                     })->flatten(),
-                'groups' => UserGroup::options(),
+                'groups' => UserGroup::options()
+                    ->reject(function (UserGroup $group) {
+                        return Gate::denies('manageUserGroup', $group);
+                    })->flatten(),
             ],
         ];
     }
