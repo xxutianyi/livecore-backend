@@ -8,7 +8,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { FormFieldSelect, FormFieldText } from '@/components/winglab/form';
+import { SelectField, TextField } from '@/components/winglab/form';
 import { User } from '@/services/model';
 import { Form } from '@inertiajs/react';
 import { useState } from 'react';
@@ -36,10 +36,10 @@ export function UserCreate() {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldText name="name" label="姓名" />
-                        <FormFieldText name="phone" label="手机号" />
-                        <FormFieldText name="email" label="电子邮件" />
-                        <FormFieldSelect
+                        <TextField name="name" label="姓名" />
+                        <TextField name="phone" label="手机号" />
+                        <TextField name="email" label="电子邮件" />
+                        <SelectField
                             name="role"
                             label="用户角色"
                             defaultValue="room-admin"
@@ -77,10 +77,10 @@ export function UserUpdate({ user }: { user: User }) {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldText name="name" label="姓名" defaultValue={user.name} />
-                        <FormFieldText name="phone" label="手机号" defaultValue={user.phone} />
-                        <FormFieldText name="email" label="电子邮件" defaultValue={user.email} />
-                        <FormFieldSelect
+                        <TextField name="name" label="姓名" defaultValue={user.name} />
+                        <TextField name="phone" label="手机号" defaultValue={user.phone} />
+                        <TextField name="email" label="电子邮件" defaultValue={user.email} />
+                        <SelectField
                             name="role"
                             label="用户角色"
                             defaultValue={user.role}

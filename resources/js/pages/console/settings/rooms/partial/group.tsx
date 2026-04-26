@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { FormFieldMutiSelect } from '@/components/winglab/form';
+import { MutiSelectField } from '@/components/winglab/form';
 import { Section } from '@/components/winglab/layout';
 import { LiveRoom, UserGroup } from '@/services/model';
 import { SharedProps } from '@/types';
@@ -62,7 +62,7 @@ export function GroupUpdate({ room, groups }: { room: LiveRoom; groups: UserGrou
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldMutiSelect
+                        <MutiSelectField
                             name="group_ids"
                             options={options.groups}
                             optionsKey={{ label: 'name', value: 'id' }}

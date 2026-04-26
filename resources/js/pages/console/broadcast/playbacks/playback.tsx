@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { PlaybackPlayer } from '@/components/watch/player';
-import { FormFieldUpload } from '@/components/winglab/form';
+import { UploadField } from '@/components/winglab/form';
 import { LiveEvent } from '@/services/model';
 import { Form } from '@inertiajs/react';
 import { useState } from 'react';
@@ -53,7 +53,7 @@ export function UploadPlayback({ event }: { event: LiveEvent }) {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldUpload name="file" accept="video/mp4" />
+                        <UploadField name="file" accept="video/mp4" />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>

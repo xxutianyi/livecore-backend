@@ -22,14 +22,13 @@ class EventController extends Controller
     public function show(LiveRoom $room, LiveEvent $event)
     {
         Gate::authorize('viewLiveRoom', $room);
-        
+
         if (!$event->published) {
             abort(403);
         }
 
         return inertia('website/events/show', [
-            'room' => $room,
-            'event' => $event,
+            'room' => $room, 'event' => $event,
             'events' => $room->events()->published()->get(),
             'messages' => $event->messages()->published()->get(),
         ]);

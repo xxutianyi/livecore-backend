@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { FormFieldText, FormFieldTextarea, FormFieldUpload } from '@/components/winglab/form';
+import { TextareaField, TextField, UploadField } from '@/components/winglab/form';
 import { LiveRoom } from '@/services/model';
 import { Form } from '@inertiajs/react';
 import { useState } from 'react';
@@ -28,9 +28,9 @@ export function RoomCreate() {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldUpload name="cover" label="封面" accept="image/*" />
-                        <FormFieldText name="name" label="名称" />
-                        <FormFieldTextarea name="description" label="简介" />
+                        <UploadField name="cover" label="封面" accept="image/*" />
+                        <TextField name="name" label="名称" />
+                        <TextareaField name="description" label="简介" />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>
@@ -62,8 +62,8 @@ export function RoomUpdate({ room }: { room: LiveRoom }) {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldText name="name" label="名称" defaultValue={room.name} />
-                        <FormFieldTextarea name="description" label="简介" defaultValue={room.description} />
+                        <TextField name="name" label="名称" defaultValue={room.name} />
+                        <TextareaField name="description" label="简介" defaultValue={room.description} />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>
@@ -95,7 +95,7 @@ export function CoverUpdate({ room }: { room: LiveRoom }) {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldUpload name="file" accept="image/*" />
+                        <UploadField name="file" accept="image/*" />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>

@@ -43,17 +43,17 @@ export interface UserOnline extends Model {
 export interface UserGroup extends Model {
     name: string;
     path: string;
-    users?: User;
-    users_count?: number;
+    users?: User[];
+    rooms?: LiveRoom[];
     children?: UserGroup[];
     parent_id?: UserGroup['id'];
 }
 
 export interface LiveRoom extends Model {
     name: string;
-    slug: string;
     cover?: string;
     description?: string;
+    living?: LiveEvent;
     events?: LiveEvent[];
     events_count: number;
     manageable_users: User[];
@@ -72,6 +72,7 @@ export interface LiveEvent extends Model {
     playback_url?: string;
     room?: LiveRoom;
     room_id: LiveRoom['id'];
+    messages?: LiveMessage[];
 }
 
 export interface LiveMessage extends Model {

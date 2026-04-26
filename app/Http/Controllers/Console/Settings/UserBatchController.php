@@ -3,23 +3,16 @@
 namespace App\Http\Controllers\Console\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Settings\UserBatchRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class UserBatchController extends Controller
 {
-    public function group(Request $request)
+    public function group(UserBatchRequest $request)
     {
-        $validated = $request->validate([
-            'user_ids' => ['required', 'array'],
-            'user_ids.*' => ['required', 'uuid', 'exists:users,id'],
-            'group_ids' => ['required', 'array'],
-            'group_ids.*' => ['required', 'exists:user_groups,id'],
-        ]);
-
-        User::whereIn('id', $validated['user_ids'])
-            ->each(function (User $user) use ($validated) {
-                $user->groups()->sync($validated['group_ids']);
+        User::whereIn('id', $request->user_ids)
+            ->each(function (User $user) use ($request) {
+                $user->groups()->sync($request->group_ids);
             });
 
         return back();

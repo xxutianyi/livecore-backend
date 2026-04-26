@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { FormFieldMutiSelect } from '@/components/winglab/form';
+import { MutiSelectField } from '@/components/winglab/form';
 import { Section } from '@/components/winglab/layout';
 import { LiveRoom, User } from '@/services/model';
 import { SharedProps } from '@/types';
@@ -77,7 +77,7 @@ export function RoomUpdate({ user }: { user: User }) {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldMutiSelect
+                        <MutiSelectField
                             name="room_ids"
                             options={options.rooms}
                             optionsKey={{ label: 'name', value: 'id' }}

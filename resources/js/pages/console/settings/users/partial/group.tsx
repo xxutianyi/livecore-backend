@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { FormFieldText } from '@/components/winglab/form';
+import { MutiSelectField, TextField } from '@/components/winglab/form';
 import { UserGroup } from '@/services/model';
 import { SharedProps } from '@/types';
 import { Form, usePage } from '@inertiajs/react';
@@ -44,6 +44,8 @@ export function GroupIndex() {
 export function GroupCreate() {
     const [open, setOpen] = useState(false);
 
+    const { options } = usePage<SharedProps>().props;
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -62,7 +64,13 @@ export function GroupCreate() {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldText name="name" label="名称" />
+                        <TextField name="name" label="名称" />
+                        <MutiSelectField
+                            label="授权直播间"
+                            name="room_ids"
+                            options={options.rooms}
+                            optionsKey={{ label: 'name', value: 'id' }}
+                        />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>
@@ -75,6 +83,8 @@ export function GroupCreate() {
 
 export function GroupUpdate({ group }: { group: UserGroup }) {
     const [open, setOpen] = useState(false);
+
+    const { options } = usePage<SharedProps>().props;
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -94,7 +104,14 @@ export function GroupUpdate({ group }: { group: UserGroup }) {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldText name="name" label="名称" defaultValue={group.name} />
+                        <TextField name="name" label="名称" defaultValue={group.name} />
+                        <MutiSelectField
+                            label="授权直播间"
+                            name="room_ids"
+                            options={options.rooms}
+                            optionsKey={{ label: 'name', value: 'id' }}
+                            defaultValue={group.rooms?.map((r) => r.id)}
+                        />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>

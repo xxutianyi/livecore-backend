@@ -29,6 +29,15 @@ class RoomController extends Controller
         return ApiResponse::success($data);
     }
 
+    public function options(Request $request)
+    {
+        $data = $request->user()->role === 'admin'
+            ? LiveRoom::all()
+            : $request->user()->manageable;
+
+        return ApiResponse::success($data);
+    }
+
     public function show(LiveRoom $room)
     {
         Gate::authorize('manageLiveRoom', $room);

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { FormFieldText } from '@/components/winglab/form';
+import { TextField } from '@/components/winglab/form';
 import { SharedProps } from '@/types';
 import { Form, usePage } from '@inertiajs/react';
 import { toast } from 'sonner';
@@ -26,9 +26,9 @@ export function ProfileForm() {
                     }}
                 >
                     <FieldGroup>
-                        <FormFieldText name="name" label="名字" defaultValue={auth.user?.name} />
-                        <FormFieldText name="phone" label="手机号" defaultValue={auth.user?.phone} />
-                        <FormFieldText name="email" label="电子邮箱" defaultValue={auth.user?.email} />
+                        <TextField name="name" label="名字" defaultValue={auth.user?.name} />
+                        <TextField name="phone" label="手机号" defaultValue={auth.user?.phone} />
+                        <TextField name="email" label="电子邮箱" defaultValue={auth.user?.email} />
                         <Field>
                             <Button type="submit">更新</Button>
                         </Field>

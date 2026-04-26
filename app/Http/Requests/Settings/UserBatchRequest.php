@@ -4,9 +4,8 @@ namespace App\Http\Requests\Settings;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UserGroupRequest extends FormRequest
+class UserBatchRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,18 +23,20 @@ class UserGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', Rule::unique('user_groups')->ignore($this->route('group'))],
-            'room_ids' => [Rule::requiredUnless($this->user()->can('viewAdmin')), 'array'],
-            'room_ids.*' => ['required', 'uuid', 'exists:live_rooms,id'],
+            'user_ids' => ['required', 'array'],
+            'user_ids.*' => ['required', 'uuid', 'exists:users,id'],
+            'group_ids' => ['required', 'array'],
+            'group_ids.*' => ['required', 'exists:user_groups,id'],
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'name' => '分组名称',
-            'room_ids' => '授权直播间',
-            'room_ids.*' => '授权直播间'
+            'user_ids' => '选择的用户',
+            'user_ids.*' => '选择的用户',
+            'group_ids' => '分组',
+            'group_ids.*' => '分组',
         ];
     }
 }

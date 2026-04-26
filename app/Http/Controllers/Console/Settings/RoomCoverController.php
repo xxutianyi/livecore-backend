@@ -17,11 +17,10 @@ class RoomCoverController extends Controller
     {
         Gate::authorize('manageLiveRoom', $room);
 
-        $noCacheQuery="?update=".now()->timestamp;
+        $noCacheQuery = "?update=" . now()->timestamp;
+        $cover = FilepondSave::save($request->cover, "cover/$room->id") . $noCacheQuery;
 
-        $room->update([
-            'cover' => FilepondSave::save($request->cover, "cover/$room->id").$noCacheQuery
-        ]);
+        $room->update(['cover' => $cover]);
 
         return back();
     }

@@ -14,7 +14,7 @@ class UserController extends Controller
     {
         $size = $request->input('size', 10);
 
-        $data = User::query()
+        $data = User::query()->canViewBy($request->user())
             ->with(['groups'])->audiences()
             ->sort($request->string('sorts'))
             ->search($request->string('search'))

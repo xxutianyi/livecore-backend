@@ -32,8 +32,9 @@ Route::name('api.')->group(function () {
 
         Route::prefix('settings')->group(function () {
             Route::apiResource('users', Api\Settings\UserController::class);
-            Route::apiResource('rooms', Api\Settings\RoomController::class);
             Route::apiResource('groups', Api\Settings\UserGroupController::class);
+            Route::get('/rooms/options', [Api\Settings\RoomController::class, 'options']);
+            Route::apiResource('rooms', Api\Settings\RoomController::class);
             Route::put('/rooms/{room}/cover', Api\Settings\RoomCoverController::class);
         });
 

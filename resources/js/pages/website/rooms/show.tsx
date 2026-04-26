@@ -6,31 +6,29 @@ import { useLive } from '@/hooks/use-live';
 import useOnline from '@/hooks/use-online';
 import { WebsiteLayout } from '@/layouts/website-layout';
 import { cn } from '@/lib/utils';
-import { Waiting, WaitingProps } from '@/pages/website/rooms/partial/waiting';
-import { LiveEvent, LiveMessage } from '@/services/model';
+import { Waiting } from '@/pages/website/rooms/partial/waiting';
+import { LiveMessage, LiveRoom } from '@/services/model';
 
-export type RoomPageProps = WaitingProps & { event?: LiveEvent; messages?: LiveMessage[] };
-
-export default function Room({ room, event, messages = [] }: RoomPageProps) {
-    useOnline({ event, living: true });
-    const { users, messages: liveMessages, handleMessageUpdate } = useLive(event?.id, messages);
+export default function Room({ room, messages }: { room: LiveRoom; messages?: LiveMessage[] }) {
+    useOnline({ event: room.living, living: true });
+    const { users, messages: liveMessages, handleMessageUpdate } = useLive(room.living?.id, messages);
 
     return (
         <WebsiteLayout title={`观看直播：${room.name}`}>
             <Breadcrumb
-                className={cn(!!event && 'mb-4 max-md:hidden md:mb-8')}
+                className={cn(!!room.living && 'mb-4 max-md:hidden md:mb-8')}
                 items={[{ label: '全部直播间', link: route('rooms.index') }, { label: room.name }]}
             />
-            {!event && <Waiting room={room} />}
-            {!!event && (
+            {!room.living && <Waiting room={room} />}
+            {!!room.living && (
                 <WatchLayout>
                     <PlayerCard title={`${room.name}正在直播`}>
-                        <PlaybackPlayer src={event.pull_url} />
+                        <PlaybackPlayer src={room.living.pull_url} />
                     </PlayerCard>
                     <LiveMessageList
                         title={`${room.name}正在直播`}
                         users={users}
-                        event={event}
+                        event={room.living}
                         messages={liveMessages}
                         handleMessageUpdate={handleMessageUpdate}
                     />

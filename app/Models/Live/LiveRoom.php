@@ -47,11 +47,12 @@ class LiveRoom extends Model
 
     protected function living(): Attribute
     {
-        $event = LiveEvent::where('room_id', $this->id)
-            ->whereNull('finished_at')
-            ->whereNotNull('started_at')
-            ->whereFuture('expired_at')
-            ->latest()->first();
+        $event =
+            LiveEvent::where('room_id', $this->id)
+                ->whereNull('finished_at')
+                ->whereNotNull('started_at')
+                ->whereFuture('expired_at')
+                ->latest()->first();
 
         return Attribute::get(function () use ($event) {
             return $event;
@@ -83,7 +84,7 @@ class LiveRoom extends Model
                     $users->push($user->id);
                 });
             });
-            
+
             $users = $users->unique();
 
             Cache::put("room-audiences-$this->id", $users);

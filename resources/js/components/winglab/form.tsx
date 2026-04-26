@@ -1,8 +1,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import { Field, FieldError, FieldLabel } from '@/components/ui/field';
+import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { InputGroup, InputGroupAddon } from '@/components/ui/input-group';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,37 +11,34 @@ import { cn, csrfToken } from '@/lib/utils';
 import { useFormContext } from '@inertiajs/react';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, Eye, EyeClosed } from 'lucide-react';
 import { useState } from 'react';
 import { FilePond, registerPlugin } from 'react-filepond';
 
-export type BaseFieldProps = {
+export type FieldProps = {
     name: string;
     label?: string;
     placeholder?: string;
+    description?: string;
     defaultValue?: string;
 };
 
-export type TextFieldProps = BaseFieldProps & {
-    type?: 'text' | 'password';
-};
-
-export type SelectProps = BaseFieldProps & {
+export type SelectProps = FieldProps & {
     options: Record<string, any>[];
     optionsKey?: { label: string; value: string };
 };
 
-export type MutiSelectProps = Omit<BaseFieldProps, 'defaultValue'> & {
+export type MutiSelectProps = Omit<SelectProps, 'defaultValue'> & {
     defaultValue?: string[];
     options: Record<string, any>[];
     optionsKey?: { label: string; value: string };
 };
 
-export type UploadProps = Omit<BaseFieldProps, 'placeholder' | 'defaultValue'> & {
-    accept?: string;
+export type UploadProps = Omit<FieldProps, 'placeholder' | 'defaultValue'> & {
+    accept?: string[];
 };
 
-export function FormFieldText({ name, label, placeholder, defaultValue, type }: TextFieldProps) {
+export function TextField({ name, label, placeholder, defaultValue }: FieldProps) {
     const form = useFormContext();
 
     if (!form) {
@@ -55,43 +53,69 @@ export function FormFieldText({ name, label, placeholder, defaultValue, type }: 
                 name={name}
                 placeholder={placeholder ?? '请输入'}
                 defaultValue={defaultValue}
-                type={type}
+                type="text"
             />
             {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
         </Field>
     );
 }
 
-export function FormFieldTextarea({ name, label, placeholder, defaultValue }: BaseFieldProps) {
+export function PasswordField({ name, label, description, defaultValue, placeholder }: FieldProps) {
     const form = useFormContext();
+    const [visible, setVisible] = useState(false);
 
-    if (!form) {
-        return null;
-    }
+    if (!form) return null;
 
     return (
         <Field>
             <FieldLabel htmlFor={name}>{label}</FieldLabel>
-            <Textarea id={name} name={name} placeholder={placeholder ?? '请输入'} defaultValue={defaultValue} />
+
+            <InputGroup>
+                <Input
+                    id={name}
+                    name={name}
+                    defaultValue={defaultValue}
+                    placeholder={placeholder ?? '请输入'}
+                    type={visible ? 'text' : 'password'}
+                    data-slot="input-group-control"
+                    className="border-none bg-transparent focus-visible:ring-0"
+                />
+                <InputGroupAddon align="inline-end">
+                    <Button variant="ghost" size="icon-sm" onClick={() => setVisible(!visible)}>
+                        {visible ? <Eye /> : <EyeClosed />}
+                    </Button>
+                </InputGroupAddon>
+            </InputGroup>
+
+            {description && <FieldDescription>{description}</FieldDescription>}
             {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
         </Field>
     );
 }
 
-export function FormFieldSelect({
-    name,
-    label,
-    placeholder,
-    defaultValue,
-    options,
-    optionsKey = { value: 'value', label: 'label' },
-}: SelectProps) {
+export function TextareaField({ name, label, placeholder, description, defaultValue }: FieldProps) {
+    const form = useFormContext();
+    if (!form) return null;
+
+    return (
+        <Field>
+            <FieldLabel htmlFor={name}>{label}</FieldLabel>
+
+            <Textarea id={name} name={name} placeholder={placeholder ?? '请输入'} defaultValue={defaultValue} />
+
+            {description && <FieldDescription>{description}</FieldDescription>}
+            {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
+        </Field>
+    );
+}
+
+export function SelectField({ name, label, placeholder, description, defaultValue, options, optionsKey }: SelectProps) {
+    optionsKey = optionsKey ?? { value: 'value', label: 'label' };
+
     const form = useFormContext();
     const [value, setValue] = useState<string>(defaultValue ?? '');
 
-    if (!form) {
-        return null;
-    }
+    if (!form) return null;
 
     return (
         <Field>
@@ -114,26 +138,27 @@ export function FormFieldSelect({
                 </SelectContent>
             </Select>
 
+            {description && <FieldDescription>{description}</FieldDescription>}
             {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
         </Field>
     );
 }
 
-export function FormFieldMutiSelect({
+export function MutiSelectField({
     name,
     label,
     placeholder,
+    description,
     defaultValue,
     options,
-    optionsKey = { value: 'value', label: 'label' },
+    optionsKey,
 }: MutiSelectProps) {
+    optionsKey = optionsKey ?? { value: 'value', label: 'label' };
+
     const form = useFormContext();
-    const [open, setOpen] = useState(false);
     const [selectedValues, setSelectedValues] = useState<string[]>(defaultValue ?? []);
 
-    if (!form) {
-        return null;
-    }
+    if (!form) return null;
 
     const selectedItems = options.filter((option) => selectedValues.includes(option[optionsKey.value]));
 
@@ -153,9 +178,9 @@ export function FormFieldMutiSelect({
                 <input key={index} name={`${name}[]`} value={value} readOnly className="hidden" />
             ))}
 
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover>
                 <PopoverTrigger asChild>
-                    <Button variant="outline" className="h-auto min-h-10 w-full justify-between bg-muted px-3 py-2">
+                    <Button variant="outline" className="h-auto min-h-10 w-full justify-between bg-input/50! px-3 py-2">
                         <div className="flex flex-wrap gap-2 overflow-hidden">
                             {selectedItems.length > 0 ? (
                                 selectedItems.map((item, index) => <Badge key={index}>{item[optionsKey.label]}</Badge>)
@@ -200,35 +225,34 @@ export function FormFieldMutiSelect({
                 </PopoverContent>
             </Popover>
 
+            {description && <FieldDescription>{description}</FieldDescription>}
             {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
         </Field>
     );
 }
 
-export function FormFieldUpload({ name, label, accept }: UploadProps) {
+export function UploadField({ name, label, accept, description }: UploadProps) {
+    const form = useFormContext();
+
     registerPlugin(FilePondPluginImagePreview);
     registerPlugin(FilePondPluginFileValidateType);
 
-    const form = useFormContext();
-
-    if (!form) {
-        return null;
-    }
-
+    if (!form) return null;
     return (
         <Field>
             <FieldLabel htmlFor={name}>{label}</FieldLabel>
+
             <FilePond
                 id={name}
                 name={name}
                 chunkUploads
                 credits={false}
-                acceptedFileTypes={[accept ?? '*']}
+                acceptedFileTypes={accept}
                 server={{
                     url: '/api/filepond',
                     headers: { 'X-CSRF-TOKEN': csrfToken() },
                 }}
-                labelIdle='拖拽文件到此处或 <span class="filepond--label-action"> 浏览文件 </span>'
+                labelIdle='拖拽文件到此处或<span class="filepond--label-action">浏览文件</span>'
                 labelInvalidField="文件校验失败"
                 labelFileWaitingForSize="检测文件大小"
                 labelFileSizeNotAvailable="文件大小检测失败"
@@ -251,6 +275,8 @@ export function FormFieldUpload({ name, label, accept }: UploadProps) {
                 labelButtonRetryItemProcessing="重试"
                 labelButtonProcessItem="上传"
             />
+
+            {description && <FieldDescription>{description}</FieldDescription>}
             {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
         </Field>
     );

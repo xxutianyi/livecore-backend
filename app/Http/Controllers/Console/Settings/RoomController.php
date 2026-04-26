@@ -32,10 +32,9 @@ class RoomController extends Controller
     {
         Gate::authorize('manageLiveRoom', $room);
 
-        return inertia('console/settings/rooms/show', [
-            'room' => $room,
-            'groups' => $room->groups,
-        ]);
+        $room->load(['groups']);
+
+        return inertia('console/settings/rooms/show', ['room' => $room]);
     }
 
     public function store(CreateRoomRequest $request)
@@ -62,6 +61,6 @@ class RoomController extends Controller
     {
         Gate::authorize('manageLiveRoom', $room);
 
-        return to_route('rooms.index');
+        return to_route('settings.rooms.index');
     }
 }

@@ -23,10 +23,11 @@ class RoomController extends Controller
     {
         Gate::authorize('viewLiveRoom', $room);
 
+        $room->append(['living']);
+
         return inertia('website/rooms/show', [
             'room' => $room,
-            'event' => $room->living,
-            'messages' => $room->living?->messages()->published()->get()
+            'messages' => $room->living->messages()->published()->get()
         ]);
     }
 }

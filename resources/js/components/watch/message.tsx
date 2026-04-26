@@ -5,10 +5,11 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { RightContent } from '@/components/watch/layouts';
 import { useLive } from '@/hooks/use-live';
+import { useScroll } from '@/hooks/use-scroll';
 import { LiveEvent, LiveMessage } from '@/services/model';
 import { router } from '@inertiajs/react';
 import { ArrowDown, Send, Users, Video } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 export type MessageListProps = ReturnType<typeof useLive> & {
@@ -16,8 +17,6 @@ export type MessageListProps = ReturnType<typeof useLive> & {
     event: LiveEvent;
     className?: string;
 };
-
-export type MessageSenderProps = Pick<MessageListProps, 'event' | 'handleMessageUpdate'>;
 
 export function MessageItem({ message }: { message: LiveMessage }) {
     return (
@@ -32,8 +31,9 @@ export function MessageList({ messages }: { messages: LiveMessage[] }) {
     return messages.map((message) => <MessageItem message={message} key={message.id} />);
 }
 
-export function MessageSender({ event, handleMessageUpdate }: MessageSenderProps) {
+export function LiveMessageList({ title, users, event, messages, handleMessageUpdate, className }: MessageListProps) {
     const [message, setMessage] = useState('');
+    const { isAtBottom, bottomRef, viewportRef, scrollToBottom } = useScroll([messages]);
 
     function handlePublish() {
         router.post(
@@ -50,56 +50,6 @@ export function MessageSender({ event, handleMessageUpdate }: MessageSenderProps
             },
         );
     }
-
-    return (
-        <Field orientation="horizontal">
-            <Input type="text" placeholder="参与互动..." value={message} onChange={(e) => setMessage(e.target.value)} />
-            <Button onClick={handlePublish}>
-                <Send />
-                发送
-            </Button>
-        </Field>
-    );
-}
-
-export function LiveMessageList({ title, users, event, messages, handleMessageUpdate, className }: MessageListProps) {
-    const bottomRef = useRef<HTMLDivElement>(null);
-    const viewportRef = useRef<HTMLDivElement>(null);
-
-    const [isAtBottom, setIsAtBottom] = useState(true);
-
-    const checkIfAtBottom = useCallback(() => {
-        const viewport = viewportRef.current;
-        if (!viewport) return false;
-
-        const { scrollTop, scrollHeight, clientHeight } = viewport;
-        const isBottom = scrollHeight - scrollTop - clientHeight < 10;
-
-        setIsAtBottom(isBottom);
-        return isBottom;
-    }, []);
-
-    const scrollToBottom = () => {
-        if (bottomRef.current) {
-            bottomRef.current.scrollIntoView({
-                block: 'end',
-                behavior: 'smooth',
-            });
-        }
-    };
-
-    useEffect(() => {
-        const viewport = viewportRef.current;
-        if (!viewport) return;
-
-        viewport.addEventListener('scroll', checkIfAtBottom, { passive: true });
-
-        return () => viewport.removeEventListener('scroll', checkIfAtBottom);
-    }, [checkIfAtBottom]);
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
 
     return (
         <RightContent className={className}>
@@ -132,7 +82,18 @@ export function LiveMessageList({ title, users, event, messages, handleMessageUp
                 </ScrollArea>
             </CardContent>
             <CardFooter className="absolute bottom-0 h-20 w-full">
-                <MessageSender event={event} handleMessageUpdate={handleMessageUpdate} />
+                <Field orientation="horizontal">
+                    <Input
+                        type="text"
+                        placeholder="参与互动..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                    />
+                    <Button onClick={handlePublish}>
+                        <Send />
+                        发送
+                    </Button>
+                </Field>
             </CardFooter>
         </RightContent>
     );

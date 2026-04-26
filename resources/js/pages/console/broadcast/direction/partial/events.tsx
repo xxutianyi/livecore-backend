@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { FormFieldText, FormFieldTextarea, FormFieldUpload } from '@/components/winglab/form';
+import { TextareaField, TextField, UploadField } from '@/components/winglab/form';
 import { Section } from '@/components/winglab/layout';
 import { formatDatetime } from '@/lib/utils';
 import { LiveEvent, LiveRoom } from '@/services/model';
@@ -43,9 +43,9 @@ export function EventCreate({ room }: { room: LiveRoom }) {
                         }}
                     >
                         <FieldGroup>
-                            <FormFieldUpload name="cover" label="封面（留空将使用直播间封面）" accept="image/*" />
-                            <FormFieldText name="name" label="名称" defaultValue={defaultName} />
-                            <FormFieldTextarea name="desctiption" label="简介" defaultValue={room.description} />
+                            <UploadField name="cover" label="封面（留空将使用直播间封面）" accept="image/*" />
+                            <TextField name="name" label="名称" defaultValue={defaultName} />
+                            <TextareaField name="desctiption" label="简介" defaultValue={room.description} />
                             <Field>
                                 <Button type="submit">开始直播</Button>
                             </Field>
