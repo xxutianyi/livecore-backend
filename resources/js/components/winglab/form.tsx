@@ -225,7 +225,7 @@ export function FormFieldUpload({ name, label, accept }: UploadProps) {
                 credits={false}
                 acceptedFileTypes={[accept ?? '*']}
                 server={{
-                    url: '/filepond',
+                    url: '/api/filepond',
                     headers: { 'X-CSRF-TOKEN': csrfToken() },
                 }}
                 labelIdle='拖拽文件到此处或 <span class="filepond--label-action"> 浏览文件 </span>'

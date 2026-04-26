@@ -42,10 +42,10 @@ export function UserCreate() {
                         <FormFieldSelect
                             name="role"
                             label="用户角色"
-                            defaultValue="director"
+                            defaultValue="room-admin"
                             options={[
                                 { label: '系统管理员', value: 'admin' },
-                                { label: '直播间导播', value: 'director' },
+                                { label: '直播管理员', value: 'room-admin' },
                             ]}
                         />
                         <Field>
@@ -86,7 +86,7 @@ export function UserUpdate({ user }: { user: User }) {
                             defaultValue={user.role}
                             options={[
                                 { label: '系统管理员', value: 'admin' },
-                                { label: '导播/直播间管理', value: 'director' },
+                                { label: '直播管理员', value: 'room-admin' },
                             ]}
                         />
                         <Field>

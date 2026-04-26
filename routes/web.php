@@ -25,43 +25,41 @@ Route::middleware('auth')->group(function () {
     Route::middleware('can:viewAdmin')->group(function () {
         Route::get('monitor/pulse', Console\Monitor\PulseController::class)->name('monitor.pulse');
 
-        Route::prefix('settings')->name('settings.')->group(function () {
-            Route::resource('users', Console\Settings\UserController::class)->except(['create', 'edit']);
-            Route::post('users/batch/group', [Console\Settings\UserBatchController::class, 'group'])->name('users.batch.group');
-            Route::resource('groups', Console\Settings\UserGroupController::class)->only(['store', 'update', 'destroy']);
-        });
-
         Route::prefix('systems')->name('systems.')->group(function () {
             Route::resource('users', Console\Systems\UserController::class)->except(['create', 'edit']);
             Route::put('/users/{user}/manageable', Console\Systems\UserManageableController::class)->name('users.manageable');
         });
     });
 
-    Route::middleware('can:viewBroadcast')->group(function () {
+    Route::middleware('can:viewRoomAdmin')->group(function () {
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::resource('rooms', Console\Settings\RoomController::class)->except(['create', 'edit']);
             Route::put('rooms/{room}/cover', Console\Settings\RoomCoverController::class)->name('rooms.cover');
             Route::put('rooms/{room}/groups', Console\Settings\RoomGroupController::class)->name('rooms.groups');
+            Route::resource('users', Console\Settings\UserController::class)->except(['create', 'edit']);
+            Route::post('users/batch/group', [Console\Settings\UserBatchController::class, 'group'])->name('users.batch.group');
+            Route::resource('groups', Console\Settings\UserGroupController::class)->only(['store', 'update', 'destroy']);
+
         });
-    });
 
-    Route::prefix('broadcast')->name('broadcast.')->middleware(['broadcast', 'can:viewBroadcast'])->group(function () {
-        Route::get('statistics/{room?}/{event?}', [Console\Broadcast\StatisticsController::class,'show'])->name('statistics');
+        Route::prefix('broadcast')->name('broadcast.')->group(function () {
+            Route::get('statistics/{room?}/{event?}', [Console\Broadcast\StatisticsController::class, 'show'])->name('statistics');
 
-        Route::get('playbacks/{room?}', [Console\Broadcast\PlaybacksController::class, 'index'])->name('playbacks');
-        Route::put('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'update'])->name('playbacks.update');
-        Route::post('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'upload'])->name('playbacks.upload');
+            Route::get('playbacks/{room?}', [Console\Broadcast\PlaybacksController::class, 'index'])->name('playbacks');
+            Route::put('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'update'])->name('playbacks.update');
+            Route::post('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'upload'])->name('playbacks.upload');
 
-        Route::get('direction/{room?}', [Console\Broadcast\DirectionController::class,'create'])->name('direction');
+            Route::get('direction/{room?}', [Console\Broadcast\DirectionController::class, 'create'])->name('direction');
 
-        Route::post('direction/{room}/events', [Console\Broadcast\DirectionController::class,'store'])->name('direction.store');
-        Route::get('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class,'show'])->name('direction.show');
-        Route::put('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class,'update'])->name('direction.update');
-        Route::delete('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class,'destroy'])->name('direction.destroy');
+            Route::post('direction/{room}/events', [Console\Broadcast\DirectionController::class, 'store'])->name('direction.store');
+            Route::get('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class, 'show'])->name('direction.show');
+            Route::put('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class, 'update'])->name('direction.update');
+            Route::delete('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class, 'destroy'])->name('direction.destroy');
 
-        Route::post('direction/{room}/messages', [Console\Broadcast\MessageController::class, 'store'])->name('message.store');
-        Route::put('direction/{room}/messages/{message}', [Console\Broadcast\MessageController::class, 'review'])->name('message.review');
+            Route::post('direction/{room}/messages', [Console\Broadcast\MessageController::class, 'store'])->name('message.store');
+            Route::put('direction/{room}/messages/{message}', [Console\Broadcast\MessageController::class, 'review'])->name('message.review');
 
+        });
     });
 
 });

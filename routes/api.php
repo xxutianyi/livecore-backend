@@ -30,6 +30,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/events/{event}/messages', [Api\Watch\MessageController::class, 'store']);
 
     Route::prefix('settings')->group(function () {
+        Route::apiResource('users', Api\Settings\UserController::class);
+        Route::apiResource('rooms', Api\Settings\RoomController::class);
+        Route::apiResource('groups', Api\Settings\UserGroupController::class);
+        Route::put('/rooms/{room}/cover', Api\Settings\RoomCoverController::class);
+    });
 
+    Route::prefix('system')->group(function () {
+        Route::apiResource('users', Api\System\UserController::class);
     });
 });

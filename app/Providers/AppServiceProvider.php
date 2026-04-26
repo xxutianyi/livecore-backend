@@ -22,16 +22,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('viewAdmin', function (User $user) {
-            return $user->role === 'admin';
-        });
-
         Gate::define('viewPulse', function (User $user) {
             return $user->role === 'admin';
         });
 
-        Gate::define('viewBroadcast', function (User $user) {
-            return $user->role === 'admin' || $user->role === 'director';
+        Gate::define('viewAdmin', function (User $user) {
+            return $user->role === 'admin';
+        });
+
+        Gate::define('viewRoomAdmin', function (User $user) {
+            return $user->role === 'admin' || $user->role === 'room-admin';
         });
 
         Gate::define('viewLiveRoom', function (User $user, LiveRoom $room) {
@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('manageLiveRoom', function (User $user, LiveRoom $room) {
-            return $user->role === 'admin' || ($user->role === 'director' && $user->manageable->contains($room));
+            return $user->role === 'admin' || ($user->role === 'room-admin' && $user->manageable->contains($room));
         });
     }
 }

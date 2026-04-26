@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Console\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Live\CreateRoomRequest;
+use App\Http\Requests\Live\UpdateRoomRequest;
 use App\Models\Live\LiveRoom;
 use App\Utils\FilepondSave;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
 
 class RoomController extends Controller
 {
@@ -38,14 +39,8 @@ class RoomController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(CreateRoomRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:255'],
-            'cover' => ['required', Rule::filepond(['mimetypes:image/*'])],
-        ]);
-
         $room = LiveRoom::create($request->only(['name', 'description']));
         $request->user()->manageable()->attach($room);
 
@@ -55,14 +50,9 @@ class RoomController extends Controller
         return back();
     }
 
-    public function update(Request $request, LiveRoom $room)
+    public function update(UpdateRoomRequest $request, LiveRoom $room)
     {
         Gate::authorize('manageLiveRoom', $room);
-
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:255'],
-        ]);
 
         $room->update($request->only(['name', 'description']));
 

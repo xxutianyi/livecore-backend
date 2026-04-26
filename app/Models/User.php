@@ -134,6 +134,13 @@ class User extends Authenticatable
         return $this->belongsToMany(LiveRoom::class, 'live_room_managers');
     }
 
+    public function scopeAdmins(Builder $builder): Builder
+    {
+        return $builder
+            ->where('role', 'admin')
+            ->orWhere('role', 'room-admin');
+    }
+
     public function scopeAudiences(Builder $builder): Builder
     {
         return $builder->where('role', 'audience');

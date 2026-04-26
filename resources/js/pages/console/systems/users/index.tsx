@@ -28,13 +28,13 @@ export default function Users({ data }: { data: PaginateData<User> }) {
             title: '用户角色',
             tableRowRender: (data) => (
                 <>
-                    {data.role === 'admin' && '管理员'}
-                    {data.role === 'director' && '导播'}
+                    {data.role === 'admin' && '系统管理员'}
+                    {data.role === 'room-admin' && '直播管理员'}
                 </>
             ),
             filter: [
-                { label: '管理', value: 'admin' },
-                { label: '导播', value: 'director' },
+                { label: '系统管理', value: 'admin' },
+                { label: '直播管理', value: 'room-admin' },
             ],
         },
         {

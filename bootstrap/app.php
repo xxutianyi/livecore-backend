@@ -1,6 +1,5 @@
 <?php
 
-use App\Exceptions\RedirectGuestException;
 use App\Exceptions\RedirectUserException;
 use App\Http\Middleware\BroadcastRoomCache;
 use App\Http\Middleware\HandleInertiaRequests;

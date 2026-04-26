@@ -39,7 +39,7 @@ return [
     |
     */
     'middleware' => [
-        'web', 'auth',
+        'web', 'auth:sanctum',
     ],
 
     /*
@@ -110,6 +110,6 @@ return [
     |
     */
     'server' => [
-        'url' => env('FILEPOND_URL', '/filepond'),
+        'url' => env('FILEPOND_URL', '/api/filepond'),
     ],
 ];

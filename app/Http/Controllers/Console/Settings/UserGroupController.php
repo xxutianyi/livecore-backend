@@ -3,30 +3,21 @@
 namespace App\Http\Controllers\Console\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Settings\UserGroupRequest;
 use App\Models\UserGroup;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class UserGroupController extends Controller
 {
-    public function store(Request $request)
+    public function store(UserGroupRequest $request)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', Rule::unique('user_groups')],
-        ]);
-
-        UserGroup::create($validated);
+        UserGroup::create($request->validated());
 
         return back();
     }
 
-    public function update(Request $request, UserGroup $group)
+    public function update(UserGroupRequest $request, UserGroup $group)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', Rule::unique('user_groups')->ignore($group)],
-        ]);
-
-        $group->update($validated);
+        $group->update($request->validated());
 
         return back();
     }

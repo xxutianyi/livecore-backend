@@ -20,7 +20,7 @@ class LoginController extends Controller
 
         $defaultRoute = route('rooms.index');
 
-        if ($request->user()->role === 'admin' || $request->user()->role === 'director') {
+        if ($request->user()->can('viewRoomAdmin')) {
             $defaultRoute = route('broadcast.direction');
         }
 

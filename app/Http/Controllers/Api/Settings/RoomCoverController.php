@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Console\Settings;
+namespace App\Http\Controllers\Api\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Live\UpdateCoverRequest;
 use App\Models\Live\LiveRoom;
+use App\Response\ApiResponse;
 use App\Utils\FilepondSave;
 use Illuminate\Support\Facades\Gate;
 
@@ -23,6 +24,6 @@ class RoomCoverController extends Controller
             'cover' => FilepondSave::save($request->cover, "cover/$room->id").$noCacheQuery
         ]);
 
-        return back();
+        return ApiResponse::success();
     }
 }
