@@ -16,7 +16,9 @@ export function DescriptionItem({ label, ellipsis, className, children }: Descri
 
       {ellipsis ? (
         <Tooltip>
-          <TooltipTrigger className="overflow-hidden text-ellipsis whitespace-nowrap">{children ?? '-'}</TooltipTrigger>
+          <TooltipTrigger className="overflow-hidden text-ellipsis whitespace-nowrap">
+            {children ?? '-'}
+          </TooltipTrigger>
           <TooltipContent className="break-all">{children ?? '-'}</TooltipContent>
         </Tooltip>
       ) : (
