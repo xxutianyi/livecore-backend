@@ -1,83 +1,83 @@
 {
-    "$schema": "https://getcomposer.org/schema.json",
-    "name": "winglab/livecore",
-    "type": "project",
-    "description": "A live broadcast system using laravel",
-    "keywords": [
-        "live",
-        "broadcast",
-        "laravel"
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "winglab/livecore",
+  "type": "project",
+  "description": "A live broadcast system using laravel",
+  "keywords": [
+    "live",
+    "broadcast",
+    "laravel"
+  ],
+  "license": "MIT",
+  "require": {
+    "php": "^8.3",
+    "ext-mbstring": "*",
+    "inertiajs/inertia-laravel": "^3.0",
+    "laravel/framework": "^13.0",
+    "laravel/octane": "^2.17",
+    "laravel/pulse": "^1.7",
+    "laravel/reverb": "^1.0",
+    "laravel/sanctum": "^4.0",
+    "laravel/tinker": "^3.0",
+    "rahulhaque/laravel-filepond": "^13.0",
+    "tightenco/ziggy": "^2.6"
+  },
+  "require-dev": {
+    "bluemmb/faker-picsum-photos-provider": "^2.0",
+    "fakerphp/faker": "^1.23",
+    "laravel/pail": "^1.2.5",
+    "laravel/pint": "^1.27",
+    "mockery/mockery": "^1.6",
+    "nunomaduro/collision": "^8.6",
+    "pestphp/pest": "^4.5",
+    "pestphp/pest-plugin-laravel": "^4.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "Database\\Factories\\": "database/factories/",
+      "Database\\Seeders\\": "database/seeders/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "dev": [
+      "Composer\\Config::disableProcessTimeout",
+      "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#9ae600,#93c5fd\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan schedule:work\" \"npm run dev\" \"php artisan reverb:start --debug\" \"php artisan pulse:check\" --names=server,queue,schedule,vite,reverb,pulse --kill-others"
     ],
-    "license": "MIT",
-    "require": {
-        "php": "^8.3",
-        "ext-mbstring": "*",
-        "inertiajs/inertia-laravel": "^3.0",
-        "laravel/framework": "^13.0",
-        "laravel/octane": "^2.17",
-        "laravel/pulse": "^1.7",
-        "laravel/reverb": "^1.0",
-        "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^3.0",
-        "rahulhaque/laravel-filepond": "^13.0",
-        "tightenco/ziggy": "^2.6"
-    },
-    "require-dev": {
-        "bluemmb/faker-picsum-photos-provider": "^2.0",
-        "fakerphp/faker": "^1.23",
-        "laravel/pail": "^1.2.5",
-        "laravel/pint": "^1.27",
-        "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.6",
-        "pestphp/pest": "^4.5",
-        "pestphp/pest-plugin-laravel": "^4.1"
-    },
-    "autoload": {
-        "psr-4": {
-            "App\\": "app/",
-            "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/"
-        }
-    },
-    "scripts": {
-        "dev": [
-            "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#9ae600,#93c5fd\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" \"php artisan reverb:start --debug\" \"php artisan pulse:check\" --names=server,queue,logs,vite,reverb,pulse --kill-others"
-        ],
-        "test": [
-            "@php artisan config:clear --ansi",
-            "@php artisan test"
-        ],
-        "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
-        ],
-        "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
-        ],
-        "pre-package-uninstall": [
-            "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
-        ]
-    },
-    "extra": {
-        "laravel": {
-            "dont-discover": []
-        }
-    },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "php-http/discovery": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+    "test": [
+      "@php artisan config:clear --ansi",
+      "@php artisan test"
+    ],
+    "post-autoload-dump": [
+      "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+      "@php artisan package:discover --ansi"
+    ],
+    "post-update-cmd": [
+      "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+    ],
+    "pre-package-uninstall": [
+      "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "dont-discover": []
+    }
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "php-http/discovery": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
