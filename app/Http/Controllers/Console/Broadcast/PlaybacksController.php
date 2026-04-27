@@ -46,9 +46,10 @@ class PlaybacksController extends Controller
             'file' => ['required', Rule::filepond(['mimetypes:video/mp4'])],
         ]);
 
-        $event->update([
-            'playback_url' => FilepondSave::save($request->file, "playback/$room->id/$event->id")
-        ]);
+        $noCacheQuery = "?update=" . now()->timestamp;
+        $playbackUrl = FilepondSave::save($request->file, "playback/$room->id/$event->id") . $noCacheQuery;
+        
+        $event->update(['playback_url' => $playbackUrl]);
 
         return back();
     }

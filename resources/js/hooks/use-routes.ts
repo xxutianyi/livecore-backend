@@ -3,81 +3,81 @@ import { SharedProps } from '@/types';
 import { usePage } from '@inertiajs/react';
 
 export function useRoutes(routes: RouteItemGroup[]): RouteItemGroup[] {
-    const { auth } = usePage<SharedProps>().props;
-    const userRole = auth.user?.role ?? '';
+  const { auth } = usePage<SharedProps>().props;
+  const userRole = auth.user?.role ?? '';
 
-    const pathname = () => {
-        const href = window.location.href;
+  const pathname = () => {
+    const href = window.location.href;
 
-        if (href.indexOf('?') !== -1) {
-            return href.slice(0, href.indexOf('?'));
-        }
-
-        return href;
-    };
-
-    function isActive(href?: string) {
-        return (href && pathname() === href) || pathname().startsWith(href + '/');
+    if (href.indexOf('?') !== -1) {
+      return href.slice(0, href.indexOf('?'));
     }
 
-    return routes
-        .map((group) => ({
-            ...group,
-            items: group.items
-                ?.map((item) => {
-                    if (item.roles && !item.roles.includes(userRole)) {
-                        return undefined;
-                    }
+    return href;
+  };
 
-                    if (item.children && item.children.length > 0) {
-                        let hasActiveChild = false;
+  function isActive(href?: string) {
+    return (href && pathname() === href) || pathname().startsWith(href + '/');
+  }
 
-                        const children = item.children
-                            .map((child) => {
-                                const childActive = isActive(child.href);
+  return routes
+    .map((group) => ({
+      ...group,
+      items: group.items
+        ?.map((item) => {
+          if (item.roles && !item.roles.includes(userRole)) {
+            return undefined;
+          }
 
-                                if (childActive) {
-                                    hasActiveChild = true;
-                                }
+          if (item.children && item.children.length > 0) {
+            let hasActiveChild = false;
 
-                                if (child.roles && !child.roles.includes(userRole)) {
-                                    return undefined;
-                                }
+            const children = item.children
+              .map((child) => {
+                const childActive = isActive(child.href);
 
-                                return { ...child, isActive: childActive };
-                            })
-                            .filter((child) => !!child);
+                if (childActive) {
+                  hasActiveChild = true;
+                }
 
-                        return { ...item, children, isActive: hasActiveChild };
-                    }
+                if (child.roles && !child.roles.includes(userRole)) {
+                  return undefined;
+                }
 
-                    return { ...item, isActive: isActive(item.href) };
-                })
-                .filter((item) => !!item),
-        }))
-        .filter((group) => group.items && group.items.length > 0);
+                return { ...child, isActive: childActive };
+              })
+              .filter((child) => !!child);
+
+            return { ...item, children, isActive: hasActiveChild };
+          }
+
+          return { ...item, isActive: isActive(item.href) };
+        })
+        .filter((item) => !!item),
+    }))
+    .filter((group) => group.items && group.items.length > 0);
 }
 
 export function useRouteBreadcrumbs(routes: RouteItemGroup[]) {
-    const items = useRoutes(routes);
-    const breadcrumb: { link?: string; label: string }[] = [];
+  const items = useRoutes(routes);
+  const breadcrumb: { link?: string; label: string }[] = [];
 
-    items.forEach((group) => {
-        group.items?.map((item) => {
-            if (item.isActive) {
-                breadcrumb.push({ label: group.title });
-                breadcrumb.push({ label: item.title, link: item.href });
-            }
+  items.forEach((group) => {
+    group.items?.map((item) => {
+      if (item.isActive) {
+        breadcrumb.push({ label: group.title });
+        breadcrumb.push({ label: item.title, link: item.href });
+      }
 
-            if (item.children && item.children.length > 0) {
-                item.children.forEach((child) => {
-                    if (child.isActive) {
-                        breadcrumb.push({ label: child.title, link: item.href });
-                    }
-                });
-            }
+      if (item.children && item.children.length > 0) {
+        item.children.forEach((child) => {
+          if (child.isActive) {
+            breadcrumb.push({ label: child.title, link: item.href });
+          }
         });
+      }
     });
+  });
 
-    return breadcrumb;
+  return breadcrumb;
 }

@@ -17,15 +17,13 @@ class DirectionController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function create(?LiveRoom $room = null)
+    public function create(LiveRoom $room)
     {
-        if ($room){
-            Gate::authorize('manageLiveRoom', $room);
-        }
+        Gate::authorize('manageLiveRoom', $room);
 
         return inertia('console/broadcast/direction/create', [
             'room' => $room,
-            'events' => $room?->events,
+            'events' => $room->events,
         ]);
     }
 

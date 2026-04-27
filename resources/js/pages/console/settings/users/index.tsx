@@ -1,7 +1,7 @@
 import { PageContainer } from '@/components/container';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AdminLayout } from '@/layouts/admin-layout';
+import { ConsoleLayout } from '@/layouts/console-layout';
 import { formatDatetime } from '@/lib/utils';
 import { User } from '@/services/model';
 import { SharedProps } from '@/types';
@@ -9,81 +9,91 @@ import { Link, usePage } from '@inertiajs/react';
 import { ColumnsDef, type PaginateData, RouterTable } from '@winglab/inertia-table';
 import { useState } from 'react';
 import { UserBatchGroup, UserCreate } from './partial/forms';
-import { GroupIndex } from './partial/group';
+import { GroupIndex } from './partial/groups';
 
 export default function Users({ data }: { data: PaginateData<User> }) {
-    const [select, setSelect] = useState<string[]>();
-    const { options } = usePage<SharedProps>().props;
+  const [select, setSelect] = useState<string[]>();
+  const { options } = usePage<SharedProps>().props;
 
-    const columns = ColumnsDef<User>([
-        {
-            dataKey: 'name',
-            title: '名字',
-            sortable: true,
-        },
-        {
-            dataKey: 'phone',
-            title: '手机号',
-            sortable: true,
-        },
-        {
-            dataKey: 'email',
-            title: '电子邮箱',
-            sortable: true,
-        },
-        {
-            dataKey: 'online',
-            title: '在线状态',
-            tableRowRender: (data) => (
-                <Badge variant={data.online ? 'default' : 'secondary'}>{data.online ? '在线' : '离线'}</Badge>
-            ),
-            filters: [
-                { label: '在线', value: 'true' },
-                { label: '离线', value: 'false' },
-            ],
-        },
-        {
-            dataKey: 'leaving_at',
-            title: '上次在线时间',
-            tableRowRender: (data) => formatDatetime(data.leaving_at),
-        },
-        {
-            index: 'groups',
-            title: '分组',
-            filters: options.groups.map((g) => ({ label: g.name, value: g.id })),
-            tableRowRender: (data) => (
-                <>
-                    {data.groups?.map((group, index) => (
-                        <span key={index}>
-                            {group.name}
-                            {index + 1 !== data.groups?.length && <>&nbsp;,&nbsp;</>}
-                        </span>
-                    ))}
-                </>
-            ),
-        },
-        {
-            index: 'actions',
-            tableRowRender: (data) => {
-                return (
-                    <Button asChild variant="secondary">
-                        <Link href={route('settings.users.show', data.id)}>详情</Link>
-                    </Button>
-                );
-            },
-        },
-    ]);
+  const columns = ColumnsDef<User>([
+    {
+      dataKey: 'name',
+      title: '名字',
+      sortable: true,
+    },
+    {
+      dataKey: 'phone',
+      title: '手机号',
+      sortable: true,
+    },
+    {
+      dataKey: 'email',
+      title: '电子邮箱',
+      sortable: true,
+    },
+    {
+      dataKey: 'online',
+      title: '在线状态',
+      tableRowRender: (data) => (
+        <Badge variant={data.online ? 'default' : 'secondary'}>
+          {data.online ? '在线' : '离线'}
+        </Badge>
+      ),
+      filters: [
+        { label: '在线', value: 'true' },
+        { label: '离线', value: 'false' },
+      ],
+    },
+    {
+      dataKey: 'leaving_at',
+      title: '上次在线时间',
+      tableRowRender: (data) => formatDatetime(data.leaving_at),
+    },
+    {
+      index: 'groups',
+      title: '分组',
+      filters: options.groups.map((g) => ({ label: g.name, value: g.id })),
+      tableRowRender: (data) => (
+        <>
+          {data.groups?.map((group, index) => (
+            <span key={index}>
+              {group.name}
+              {index + 1 !== data.groups?.length && <>&nbsp;,&nbsp;</>}
+            </span>
+          ))}
+        </>
+      ),
+    },
+    {
+      index: 'actions',
+      tableRowRender: (data) => {
+        return (
+          <Button asChild variant="secondary">
+            <Link href={route('settings.users.show', data.id)}>详情</Link>
+          </Button>
+        );
+      },
+    },
+  ]);
 
-    const actions =
-        select && select?.length > 0
-            ? [<UserBatchGroup ids={select} key="batch" />, <UserCreate key="create" />, <GroupIndex key="group" />]
-            : [<UserCreate key="create" />, <GroupIndex key="group" />];
+  const actions =
+    select && select?.length > 0
+      ? [
+          <UserBatchGroup ids={select} key="batch" />,
+          <UserCreate key="create" />,
+          <GroupIndex key="group" />,
+        ]
+      : [<UserCreate key="create" />, <GroupIndex key="group" />];
 
-    return (
-        <AdminLayout>
-            <PageContainer title="观众列表" actions={actions}>
-                <RouterTable columns={columns} data={data} onSelectChange={setSelect} />
-            </PageContainer>
-        </AdminLayout>
-    );
+  return (
+    <ConsoleLayout>
+      <PageContainer
+        title="观众列表"
+        breadcrumb={[{ label: '观众列表', link: route('settings.users.index') }]}
+        actions={actions}
+      >
+        <RouterTable columns={columns} data={data} onSelectChange={setSelect} />
+      </PageContainer>
+    </ConsoleLayout>
+  );
 }

@@ -42,16 +42,21 @@ Route::middleware('auth')->group(function () {
 
         });
 
-        Route::prefix('broadcast')->name('broadcast.')->group(function () {
-            Route::get('statistics/{room?}/{event?}', [Console\Broadcast\StatisticsController::class, 'show'])->name('statistics');
+        Route::prefix('broadcast')->name('broadcast.')->middleware('broadcast')->group(function () {
+            Route::get('direction',Console\Broadcast\WelcomeController::class)->name('direction');
+            Route::get('playbacks',Console\Broadcast\WelcomeController::class)->name('playbacks');
+            Route::get('statistics',Console\Broadcast\WelcomeController::class)->name('statistics');
 
-            Route::get('playbacks/{room?}', [Console\Broadcast\PlaybacksController::class, 'index'])->name('playbacks');
+            Route::get('statistics/{room}', [Console\Broadcast\StatisticsController::class, 'index'])->name('statistics.index');
+            Route::get('statistics/{room}/{event}', [Console\Broadcast\StatisticsController::class, 'show'])->name('statistics.show');
+
+            Route::get('playbacks/{room}', [Console\Broadcast\PlaybacksController::class, 'index'])->name('playbacks.index');
             Route::put('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'update'])->name('playbacks.update');
             Route::post('playbacks/{room}/{event}', [Console\Broadcast\PlaybacksController::class, 'upload'])->name('playbacks.upload');
 
-            Route::get('direction/{room?}', [Console\Broadcast\DirectionController::class, 'create'])->name('direction');
-
+            Route::get('direction/{room}', [Console\Broadcast\DirectionController::class, 'create'])->name('direction.create');
             Route::post('direction/{room}/events', [Console\Broadcast\DirectionController::class, 'store'])->name('direction.store');
+
             Route::get('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class, 'show'])->name('direction.show');
             Route::put('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class, 'update'])->name('direction.update');
             Route::delete('direction/{room}/events/{event}', [Console\Broadcast\DirectionController::class, 'destroy'])->name('direction.destroy');

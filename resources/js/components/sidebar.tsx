@@ -9,8 +9,8 @@ import {
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
 import { RouteItemGroup } from '@/constant/routes';
+import { Link } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
-import Link from 'next/link';
 
 export function SidebarMenu({ menu }: { menu: RouteItemGroup[] }) {
   return menu.map((group, index) => (

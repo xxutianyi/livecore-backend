@@ -27,7 +27,7 @@ class MessageController extends Controller
         return back();
     }
 
-    public function review(Request $request, LiveRoom $room, LiveMessage $message)
+    public function review(Request $request, LiveMessage $message)
     {
         $message->review($request->user(), now());
 

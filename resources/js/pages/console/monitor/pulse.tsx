@@ -1,9 +1,9 @@
-import { AdminLayout } from '@/layouts/admin-layout';
+import { ConsoleLayout } from '@/layouts/console-layout';
 
 export default function MonitorPage() {
-    return (
-        <AdminLayout title="Pulse">
-            <iframe src={'/pulse'} className="h-[calc(100vh-64px)] w-full" />
-        </AdminLayout>
-    );
+  return (
+    <ConsoleLayout>
+      <iframe src={'/pulse'} className="h-[calc(100vh-64px)] w-full" />
+    </ConsoleLayout>
+  );
 }

@@ -21,9 +21,9 @@ dayjs.tz.guess();
 configureEcho({ broadcaster: 'reverb' });
 
 createInertiaApp({
-    title: (title) => (title ? `${title} | ${appName}` : appName),
-    pages: { path: './pages', extension: '.tsx' },
-    progress: { color: '#9ae600' },
+  title: (title) => (title ? `${title} | ${appName}` : appName),
+  pages: { path: './pages', extension: '.tsx' },
+  progress: { color: '#9ae600' },
 });
 
 initializeTheme();

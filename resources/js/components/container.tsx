@@ -3,6 +3,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
+import { Head } from '@inertiajs/react';
 import type { PropsWithChildren, ReactNode } from 'react';
 
 export type PageContainerProps = PropsWithChildren<{
@@ -26,7 +27,10 @@ export function PageContainer({ breadcrumb = [], children, ...props }: PageConta
       <header className="flex h-16 shrink-0 items-center gap-2 border-b">
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 data-vertical:h-4 data-vertical:self-auto" />
+          <Separator
+            orientation="vertical"
+            className="mr-2 data-vertical:h-4 data-vertical:self-auto"
+          />
           <Breadcrumb items={breadcrumb} />
         </div>
       </header>
@@ -40,7 +44,15 @@ export function PageContainer({ breadcrumb = [], children, ...props }: PageConta
 export function PageContent({ title, subTitle, actions, children, className }: PageContentProps) {
   return (
     <>
-      <div className={cn(className, 'mx-auto flex h-full min-h-full max-w-7xl flex-col gap-6 px-4 py-6')}>
+      <Head>
+        <title>{title}</title>
+      </Head>
+      <div
+        className={cn(
+          className,
+          'mx-auto flex h-full min-h-full max-w-7xl flex-col gap-6 px-4 py-6',
+        )}
+      >
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">{title}</h1>

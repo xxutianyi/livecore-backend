@@ -5,14 +5,14 @@ import { PasswordForm } from './partial/password';
 import { ProfileForm } from './partial/profile';
 
 export default function Profile() {
-    return (
-        <WebsiteLayout>
-            <PageContainer title="账号设置">
-                <Separator />
-                <ProfileForm />
-                <Separator />
-                <PasswordForm />
-            </PageContainer>
-        </WebsiteLayout>
-    );
+  return (
+    <WebsiteLayout>
+      <PageContainer title="账号设置">
+        <Separator />
+        <ProfileForm />
+        <Separator />
+        <PasswordForm />
+      </PageContainer>
+    </WebsiteLayout>
+  );
 }
