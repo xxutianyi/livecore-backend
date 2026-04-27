@@ -1,11 +1,11 @@
+import { Section } from '@/components/container';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Section } from '@/components/winglab/layout';
 import { formatDatetime } from '@/lib/utils';
 import { LiveMessage } from '@/services/model';
-import { defineColumns, SimpleTable } from '@winglab/inertia-table';
+import { ColumnsDef, Table } from '@winglab/inertia-table';
 
 export function MessageTable({ messages }: { messages: LiveMessage[] }) {
-    const messagesColumns = defineColumns<LiveMessage>([
+    const messagesColumns = ColumnsDef<LiveMessage>([
         {
             title: '直播间',
             dataKey: ['room', 'name'],
@@ -40,7 +40,7 @@ export function MessageTable({ messages }: { messages: LiveMessage[] }) {
 
     return (
         <Section title="评论记录">
-            <SimpleTable data={messages} columns={messagesColumns} />
+            <Table data={messages} columns={messagesColumns} />
         </Section>
     );
 }

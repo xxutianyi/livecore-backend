@@ -36,10 +36,13 @@ Route::name('api.')->group(function () {
             Route::get('/rooms/options', [Api\Settings\RoomController::class, 'options']);
             Route::apiResource('rooms', Api\Settings\RoomController::class);
             Route::put('/rooms/{room}/cover', Api\Settings\RoomCoverController::class);
+            Route::put('/rooms/{room}/group', Api\Settings\RoomGroupController::class);
         });
 
-        Route::prefix('system')->group(function () {
+        Route::prefix('systems')->group(function () {
             Route::apiResource('users', Api\System\UserController::class);
+            Route::put('/users/{user}/manageable', Api\System\UserManageableController::class);
+
         });
     });
 });

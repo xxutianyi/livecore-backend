@@ -3,8 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardAction, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { LiveEvent, LiveRoom } from '@/services/model';
-import { Link, usePage } from '@inertiajs/react';
+import { LiveEvent, LiveMessage, LiveRoom } from '@/services/model';
+import { Link } from '@inertiajs/react';
 import { Play } from 'lucide-react';
 
 export function RoomBadge({ room }: { room: LiveRoom }) {
@@ -34,24 +34,23 @@ export function RoomItemCard({ room }: { room: LiveRoom }) {
     );
 }
 
-export function EventItem({ event }: { event: LiveEvent }) {
-    const { event: currentPlay } = usePage<{ event: LiveEvent }>().props;
-    const isCurrentPlay = currentPlay.id === event.id;
+export function EventItem({ event, current }: { event: LiveEvent; current: LiveEvent }) {
+    const isCurrentPlay = event.id === current.id;
 
     return (
         <Link className="py-2" href={`/rooms/${event.room_id}/events/${event.id}`} preserveScroll>
             <div className={cn('flex h-20 space-x-4 rounded-lg p-2', isCurrentPlay && 'bg-muted')}>
-                <img alt="cover" src={event.cover} className="aspect-video max-h-16 rounded bg-gray-500" />
+                <div className="relative aspect-video max-h-16 rounded bg-gray-500">
+                    <img alt="cover" src={event.cover} className="h-full w-full" />
+                    {isCurrentPlay && (
+                        <Badge className="absolute top-1/2 right-1/2 bottom-1/2 left-1/2 -translate-1/2">
+                            <Play />
+                            正在播放
+                        </Badge>
+                    )}
+                </div>
                 <div className="flex max-h-16 flex-col justify-between">
-                    <p className="flex items-center font-heading text-sm font-bold">
-                        {event.name}
-                        {isCurrentPlay && (
-                            <Badge className="scale-75">
-                                <Play />
-                                正在播放
-                            </Badge>
-                        )}
-                    </p>
+                    <p className="flex items-center font-heading text-sm font-bold">{event.name}</p>
                     <p className="overflow-hidden text-sm text-ellipsis">{event.description}</p>
                 </div>
             </div>
@@ -79,6 +78,15 @@ export function EventItemCard({ event }: { event: LiveEvent }) {
     );
 }
 
+export function MessageItem({ message }: { message: LiveMessage }) {
+    return (
+        <div className="py-2">
+            <span className="whitespace-nowrap text-cyan-700 dark:text-cyan-500">{message?.sender?.name}：&nbsp;</span>
+            <span className="w-full break-all">{message?.content}</span>
+        </div>
+    );
+}
+
 export function RoomCardList({ rooms }: { rooms: LiveRoom[] }) {
     return rooms.map((room) => <RoomItemCard key={room.id} room={room} />);
 }
@@ -87,6 +95,10 @@ export function EventCardList({ events }: { events: LiveEvent[] }) {
     return events.map((event) => <EventItemCard key={event.id} event={event} />);
 }
 
-export function EventItemList({ events }: { events: LiveEvent[] }) {
-    return events.map((event) => <EventItem key={event.id} event={event} />);
+export function EventItemList({ current, events }: { current: LiveEvent; events: LiveEvent[] }) {
+    return events.map((event) => <EventItem key={event.id} event={event} current={current} />);
+}
+
+export function MessageList({ messages }: { messages: LiveMessage[] }) {
+    return messages.map((message, index) => <MessageItem message={message} key={index} />);
 }

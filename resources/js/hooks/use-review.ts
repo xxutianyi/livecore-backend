@@ -1,13 +1,13 @@
-import { LiveMessage, User } from '@/services/model';
+import { User } from '@/services/model';
+import { router } from '@inertiajs/react';
 import { useEchoPresence } from '@laravel/echo-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-export function useReview(eventId: string, initMessages: LiveMessage[] = []) {
+export function useReview(eventId: string) {
     const channelId = `live.message.${eventId}.review`;
 
     const [users, setUsers] = useState<User[]>([]);
-    const [messages, setMessages] = useState<LiveMessage[]>(initMessages);
 
     const { channel, leave } = useEchoPresence(channelId);
 
@@ -29,17 +29,13 @@ export function useReview(eventId: string, initMessages: LiveMessage[] = []) {
         toast.error('审核功能连接失败');
     }
 
-    function handleMessageSubmitted({ message }: { message: LiveMessage }) {
+    function handleMessageSubmitted() {
         toast.info('新评论待审核');
-        setMessages((prev) => {
-            return [message, ...prev];
-        });
+        router.reload({ only: ['messages'] });
     }
 
-    function handleMessagePublished({ message }: { message: LiveMessage }) {
-        setMessages((prev) => {
-            return [message, ...prev.filter((m) => m.id !== message.id)];
-        });
+    function handleMessagePublished() {
+        router.reload({ only: ['messages'] });
     }
 
     useEffect(() => {
@@ -54,5 +50,5 @@ export function useReview(eventId: string, initMessages: LiveMessage[] = []) {
         return () => leave();
     }, []);
 
-    return { users, messages };
+    return { users };
 }

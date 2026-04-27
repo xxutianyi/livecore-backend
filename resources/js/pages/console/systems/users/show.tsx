@@ -1,5 +1,5 @@
+import { PageContainer } from '@/components/container';
 import { Separator } from '@/components/ui/separator';
-import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { User } from '@/services/model';
 import { UserDetail } from './partial/detail';

@@ -1,10 +1,10 @@
+import { PageContainer } from '@/components/container';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
-import { RoomDetail } from '@/pages/console/settings/rooms/partial/detail';
 import { LiveRoom, UserGroup } from '@/services/model';
 import { Link } from '@inertiajs/react';
+import { RoomDetail } from './partial/detail';
 import { CoverUpdate, RoomUpdate } from './partial/forms';
 import { GroupIndex, GroupUpdate } from './partial/group';
 

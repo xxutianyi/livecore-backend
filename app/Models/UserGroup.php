@@ -21,6 +21,10 @@ class UserGroup extends Model
         'rooms'
     ];
 
+    protected $withCount = [
+        'users'
+    ];
+
     protected $fillable = [
         'name',
         'parent_id',

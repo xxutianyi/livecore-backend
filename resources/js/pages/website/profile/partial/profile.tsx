@@ -1,7 +1,7 @@
+import { TextField } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { TextField } from '@/components/winglab/form';
 import { SharedProps } from '@/types';
 import { Form, usePage } from '@inertiajs/react';
 import { toast } from 'sonner';

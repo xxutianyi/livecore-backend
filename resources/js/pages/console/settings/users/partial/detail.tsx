@@ -1,6 +1,6 @@
+import { Section } from '@/components/container';
+import { Description, DescriptionItem } from '@/components/description';
 import { Badge } from '@/components/ui/badge';
-import { Description, DescriptionItem } from '@/components/winglab/description';
-import { Section } from '@/components/winglab/layout';
 import { formatDate, formatDatetime } from '@/lib/utils';
 import { User } from '@/services/model';
 

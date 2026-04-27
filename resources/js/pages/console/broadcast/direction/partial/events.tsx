@@ -1,14 +1,14 @@
+import { Section } from '@/components/container';
+import { TextareaField, TextField, UploadField } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from '@/components/ui/dialog';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { TextareaField, TextField, UploadField } from '@/components/winglab/form';
-import { Section } from '@/components/winglab/layout';
 import { formatDatetime } from '@/lib/utils';
 import { LiveEvent, LiveRoom } from '@/services/model';
 import { Form, router } from '@inertiajs/react';
-import { defineColumns, SimpleTable } from '@winglab/inertia-table';
+import { ColumnsDef, Table } from '@winglab/inertia-table';
 import dayjs from 'dayjs';
 import { TvMinimalPlay } from 'lucide-react';
 import { useState } from 'react';
@@ -43,7 +43,7 @@ export function EventCreate({ room }: { room: LiveRoom }) {
                         }}
                     >
                         <FieldGroup>
-                            <UploadField name="cover" label="封面（留空将使用直播间封面）" accept="image/*" />
+                            <UploadField name="cover" label="封面（留空将使用直播间封面）" accept={['image/*']} />
                             <TextField name="name" label="名称" defaultValue={defaultName} />
                             <TextareaField name="desctiption" label="简介" defaultValue={room.description} />
                             <Field>
@@ -66,7 +66,7 @@ export function EventHistory({ events }: { events: LiveEvent[] }) {
         router.delete(route('broadcast.direction.destroy', [data.room_id, data.id]));
     }
 
-    const columns = defineColumns<LiveEvent>([
+    const columns = ColumnsDef<LiveEvent>([
         {
             title: '场次名称',
             dataKey: 'name',
@@ -114,7 +114,7 @@ export function EventHistory({ events }: { events: LiveEvent[] }) {
 
     return (
         <Section title="历史场次">
-            <SimpleTable columns={columns} data={events} />
+            <Table columns={columns} data={events} />
         </Section>
     );
 }

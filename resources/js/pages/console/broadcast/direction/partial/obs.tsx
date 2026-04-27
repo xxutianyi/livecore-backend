@@ -1,9 +1,9 @@
+import { Section, SectionTitle } from '@/components/container';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Section, SectionTitle } from '@/components/winglab/layout';
 import { useOBS } from '@/hooks/use-obs';
 import { LiveEvent } from '@/services/model';
 import dayjs from 'dayjs';

@@ -1,10 +1,10 @@
-import { Section } from '@/components/winglab/layout';
+import { Section } from '@/components/container';
 import { diffDatetime, formatDatetime } from '@/lib/utils';
 import { UserOnline } from '@/services/model';
-import { defineColumns, SimpleTable } from '@winglab/inertia-table';
+import { ColumnsDef, Table } from '@winglab/inertia-table';
 
 export function Online({ onlines }: { onlines: UserOnline[] }) {
-    const onlineColumns = defineColumns<UserOnline>([
+    const onlineColumns = ColumnsDef<UserOnline>([
         {
             title: '直播间',
             dataKey: ['room', 'name'],
@@ -36,7 +36,7 @@ export function Online({ onlines }: { onlines: UserOnline[] }) {
 
     return (
         <Section title="观看记录">
-            <SimpleTable data={onlines} columns={onlineColumns} />
+            <Table data={onlines} columns={onlineColumns} />
         </Section>
     );
 }

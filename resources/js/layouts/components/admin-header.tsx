@@ -1,7 +1,6 @@
+import { Breadcrumb } from '@/components/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-
-import { Breadcrumb } from '@/components/winglab/breadcrumb';
 import { RouteItemGroup } from '@/constant/routes';
 import { useRouteBreadcrumbs } from '@/hooks/use-routes';
 import styles from '../admin.module.css';

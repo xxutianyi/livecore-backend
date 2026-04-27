@@ -1,3 +1,4 @@
+import { MutiSelectField, TextField } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -8,7 +9,6 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { MutiSelectField, TextField } from '@/components/winglab/form';
 import { User } from '@/services/model';
 import { SharedProps } from '@/types';
 import { Form, usePage } from '@inertiajs/react';

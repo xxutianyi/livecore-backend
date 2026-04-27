@@ -1,29 +1,29 @@
+import { Section } from '@/components/container';
+import { VideoPlayer } from '@/components/player';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { LivePlayer } from '@/components/watch/player';
 import FloatingWindow from '@/components/window';
-import { Section } from '@/components/winglab/layout';
 import { formatDatetime } from '@/lib/utils';
 import { LiveEvent, LiveMessage } from '@/services/model';
 import { router } from '@inertiajs/react';
-import { defineColumns, SimpleTable } from '@winglab/inertia-table';
+import { ColumnsDef, Table } from '@winglab/inertia-table';
 import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function StreamingPlay({ event }: { event: LiveEvent }) {
     return (
         <FloatingWindow title="直播监看">
-            <LivePlayer src={event.pull_url} />
+            <VideoPlayer src={event.pull_url} live />
         </FloatingWindow>
     );
 }
 
-export function StreamingMessage({ messages }: { messages: LiveMessage[] }) {
+export function MessageReview({ messages }: { messages: LiveMessage[] }) {
     function handleReview(message: LiveMessage) {
         router.put(route('broadcast.message.review', [message.room_id, message.id]));
     }
 
-    const columns = defineColumns<LiveMessage>([
+    const columns = ColumnsDef<LiveMessage>([
         {
             title: '发送人',
             dataKey: ['sender', 'name'],
@@ -68,7 +68,7 @@ export function StreamingMessage({ messages }: { messages: LiveMessage[] }) {
 
     return (
         <Section title="评论审核">
-            <SimpleTable data={messages} columns={columns} />
+            <Table data={messages} columns={columns} />
         </Section>
     );
 }

@@ -1,18 +1,25 @@
+import { MutiSelectField, TextField } from '@/components/form';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { MutiSelectField, TextField } from '@/components/winglab/form';
 import { UserGroup } from '@/services/model';
 import { SharedProps } from '@/types';
-import { Form, usePage } from '@inertiajs/react';
-import { defineColumns, SimpleTable } from '@winglab/inertia-table';
+import { Form, router, usePage } from '@inertiajs/react';
+import { ColumnsDef, Table } from '@winglab/inertia-table';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 export function GroupIndex() {
     const { options } = usePage<SharedProps>().props;
 
-    const columns = defineColumns<UserGroup>([
+    const columns = ColumnsDef<UserGroup>([
         {
             dataKey: 'name',
             title: '名字',
@@ -20,7 +27,12 @@ export function GroupIndex() {
         {
             index: 'actions',
             tableRowRender: (data) => {
-                return <GroupUpdate group={data} />;
+                return (
+                    <div className="max-w-12">
+                        <GroupUpdate group={data} />
+                        <GroupDelete group={data} />
+                    </div>
+                );
             },
         },
     ]);
@@ -35,7 +47,7 @@ export function GroupIndex() {
                     <DialogTitle>用户分组</DialogTitle>
                     <GroupCreate />
                 </DialogHeader>
-                <SimpleTable columns={columns} data={options.groups as UserGroup[]} />
+                <Table columns={columns} data={options.groups as UserGroup[]} />
             </DialogContent>
         </Dialog>
     );
@@ -117,6 +129,35 @@ export function GroupUpdate({ group }: { group: UserGroup }) {
                         </Field>
                     </FieldGroup>
                 </Form>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+export function GroupDelete({ group }: { group: UserGroup }) {
+    const [open, setOpen] = useState(false);
+
+    function handleDelete() {
+        router.delete(route('settings.groups.destroy', group.id), {
+            onSuccess: () => {
+                setOpen(false);
+            },
+        });
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="destructive">删除</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>删除分组</DialogTitle>
+                    <DialogDescription>删除后将解除与用户和直播间的关联，且无法恢复</DialogDescription>
+                </DialogHeader>
+                <Button variant="destructive" onClick={handleDelete}>
+                    确定删除
+                </Button>
             </DialogContent>
         </Dialog>
     );

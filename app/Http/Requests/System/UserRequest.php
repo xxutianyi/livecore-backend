@@ -13,7 +13,7 @@ class UserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can('viewRoomAdmin');
+        return $this->user()->can('viewAdmin');
     }
 
     /**

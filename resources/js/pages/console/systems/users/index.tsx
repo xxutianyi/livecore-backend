@@ -1,13 +1,13 @@
+import { PageContainer } from '@/components/container';
 import { Button } from '@/components/ui/button';
-import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { User } from '@/services/model';
 import { Link } from '@inertiajs/react';
-import { DataTable, defineColumns, type PaginateData } from '@winglab/inertia-table';
+import { ColumnsDef, type PaginateData, RouterTable } from '@winglab/inertia-table';
 import { UserCreate } from './partial/forms';
 
 export default function Users({ data }: { data: PaginateData<User> }) {
-    const columns = defineColumns<User>([
+    const columns = ColumnsDef<User>([
         {
             dataKey: 'name',
             title: '名字',
@@ -32,7 +32,7 @@ export default function Users({ data }: { data: PaginateData<User> }) {
                     {data.role === 'room-admin' && '直播管理员'}
                 </>
             ),
-            filter: [
+            filters: [
                 { label: '系统管理', value: 'admin' },
                 { label: '直播管理', value: 'room-admin' },
             ],
@@ -52,7 +52,7 @@ export default function Users({ data }: { data: PaginateData<User> }) {
     return (
         <AdminLayout>
             <PageContainer title="管理员" actions={[<UserCreate key="create" />]}>
-                <DataTable columns={columns} paginateData={data} />
+                <RouterTable columns={columns} data={data} />
             </PageContainer>
         </AdminLayout>
     );

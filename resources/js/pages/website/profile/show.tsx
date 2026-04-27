@@ -1,5 +1,5 @@
+import { PageContainer } from '@/components/container';
 import { Separator } from '@/components/ui/separator';
-import { PageContainer } from '@/components/winglab/layout';
 import { WebsiteLayout } from '@/layouts/website-layout';
 import { PasswordForm } from './partial/password';
 import { ProfileForm } from './partial/profile';

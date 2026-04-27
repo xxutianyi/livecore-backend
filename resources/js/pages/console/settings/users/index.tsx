@@ -1,12 +1,12 @@
+import { PageContainer } from '@/components/container';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { formatDatetime } from '@/lib/utils';
 import { User } from '@/services/model';
 import { SharedProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { DataTable, defineColumns, type PaginateData } from '@winglab/inertia-table';
+import { ColumnsDef, type PaginateData, RouterTable } from '@winglab/inertia-table';
 import { useState } from 'react';
 import { UserBatchGroup, UserCreate } from './partial/forms';
 import { GroupIndex } from './partial/group';
@@ -15,7 +15,7 @@ export default function Users({ data }: { data: PaginateData<User> }) {
     const [select, setSelect] = useState<string[]>();
     const { options } = usePage<SharedProps>().props;
 
-    const columns = defineColumns<User>([
+    const columns = ColumnsDef<User>([
         {
             dataKey: 'name',
             title: '名字',
@@ -37,7 +37,7 @@ export default function Users({ data }: { data: PaginateData<User> }) {
             tableRowRender: (data) => (
                 <Badge variant={data.online ? 'default' : 'secondary'}>{data.online ? '在线' : '离线'}</Badge>
             ),
-            filter: [
+            filters: [
                 { label: '在线', value: 'true' },
                 { label: '离线', value: 'false' },
             ],
@@ -50,7 +50,7 @@ export default function Users({ data }: { data: PaginateData<User> }) {
         {
             index: 'groups',
             title: '分组',
-            filter: options.groups.map((g) => ({ label: g.name, value: g.id })),
+            filters: options.groups.map((g) => ({ label: g.name, value: g.id })),
             tableRowRender: (data) => (
                 <>
                     {data.groups?.map((group, index) => (
@@ -82,7 +82,7 @@ export default function Users({ data }: { data: PaginateData<User> }) {
     return (
         <AdminLayout>
             <PageContainer title="观众列表" actions={actions}>
-                <DataTable columns={columns} paginateData={data} onRowSelection={setSelect} />
+                <RouterTable columns={columns} data={data} onSelectChange={setSelect} />
             </PageContainer>
         </AdminLayout>
     );

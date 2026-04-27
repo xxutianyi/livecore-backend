@@ -1,7 +1,7 @@
+import { TextareaField, TextField, UploadField } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { TextareaField, TextField, UploadField } from '@/components/winglab/form';
 import { LiveRoom } from '@/services/model';
 import { Form } from '@inertiajs/react';
 import { useState } from 'react';
@@ -28,7 +28,7 @@ export function RoomCreate() {
                     }}
                 >
                     <FieldGroup>
-                        <UploadField name="cover" label="封面" accept="image/*" />
+                        <UploadField name="cover" label="封面" accept={['image/*']} />
                         <TextField name="name" label="名称" />
                         <TextareaField name="description" label="简介" />
                         <Field>
@@ -95,7 +95,7 @@ export function CoverUpdate({ room }: { room: LiveRoom }) {
                     }}
                 >
                     <FieldGroup>
-                        <UploadField name="file" accept="image/*" />
+                        <UploadField name="file" accept={['image/*']} />
                         <Field>
                             <Button type="submit">保存</Button>
                         </Field>

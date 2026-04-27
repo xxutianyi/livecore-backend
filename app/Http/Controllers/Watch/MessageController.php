@@ -12,11 +12,15 @@ class MessageController extends Controller
 {
     public function store(LiveEvent $event, Request $request)
     {
+        $validated = $request->validate([
+            'content' => ['required', 'string'],
+        ]);
+
         $message = LiveMessage::create([
-            'event_id' => $event->id,
             'room_id' => $event->room_id,
-            'content' => $request->input('content'),
+            'event_id' => $event->id,
             'sender_id' => $request->user()->id,
+            'content' => $validated['content'],
         ]);
 
         LiveMessageSubmitted::dispatch($message);

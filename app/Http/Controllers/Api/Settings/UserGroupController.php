@@ -49,6 +49,7 @@ class UserGroupController extends Controller
     public function destroy(UserGroup $group)
     {
         $group->users()->detach();
+        $group->rooms()->detach();
         $group->delete();
 
         return ApiResponse::success();

@@ -1,5 +1,5 @@
+import { PageContainer } from '@/components/container';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
-import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { Info } from 'lucide-react';
 import { RoomSelect } from './room-select';

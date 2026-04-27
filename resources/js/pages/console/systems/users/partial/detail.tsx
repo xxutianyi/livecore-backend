@@ -1,5 +1,5 @@
-import { Description, DescriptionItem } from '@/components/winglab/description';
-import { Section } from '@/components/winglab/layout';
+import { Section } from '@/components/container';
+import { Description, DescriptionItem } from '@/components/description';
 import { formatDate } from '@/lib/utils';
 import { User } from '@/services/model';
 

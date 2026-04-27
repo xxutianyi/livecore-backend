@@ -1,13 +1,13 @@
+import { PageContainer } from '@/components/container';
 import { Button } from '@/components/ui/button';
-import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { LiveRoom } from '@/services/model';
 import { Link } from '@inertiajs/react';
-import { DataTable, defineColumns, type PaginateData } from '@winglab/inertia-table';
+import { ColumnsDef, PaginateData, RouterTable } from '@winglab/inertia-table';
 import { RoomCreate } from './partial/forms';
 
 export default function Room({ data }: { data: PaginateData<LiveRoom> }) {
-    const columns = defineColumns<LiveRoom>([
+    const columns = ColumnsDef<LiveRoom>([
         {
             dataKey: 'name',
             title: '名称',
@@ -33,7 +33,7 @@ export default function Room({ data }: { data: PaginateData<LiveRoom> }) {
     return (
         <AdminLayout>
             <PageContainer title="直播间列表" actions={[<RoomCreate key="create" />]}>
-                <DataTable columns={columns} paginateData={data} />
+                <RouterTable columns={columns} data={data} />
             </PageContainer>
         </AdminLayout>
     );

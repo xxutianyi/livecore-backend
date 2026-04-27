@@ -1,5 +1,5 @@
+import { PageContainer } from '@/components/container';
 import { Separator } from '@/components/ui/separator';
-import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { LiveEvent, LiveRoom } from '@/services/model';
 import { RoomSelect } from '../room-select';

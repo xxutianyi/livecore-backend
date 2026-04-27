@@ -1,5 +1,5 @@
-import { Description, DescriptionItem } from '@/components/winglab/description';
-import { Section } from '@/components/winglab/layout';
+import { Section } from '@/components/container';
+import { Description, DescriptionItem } from '@/components/description';
 import { LiveRoom } from '@/services/model';
 
 export function RoomDetail({ room }: { room: LiveRoom }) {

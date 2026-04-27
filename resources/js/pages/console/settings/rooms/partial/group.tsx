@@ -1,17 +1,17 @@
+import { Section } from '@/components/container';
+import { MutiSelectField } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { MutiSelectField } from '@/components/winglab/form';
-import { Section } from '@/components/winglab/layout';
 import { LiveRoom, UserGroup } from '@/services/model';
 import { SharedProps } from '@/types';
 import { Form, Link, usePage } from '@inertiajs/react';
-import { defineColumns, SimpleTable } from '@winglab/inertia-table';
+import { ColumnsDef, Table } from '@winglab/inertia-table';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 export function GroupIndex({ groups }: { groups: UserGroup[] }) {
-    const columns = defineColumns<UserGroup>([
+    const columns = ColumnsDef<UserGroup>([
         {
             dataKey: 'name',
             title: '名称',
@@ -34,7 +34,7 @@ export function GroupIndex({ groups }: { groups: UserGroup[] }) {
 
     return (
         <Section title="授权用户组">
-            <SimpleTable data={groups} columns={columns} />
+            <Table data={groups ?? []} columns={columns} />
         </Section>
     );
 }
@@ -66,7 +66,7 @@ export function GroupUpdate({ room, groups }: { room: LiveRoom; groups: UserGrou
                             name="group_ids"
                             options={options.groups}
                             optionsKey={{ label: 'name', value: 'id' }}
-                            defaultValue={groups.map((g) => g.id)}
+                            defaultValue={groups?.map((g) => g.id)}
                         />
                         <Field>
                             <Button type="submit">保存</Button>

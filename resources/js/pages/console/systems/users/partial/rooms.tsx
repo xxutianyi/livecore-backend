@@ -1,19 +1,19 @@
+import { Section } from '@/components/container';
+import { MutiSelectField } from '@/components/form';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Field, FieldGroup } from '@/components/ui/field';
-import { MutiSelectField } from '@/components/winglab/form';
-import { Section } from '@/components/winglab/layout';
 import { LiveRoom, User } from '@/services/model';
 import { SharedProps } from '@/types';
 import { Form, Link, usePage } from '@inertiajs/react';
-import { defineColumns, SimpleTable } from '@winglab/inertia-table';
+import { ColumnsDef, Table } from '@winglab/inertia-table';
 import { ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 export function RoomIndex({ user }: { user: User }) {
-    const columns = defineColumns<LiveRoom>([
+    const columns = ColumnsDef<LiveRoom>([
         {
             dataKey: 'name',
             title: '名称',
@@ -49,7 +49,7 @@ export function RoomIndex({ user }: { user: User }) {
                     </EmptyHeader>
                 </Empty>
             )}
-            {user.role === 'room-admin' && <SimpleTable data={user.manageable} columns={columns} />}
+            {user.role === 'room-admin' && <Table data={user.manageable ?? []} columns={columns} />}
         </Section>
     );
 }

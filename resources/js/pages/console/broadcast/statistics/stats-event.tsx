@@ -1,4 +1,5 @@
 import { AreaContents, buildConfig, Config, LineGradients } from '@/components/chart';
+import { Section } from '@/components/container';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -8,16 +9,15 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from '@/components/ui/chart';
-import { Section } from '@/components/winglab/layout';
 import { formatDatetime } from '@/lib/utils';
 import { LiveEvent, LiveEventStat } from '@/services/model';
 import { Link } from '@inertiajs/react';
-import { defineColumns, SimpleTable } from '@winglab/inertia-table';
+import { ColumnsDef, Table } from '@winglab/inertia-table';
 import { AreaChart, CartesianGrid, XAxis } from 'recharts';
 import { StatsRangeEvent } from './stats-range';
 
 export function EventIndex({ data }: { data: LiveEvent[] }) {
-    const columns = defineColumns<LiveEvent>([
+    const columns = ColumnsDef<LiveEvent>([
         {
             title: '场次名称',
             dataKey: 'name',
@@ -46,7 +46,7 @@ export function EventIndex({ data }: { data: LiveEvent[] }) {
 
     return (
         <Section title="历史场次">
-            <SimpleTable columns={columns} data={data} />
+            <Table columns={columns} data={data} />
         </Section>
     );
 }

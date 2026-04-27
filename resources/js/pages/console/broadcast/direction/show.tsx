@@ -1,14 +1,14 @@
+import { PageContainer } from '@/components/container';
 import { Separator } from '@/components/ui/separator';
-import { PageContainer } from '@/components/winglab/layout';
 import { useReview } from '@/hooks/use-review';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { LiveEvent, LiveMessage } from '@/services/model';
 import { RoomSelect } from '../room-select';
 import { ObsController } from './partial/obs';
-import { StreamingConfig, StreamingMessage, StreamingPlay } from './partial/streaming';
+import { MessageReview, StreamingConfig, StreamingPlay } from './partial/streaming';
 
-export default function ShowEvent({ event, messages: initMessages }: { event: LiveEvent; messages: LiveMessage[] }) {
-    const { messages } = useReview(event.id, initMessages);
+export default function ShowEvent({ event, messages }: { event: LiveEvent; messages: LiveMessage[] }) {
+    useReview(event.id);
 
     return (
         <AdminLayout breadcrumbTitle={event.name}>
@@ -20,7 +20,7 @@ export default function ShowEvent({ event, messages: initMessages }: { event: Li
                 <StreamingPlay event={event} />
                 <ObsController event={event} />
                 <Separator />
-                <StreamingMessage messages={messages} />
+                <MessageReview messages={messages} />
                 <Separator />
                 <StreamingConfig event={event} />
             </PageContainer>

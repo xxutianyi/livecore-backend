@@ -22,7 +22,12 @@ class UserGroupController extends Controller
         return back();
     }
 
-    public function destroy(UserGroup $group){
+    public function destroy(UserGroup $group)
+    {
+        $group->users()->detach();
+        $group->rooms()->detach();
+        $group->delete();
 
+        return back();
     }
 }

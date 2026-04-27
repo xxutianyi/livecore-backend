@@ -1,3 +1,4 @@
+import { PageContainer } from '@/components/container';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -6,12 +7,11 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { diffDatetime, formatDatetime } from '@/lib/utils';
 import { LiveEvent, LiveRoom } from '@/services/model';
 import { router } from '@inertiajs/react';
-import { DataTable, defineColumns, PaginateData } from '@winglab/inertia-table';
+import { ColumnsDef, PaginateData, RouterTable } from '@winglab/inertia-table';
 import { MoreHorizontal } from 'lucide-react';
 import { RoomSelect } from '../room-select';
 import Welcome from '../welcome';
@@ -24,7 +24,7 @@ export default function PlaybacksPage({ room, events }: { room?: LiveRoom; event
         router.put(route('broadcast.playbacks.update', [room?.id, event.id]), { published: !event.published });
     }
 
-    const columns = defineColumns<LiveEvent>([
+    const columns = ColumnsDef<LiveEvent>([
         {
             title: '场次名称',
             dataKey: 'name',
@@ -100,7 +100,7 @@ export default function PlaybacksPage({ room, events }: { room?: LiveRoom; event
                 title="直播回放"
                 actions={[<RoomSelect route={route('broadcast.playbacks')} key="select" />]}
             >
-                <DataTable columns={columns} paginateData={events} />
+                <RouterTable columns={columns} data={events} />
             </PageContainer>
         </AdminLayout>
     );

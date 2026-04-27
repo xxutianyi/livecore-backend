@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
-import { CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { RightContent } from '@/components/watch/layouts';
+import { MessageList } from '@/components/watch';
 import { useLive } from '@/hooks/use-live';
 import { useScroll } from '@/hooks/use-scroll';
 import { LiveEvent, LiveMessage } from '@/services/model';
@@ -12,27 +12,17 @@ import { ArrowDown, Send, Users, Video } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-export type MessageListProps = ReturnType<typeof useLive> & {
+export function LiveMessages({
+    title,
+    event,
+    initMessages,
+}: {
     title: string;
     event: LiveEvent;
-    className?: string;
-};
-
-export function MessageItem({ message }: { message: LiveMessage }) {
-    return (
-        <div className="py-2">
-            <span className="whitespace-nowrap text-cyan-700 dark:text-cyan-500">{message.sender?.name}：&nbsp;</span>
-            <span className="w-full break-all">{message.content}</span>
-        </div>
-    );
-}
-
-export function MessageList({ messages }: { messages: LiveMessage[] }) {
-    return messages.map((message) => <MessageItem message={message} key={message.id} />);
-}
-
-export function LiveMessageList({ title, users, event, messages, handleMessageUpdate, className }: MessageListProps) {
+    initMessages: LiveMessage[];
+}) {
     const [message, setMessage] = useState('');
+    const { users, messages, handleMessageUpdate } = useLive(event?.id, initMessages);
     const { isAtBottom, bottomRef, viewportRef, scrollToBottom } = useScroll([messages]);
 
     function handlePublish() {
@@ -52,7 +42,7 @@ export function LiveMessageList({ title, users, event, messages, handleMessageUp
     }
 
     return (
-        <RightContent className={className}>
+        <Card className="relative max-md:h-[calc(100svh-64px-56.25vw)] max-md:rounded-none md:w-1/4">
             <CardHeader className="-mt-1">
                 <CardTitle className="flex items-center justify-between max-md:text-sm">
                     <div className="flex items-center space-x-2 md:hidden">
@@ -84,7 +74,7 @@ export function LiveMessageList({ title, users, event, messages, handleMessageUp
             <CardFooter className="absolute bottom-0 h-20 w-full">
                 <Field orientation="horizontal">
                     <Input
-                        type="text"
+                        aria-label="参与互动..."
                         placeholder="参与互动..."
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
@@ -95,6 +85,6 @@ export function LiveMessageList({ title, users, event, messages, handleMessageUp
                     </Button>
                 </Field>
             </CardFooter>
-        </RightContent>
+        </Card>
     );
 }

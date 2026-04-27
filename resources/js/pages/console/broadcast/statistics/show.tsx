@@ -1,6 +1,6 @@
+import { PageContainer } from '@/components/container';
 import { Separator } from '@/components/ui/separator';
 import { Toggle } from '@/components/ui/toggle';
-import { PageContainer } from '@/components/winglab/layout';
 import { AdminLayout } from '@/layouts/admin-layout';
 import { LiveEvent, LiveEventStat, LiveRoom, LiveRoomStat } from '@/services/model';
 import { usePoll } from '@inertiajs/react';
