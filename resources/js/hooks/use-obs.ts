@@ -24,7 +24,7 @@ export function useOBS(password?: string, server?: string) {
         });
       })
       .catch((error) => {
-        toast.success('OBS 连接失败，请打开OBS-工具-WebSocket服务器设置检查配置');
+        toast.error('OBS 连接失败，请打开OBS-工具-WebSocket服务器设置检查配置');
         console.error('OBS 连接失败', error);
       });
   }
