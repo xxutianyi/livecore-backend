@@ -43,7 +43,6 @@ class User extends Authenticatable
     ];
 
     protected $with = [
-        'groups'
     ];
 
     protected $appends = [

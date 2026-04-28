@@ -87,7 +87,7 @@ class LiveRoom extends Model
 
             $users = $users->unique();
 
-            Cache::put("room-audiences-$this->id", $users);
+            Cache::put("room-audiences-$this->id", $users, now()->addMinute());
         }
 
         return Attribute::get(function () use ($users) {
