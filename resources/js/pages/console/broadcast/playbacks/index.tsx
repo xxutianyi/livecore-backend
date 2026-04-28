@@ -82,7 +82,10 @@ export default function PlaybacksPage({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <a href={route('rooms.events.show', [data.room_id, data.id])} target="_blank">
+                  <a
+                    href={route('watch.rooms.events.show', [data.room_id, data.id])}
+                    target="_blank"
+                  >
                     观众视角
                   </a>
                 </DropdownMenuItem>

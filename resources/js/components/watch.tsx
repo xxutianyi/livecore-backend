@@ -34,7 +34,7 @@ export function RoomItemCard({ room }: { room: LiveRoom }) {
       </CardHeader>
       <CardFooter>
         <Button className="w-full" asChild>
-          <Link href={route('rooms.show', room.id)}>进入直播间</Link>
+          <Link href={route('watch.rooms.show', room.id)}>进入直播间</Link>
         </Button>
       </CardFooter>
     </Card>
@@ -45,7 +45,11 @@ export function EventItem({ event, current }: { event: LiveEvent; current: LiveE
   const isCurrentPlay = event.id === current.id;
 
   return (
-    <Link className="py-2" href={`/rooms/${event.room_id}/events/${event.id}`} preserveScroll>
+    <Link
+      className="py-2"
+      preserveScroll
+      href={route('watch.rooms.events.show', [event.room_id, event.id])}
+    >
       <div className={cn('flex h-20 space-x-4 rounded-lg p-2', isCurrentPlay && 'bg-muted')}>
         <div className="relative aspect-video max-h-16 rounded bg-gray-500">
           <img alt="cover" src={event.cover} className="h-full w-full" />
@@ -78,7 +82,7 @@ export function EventItemCard({ event }: { event: LiveEvent }) {
       </CardHeader>
       <CardFooter>
         <Button className="w-full" asChild>
-          <Link href={route('rooms.events.show', [room_id, id])}>观看回放</Link>
+          <Link href={route('watch.rooms.events.show', [room_id, id])}>观看回放</Link>
         </Button>
       </CardFooter>
     </Card>

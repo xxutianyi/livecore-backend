@@ -66,7 +66,7 @@ class LiveEvent extends Model
     public function room(): BelongsTo
     {
         return $this->belongsTo(LiveRoom::class, 'room_id')
-            ->select(['id', 'name']);
+            ->select(['id', 'name'])->without('living');
     }
 
     public function messages(): LiveEvent|HasMany

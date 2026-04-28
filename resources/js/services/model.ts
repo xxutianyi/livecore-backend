@@ -27,6 +27,12 @@ export interface User extends Model {
   manageable?: LiveRoom[];
 }
 
+export interface Client extends Model {
+  name: string;
+  secret: string;
+  whitelist: string[];
+}
+
 export interface UserOnline extends Model {
   user_id: User['id'];
   room?: LiveRoom;

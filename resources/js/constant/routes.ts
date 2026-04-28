@@ -76,6 +76,12 @@ const routes: RouteItemGroup[] = [
         roles: ['admin'],
       },
       {
+        title: '接口访问',
+        icon: Lock,
+        href: route('systems.clients.index'),
+        roles: ['admin'],
+      },
+      {
         title: '操作记录',
         icon: ShieldAlert,
         roles: ['admin'],
@@ -88,8 +94,9 @@ const routes: RouteItemGroup[] = [
       {
         title: 'Pulse',
         icon: HeartPulse,
-        href: '/monitor/pulse',
+        href: '/pulse',
         roles: ['admin'],
+        external: true,
       },
     ],
   },
@@ -99,7 +106,7 @@ const routes: RouteItemGroup[] = [
       {
         title: '直播前台',
         icon: TvMinimalPlay,
-        href: '/rooms',
+        href: route('watch.rooms.index'),
         external: true,
       },
     ],

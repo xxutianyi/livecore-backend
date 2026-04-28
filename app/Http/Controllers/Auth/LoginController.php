@@ -18,7 +18,7 @@ class LoginController extends Controller
         $request->authenticate();
         $request->session()->regenerate();
 
-        $defaultRoute = route('rooms.index');
+        $defaultRoute = route('watch.rooms.index');
 
         if ($request->user()->can('viewRoomAdmin')) {
             $defaultRoute = route('broadcast.direction');

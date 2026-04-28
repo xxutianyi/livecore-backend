@@ -25,7 +25,7 @@ export function Waiting({ room }: WaitingProps) {
       </EmptyHeader>
       <EmptyContent className="mb-32">
         <div className="space-x-4">
-          <Button onClick={() => router.get(route('rooms.events.index', room.id))}>
+          <Button onClick={() => router.get(route('watch.rooms.events.index', room.id))}>
             查看回放
             <Video />
           </Button>

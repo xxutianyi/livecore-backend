@@ -20,11 +20,12 @@ class EventController extends Controller
     public function show(LiveEvent $event)
     {
         Gate::authorize('viewLiveRoom', $event->room);
+        unset($event->room);
 
         if (!$event->published) {
             return ApiResponse::unAuthorized();
         }
-
+        
         return ApiResponse::success($event);
     }
 }

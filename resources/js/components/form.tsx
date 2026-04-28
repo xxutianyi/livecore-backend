@@ -32,6 +32,7 @@ import { FilePond, registerPlugin } from 'react-filepond';
 export type FieldProps = {
   name: string;
   label?: string;
+  disabled?: boolean;
   placeholder?: string;
   description?: string;
   defaultValue?: string;
@@ -52,7 +53,14 @@ export type UploadProps = Omit<FieldProps, 'placeholder' | 'defaultValue'> & {
   accept?: string[];
 };
 
-export function TextField({ name, label, placeholder, defaultValue }: FieldProps) {
+export function TextField({
+  name,
+  label,
+  disabled,
+  description,
+  placeholder,
+  defaultValue,
+}: FieldProps) {
   const form = useFormContext();
 
   if (!form) {
@@ -65,16 +73,25 @@ export function TextField({ name, label, placeholder, defaultValue }: FieldProps
       <Input
         id={name}
         name={name}
+        disabled={disabled}
         placeholder={placeholder ?? '请输入'}
         defaultValue={defaultValue}
         type="text"
       />
+      {description && <FieldDescription>{description}</FieldDescription>}
       {form.errors[name] && <FieldError errors={[{ message: form.errors[name] }]} />}
     </Field>
   );
 }
 
-export function PasswordField({ name, label, description, defaultValue, placeholder }: FieldProps) {
+export function PasswordField({
+  name,
+  label,
+  disabled,
+  description,
+  defaultValue,
+  placeholder,
+}: FieldProps) {
   const form = useFormContext();
   const [visible, setVisible] = useState(false);
 
@@ -88,6 +105,7 @@ export function PasswordField({ name, label, description, defaultValue, placehol
         <Input
           id={name}
           name={name}
+          disabled={disabled}
           defaultValue={defaultValue}
           placeholder={placeholder ?? '请输入'}
           type={visible ? 'text' : 'password'}
@@ -107,7 +125,14 @@ export function PasswordField({ name, label, description, defaultValue, placehol
   );
 }
 
-export function TextareaField({ name, label, placeholder, description, defaultValue }: FieldProps) {
+export function TextareaField({
+  name,
+  label,
+  disabled,
+  placeholder,
+  description,
+  defaultValue,
+}: FieldProps) {
   const form = useFormContext();
   if (!form) return null;
 
@@ -118,6 +143,7 @@ export function TextareaField({ name, label, placeholder, description, defaultVa
       <Textarea
         id={name}
         name={name}
+        disabled={disabled}
         placeholder={placeholder ?? '请输入'}
         defaultValue={defaultValue}
       />
@@ -131,6 +157,7 @@ export function TextareaField({ name, label, placeholder, description, defaultVa
 export function SelectField({
   name,
   label,
+  disabled,
   placeholder,
   description,
   defaultValue,
@@ -150,7 +177,7 @@ export function SelectField({
 
       <input name={name} value={value} readOnly className="hidden" />
 
-      <Select defaultValue={defaultValue} onValueChange={setValue}>
+      <Select defaultValue={defaultValue} onValueChange={setValue} disabled={disabled}>
         <SelectTrigger>
           <SelectValue placeholder={placeholder ?? '请选择'} />
         </SelectTrigger>
@@ -174,6 +201,7 @@ export function SelectField({
 export function MutiSelectField({
   name,
   label,
+  disabled,
   placeholder,
   description,
   defaultValue,
@@ -212,6 +240,7 @@ export function MutiSelectField({
           <Button
             variant="outline"
             className="h-auto min-h-10 w-full justify-between bg-input/50! px-3 py-2"
+            disabled={disabled}
           >
             <div className="flex flex-wrap gap-2 overflow-hidden">
               {selectedItems.length > 0 ? (
@@ -265,7 +294,7 @@ export function MutiSelectField({
   );
 }
 
-export function UploadField({ name, label, accept, description }: UploadProps) {
+export function UploadField({ name, label, disabled, accept, description }: UploadProps) {
   const form = useFormContext();
 
   registerPlugin(FilePondPluginImagePreview);
@@ -281,6 +310,7 @@ export function UploadField({ name, label, accept, description }: UploadProps) {
         name={name}
         chunkUploads
         credits={false}
+        disabled={disabled}
         acceptedFileTypes={accept}
         server={{
           url: '/api/filepond',

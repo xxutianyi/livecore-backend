@@ -13,10 +13,10 @@ export default function Room({ room, messages }: { room: LiveRoom; messages?: Li
   useOnline({ event: room.living, living: true });
 
   return (
-    <WebsiteLayout title={`观看直播：${room.name}`}>
+    <WebsiteLayout>
       <Breadcrumb
         className={cn(!!room.living && 'mb-4 max-md:hidden md:mb-8')}
-        items={[{ label: '全部直播间', link: route('rooms.index') }, { label: room.name }]}
+        items={[{ label: '全部直播间', link: route('watch.rooms.index') }, { label: room.name }]}
       />
       {!room.living && <Waiting room={room} />}
       {!!room.living && (

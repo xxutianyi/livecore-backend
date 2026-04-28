@@ -2,8 +2,10 @@
 
 use App\Exceptions\RedirectUserException;
 use App\Http\Middleware\BroadcastRoomCache;
+use App\Http\Middleware\HandleClientRequests;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Response\ApiResponse;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
@@ -12,6 +14,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -43,7 +46,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'broadcast' => BroadcastRoomCache::class
+            'client' => HandleClientRequests::class,
+            'broadcast' => BroadcastRoomCache::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -52,12 +56,14 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->expectsJson()) {
                 return match (true) {
                     $e instanceof UnauthorizedException => ApiResponse::unAuthorized(),
+                    $e instanceof AuthorizationException => ApiResponse::unAuthorized(),
+                    $e instanceof AccessDeniedHttpException => ApiResponse::unAuthorized(),
                     $e instanceof RedirectUserException => ApiResponse::authenticated(),
                     $e instanceof AuthenticationException => ApiResponse::unAuthenticated(),
                     $e instanceof ValidationException => ApiResponse::validationErrors($e),
                     $e instanceof NotFoundHttpException => ApiResponse::routeNotFound(),
                     $e instanceof ModelNotFoundException => ApiResponse::modelNotFound(),
-                    default => ApiResponse::error($e->getMessage(), -1, app()->isLocal() && $e->getTrace()),
+                    default => ApiResponse::error($e->getMessage(), -1, $e::class),
                 };
             }
             return null;

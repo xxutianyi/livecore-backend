@@ -13,7 +13,7 @@ export default function Welcome() {
           WingLab 直播系统
         </div>
         <div className="mt-8 space-x-2">
-          <Link href={route('rooms.index')}>
+          <Link href={route('watch.rooms.index')}>
             <Button size="lg">
               <LogInIcon />
               观看直播

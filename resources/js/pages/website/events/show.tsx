@@ -22,9 +22,9 @@ export default function Event({ room, event, events, messages }: PageProps) {
       <Breadcrumb
         className="mb-4 max-md:hidden md:mb-8"
         items={[
-          { label: '全部直播间', link: route('rooms.index') },
-          { label: `直播间：${room.name}`, link: route('rooms.show', room.id) },
-          { label: '直播回放', link: route('rooms.events.index', room.id) },
+          { label: '全部直播间', link: route('watch.rooms.index') },
+          { label: room.name, link: route('watch.rooms.show', room.id) },
+          { label: '直播回放', link: route('watch.rooms.events.index', room.id) },
           { label: event.name },
         ]}
       />

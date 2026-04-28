@@ -10,7 +10,8 @@ import {
 } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { User } from '@/services/model';
-import { Form } from '@inertiajs/react';
+import { SharedProps } from '@/types';
+import { Form, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -42,7 +43,6 @@ export function UserCreate() {
             <SelectField
               name="role"
               label="用户角色"
-              defaultValue="room-admin"
               options={[
                 { label: '系统管理员', value: 'admin' },
                 { label: '直播管理员', value: 'room-admin' },
@@ -59,6 +59,7 @@ export function UserCreate() {
 }
 
 export function UserUpdate({ user }: { user: User }) {
+  const { auth } = usePage<SharedProps>().props;
   const [open, setOpen] = useState(false);
 
   return (
@@ -84,6 +85,7 @@ export function UserUpdate({ user }: { user: User }) {
               name="role"
               label="用户角色"
               defaultValue={user.role}
+              disabled={auth.user?.id === user.id}
               options={[
                 { label: '系统管理员', value: 'admin' },
                 { label: '直播管理员', value: 'room-admin' },

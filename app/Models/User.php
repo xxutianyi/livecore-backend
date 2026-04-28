@@ -18,11 +18,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
 use RahulHaque\Filepond\Traits\HasFilepond;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuids, Searchable, Filterable, Sortable, HasFilepond;
+    use HasFactory, Notifiable, HasUuids, Searchable, Filterable, Sortable, HasFilepond, HasApiTokens;
 
     protected $fillable = [
         'name',
