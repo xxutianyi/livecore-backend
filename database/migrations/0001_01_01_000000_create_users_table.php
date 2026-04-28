@@ -17,12 +17,10 @@ return new class extends Migration {
             $table->string('phone')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('phone_verified_at')->nullable();
-            $table->string('external_id')->nullable()->unique();
             $table->string('password')->nullable();
             $table->string('inviter_code')->unique();
             $table->string('invitation_code')->nullable();
             $table->string('role')->default('audience');
-            $table->jsonb('authorities')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
