@@ -23,6 +23,10 @@ class MessageController extends Controller
     {
         Gate::authorize('viewLiveRoom', $event->room);
 
+        $request->validate([
+            'content' => ['required', 'string'],
+        ]);
+        
         $message = LiveMessage::create([
             'room_id' => $event->room->id,
             'event_id' => $event->id,

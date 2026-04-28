@@ -13,6 +13,10 @@ class MessageController extends Controller
 {
     public function store(Request $request, LiveRoom $room, LiveEvent $event)
     {
+        $request->validate([
+            'content' => ['required', 'string'],
+        ]);
+
         $message = LiveMessage::create([
             'event_id' => $event->id,
             'room_id' => $event->room_id,
@@ -27,7 +31,7 @@ class MessageController extends Controller
         return back();
     }
 
-    public function review(Request $request, LiveMessage $message)
+    public function review(Request $request, LiveRoom $room, LiveMessage $message)
     {
         $message->review($request->user(), now());
 
