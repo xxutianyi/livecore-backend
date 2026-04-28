@@ -4,13 +4,7 @@ import Chinese from '@/assets/player-chinese.json';
 import '@vidstack/react/player/styles/base.css';
 import '@vidstack/react/player/styles/plyr/theme.css';
 
-import {
-  MediaPlayer,
-  MediaPlayerInstance,
-  MediaPlayerProps,
-  MediaProvider,
-  useMediaStore,
-} from '@vidstack/react';
+import { MediaPlayer, MediaPlayerInstance, MediaPlayerProps, MediaProvider, useMediaStore, } from '@vidstack/react';
 import { PlyrLayout, plyrLayoutIcons } from '@vidstack/react/player/layouts/plyr';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
@@ -26,7 +20,7 @@ export function VideoPlayer({ src, live, className }: PlayerProps) {
     ref: ref,
     autoPlay: true,
     playsInline: true,
-    streamType: live ? 'live' : undefined,
+    streamType: live ? 'live' : 'unknown',
   };
 
   useEffect(() => {
