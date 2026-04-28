@@ -2,13 +2,13 @@ import { PageContainer } from '@/components/container';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ConsoleLayout } from '@/layouts/console-layout';
-import { LiveRoom, UserGroup } from '@/services/model';
+import { LiveRoom } from '@/services/model';
 import { Link } from '@inertiajs/react';
 import { RoomDetail } from './partial/detail';
 import { CoverUpdate, RoomUpdate } from './partial/forms';
 import { GroupIndex, GroupUpdate } from './partial/groups';
 
-export default function Show({ room, groups }: { room: LiveRoom; groups: UserGroup[] }) {
+export default function Show({ room }: { room: LiveRoom }) {
   return (
     <ConsoleLayout>
       <PageContainer
@@ -20,7 +20,7 @@ export default function Show({ room, groups }: { room: LiveRoom; groups: UserGro
         actions={[
           <RoomUpdate room={room} key="update" />,
           <CoverUpdate room={room} key="cover" />,
-          <GroupUpdate room={room} groups={groups} key="group" />,
+          <GroupUpdate room={room} key="group" />,
           <Button asChild key="playback">
             <Link href={route('broadcast.playbacks', room.id)}>管理回放</Link>
           </Button>,
@@ -29,7 +29,7 @@ export default function Show({ room, groups }: { room: LiveRoom; groups: UserGro
         <Separator />
         <RoomDetail room={room} />
         <Separator />
-        <GroupIndex groups={groups} />
+        <GroupIndex room={room} />
       </PageContainer>
     </ConsoleLayout>
   );

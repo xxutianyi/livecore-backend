@@ -16,7 +16,7 @@ import { ColumnsDef, Table } from '@winglab/inertia-table';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-export function GroupIndex({ groups }: { groups: UserGroup[] }) {
+export function GroupIndex({ room }: { room: LiveRoom }) {
   const columns = ColumnsDef<UserGroup>([
     {
       dataKey: 'name',
@@ -40,12 +40,12 @@ export function GroupIndex({ groups }: { groups: UserGroup[] }) {
 
   return (
     <Section title="授权用户组">
-      <Table data={groups ?? []} columns={columns} />
+      <Table data={room.groups} columns={columns} />
     </Section>
   );
 }
 
-export function GroupUpdate({ room, groups }: { room: LiveRoom; groups: UserGroup[] }) {
+export function GroupUpdate({ room }: { room: LiveRoom }) {
   const [open, setOpen] = useState(false);
 
   const { options } = usePage<SharedProps>().props;
@@ -72,7 +72,7 @@ export function GroupUpdate({ room, groups }: { room: LiveRoom; groups: UserGrou
               name="group_ids"
               options={options.groups}
               optionsKey={{ label: 'name', value: 'id' }}
-              defaultValue={groups?.map((g) => g.id)}
+              defaultValue={room.groups?.map((g) => g.id)}
             />
             <Field>
               <Button type="submit">保存</Button>

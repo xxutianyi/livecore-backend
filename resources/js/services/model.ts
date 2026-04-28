@@ -61,6 +61,7 @@ export interface LiveRoom extends Model {
   description?: string;
   living?: LiveEvent;
   events?: LiveEvent[];
+  groups?: UserGroup[];
   events_count: number;
   manageable_users: User[];
 }
