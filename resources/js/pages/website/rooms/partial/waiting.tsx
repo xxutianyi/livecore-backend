@@ -15,9 +15,9 @@ export type WaitingProps = { room: LiveRoom };
 
 export function Waiting({ room }: WaitingProps) {
   return (
-    <Empty className="m-auto w-full">
+    <Empty className="m-auto w-full p-0 pt-4 md:p-12">
       <EmptyMedia>
-        <img alt="cover" src={room.cover} className="aspect-video max-w-sm rounded-4xl" />
+        <img alt="cover" src={room.cover} className="aspect-video rounded-4xl" />
       </EmptyMedia>
       <EmptyHeader>
         <EmptyTitle>{room.name}暂未开播</EmptyTitle>
