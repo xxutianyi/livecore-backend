@@ -14,7 +14,7 @@ RUN npm run build
 FROM dunglas/frankenphp:1.12.3-php8.4 AS runtime
 
 # 安装系统依赖
-RUN apt-get update && apt-get upgrade -y && apt-get install -y supervisor
+RUN apt-get update && apt-get upgrade -y && apt-get install -y zip unzip git supervisor
 
 # 安装 php 依赖
 RUN install-php-extensions pcntl pdo_pgsql pdo_mysql
