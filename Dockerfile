@@ -10,39 +10,27 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# === 第二阶段：打包二进制包 ===
-FROM --platform=linux/amd64 dunglas/frankenphp:static-builder-musl AS static-builder
+# === 第二阶段：配置运行环境 ===
+FROM dunglas/frankenphp:1.12.3-php8.4 AS runtime
 
-# 复制项目文件
-WORKDIR /go/src/app/dist/app
+# 安装系统依赖
+RUN apt-get update && apt-get upgrade -y && apt-get install -y supervisor
+
+# 安装 php 依赖
+RUN install-php-extensions pcntl pdo_pgsql pdo_mysql
+
+WORKDIR /app
+
+# 复制项目文件并安装依赖
 COPY . .
-
-# 安装依赖
-RUN composer install --ignore-platform-reqs --no-dev -a
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # 复制前端资源
 COPY --from=node-builder /app/public/build ./public/build
 
-# 构建静态二进制文件
-WORKDIR /go/src/app
-RUN EMBED=dist/app/ ./build-static.sh
-
-# === 第三阶段：配置运行环境 ===
-FROM --platform=linux/amd64 alpine:latest AS runtime
-
-RUN apk add --no-cache \
-    supervisor \
-    bash \
-    curl \
-    postgresql-client
-
-WORKDIR /app
-
-COPY --from=static-builder /go/src/app/dist/frankenphp-linux-x86_64 /usr/local/bin/frankenphp
-
-# 权限设置
-RUN chmod +x /usr/local/bin/frankenphp && \
-    chown -R www-data:www-data storage bootstrap/cache
+# 目录授权写入
+RUN chown -R www-data:www-data storage bootstrap/cache
 
 # Supervisor 配置
 COPY docker/supervisord.conf /etc/supervisord.conf
@@ -50,6 +38,6 @@ COPY docker/supervisord.conf /etc/supervisord.conf
 EXPOSE 8000 8080
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost/up || exit 1
+    CMD curl -f http://localhost:8000/up || exit 1
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
