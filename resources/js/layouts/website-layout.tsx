@@ -11,7 +11,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import configs from '@/lib/configs';
+import { useConfig } from '@/hooks/useConfig';
 import { SharedProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { LogIn, User } from 'lucide-react';
@@ -51,13 +51,15 @@ export function UserAction() {
 }
 
 export function WebsiteLayout({ children }: PropsWithChildren) {
+  const config = useConfig();
+
   return (
     <TooltipProvider>
       <div className="flex h-16 w-full items-center justify-between border-t border-b border-border bg-sidebar px-4 py-4 md:px-8">
         <Link href="/">
           <div className="flex items-center gap-2">
-            <img alt="logo" width={32} height={32} src={configs.APP_LOGO} className="inline" />
-            <h1 className="text-base font-bold md:text-xl">{configs.APP_NAME}</h1>
+            <img alt="logo" width={32} height={32} src={config.APP_LOGO} className="inline" />
+            <h1 className="text-base font-bold md:text-xl">{config.APP_NAME}</h1>
           </div>
         </Link>
         <div className="space-x-4">

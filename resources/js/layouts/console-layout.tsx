@@ -26,7 +26,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import routes from '@/constant/routes';
 import { useRoutes } from '@/hooks/use-routes';
-import configs from '@/lib/configs';
+import { useConfig } from '@/hooks/useConfig';
 import { SharedProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { ChevronsUpDownIcon, LogOutIcon, Settings, User } from 'lucide-react';
@@ -75,6 +75,7 @@ export function UserActions() {
 }
 
 export function ConsoleLayout({ children }: PropsWithChildren) {
+  const config = useConfig();
   const menuItems = useRoutes(routes);
 
   return (
@@ -85,10 +86,10 @@ export function ConsoleLayout({ children }: PropsWithChildren) {
             <div className="flex h-12 w-full items-center justify-between px-2">
               <div className="flex items-center gap-2">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-muted">
-                  <img alt="logo" src={configs.APP_ADMIN_LOGO} className="size-8 rounded-full" />
+                  <img alt="logo" src={config.APP_LOGO} className="size-8 rounded-full" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{configs.APP_NAME}</span>
+                  <span className="truncate font-medium">{config.APP_NAME}</span>
                 </div>
               </div>
               <ThemeToggle />

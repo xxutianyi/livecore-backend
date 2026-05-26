@@ -53,6 +53,17 @@ class HandleInertiaRequests extends Middleware
                         return Gate::denies('manageUserGroup', $group);
                     })->flatten(),
             ],
+            'app' => [
+                'APP_NAME' => config('app.name'),
+                'APP_LOGO' => config('brand.logo'),
+                'APP_IMAGE' => config('brand.image'),
+            ],
+            'broadcast' => [
+                'REVERB_APP_KEY' => config('broadcasting.connections.reverb.app_id'),
+                'REVERB_HOST' => config('broadcasting.connections.reverb.options.host'),
+                'REVERB_PORT' => config('broadcasting.connections.reverb.options.port'),
+                'REVERB_SCHEME' => config('broadcasting.connections.reverb.options.scheme'),
+            ]
         ];
     }
 }

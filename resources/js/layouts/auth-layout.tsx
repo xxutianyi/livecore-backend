@@ -1,9 +1,11 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { FieldDescription } from '@/components/ui/field';
-import configs from '@/lib/configs';
+import { useConfig } from '@/hooks/useConfig';
 import { PropsWithChildren } from 'react';
 
 export function AuthLayout({ children }: PropsWithChildren) {
+  const config = useConfig();
+
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
       <div className="w-full max-w-sm md:max-w-4xl">
@@ -14,7 +16,7 @@ export function AuthLayout({ children }: PropsWithChildren) {
               <div className="relative hidden bg-muted md:block">
                 <img
                   alt="Image"
-                  src={configs.APP_LOGIN_IMAGE}
+                  src={config.APP_IMAGE}
                   className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
                 />
               </div>
