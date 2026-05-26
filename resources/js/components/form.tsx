@@ -113,7 +113,7 @@ export function PasswordField({
           className="border-none bg-transparent focus-visible:ring-0"
         />
         <InputGroupAddon align="inline-end">
-          <Button variant="ghost" size="icon-sm" onClick={() => setVisible(!visible)}>
+          <Button type="button" variant="ghost" size="icon-sm" onClick={() => setVisible(!visible)}>
             {visible ? <Eye /> : <EyeClosed />}
           </Button>
         </InputGroupAddon>

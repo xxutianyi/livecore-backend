@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('guest')->group(function () {
-    Route::get('/', fn() => inertia('welcome'));
+    Route::redirect('/', '/login');
     Route::get('login', [Auth\LoginController::class, 'show']);
     Route::post('login', [Auth\LoginController::class, 'store']);
 });
