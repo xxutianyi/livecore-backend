@@ -1,22 +1,10 @@
 import { LiveMessage, User } from '@/services/model';
-import { SharedProps } from '@/types';
-import { router, usePage } from '@inertiajs/react';
-import { configureEcho, useEchoPresence } from '@laravel/echo-react';
+import { router } from '@inertiajs/react';
+import { useEchoPresence } from '@laravel/echo-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export function useLive(eventId?: string, initMessages: LiveMessage[] = []) {
-  const { broadcast } = usePage<SharedProps>().props;
-
-  configureEcho({
-    broadcaster: 'reverb',
-    key: broadcast.REVERB_APP_KEY,
-    wsHost: broadcast.REVERB_HOST,
-    wsPort: Number.parseInt(broadcast.REVERB_PORT),
-    wssPort: Number.parseInt(broadcast.REVERB_PORT),
-    forceTLS: (broadcast.REVERB_SCHEME ?? 'https') === 'https',
-  });
-
   const channelId = `live.message.${eventId}`;
 
   const [users, setUsers] = useState<User[]>([]);
