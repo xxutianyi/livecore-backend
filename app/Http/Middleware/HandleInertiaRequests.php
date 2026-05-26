@@ -59,7 +59,7 @@ class HandleInertiaRequests extends Middleware
                 'APP_IMAGE' => config('brand.image'),
             ],
             'broadcast' => [
-                'REVERB_APP_KEY' => config('broadcasting.connections.reverb.app_id'),
+                'REVERB_APP_KEY' => config('broadcasting.connections.reverb.key'),
                 'REVERB_HOST' => config('broadcasting.connections.reverb.options.host'),
                 'REVERB_PORT' => config('broadcasting.connections.reverb.options.port'),
                 'REVERB_SCHEME' => config('broadcasting.connections.reverb.options.scheme'),
