@@ -42,7 +42,6 @@ export function UserCreate() {
             <TextField name="name" label="姓名" />
             <TextField name="phone" label="手机号" />
             <TextField name="email" label="电子邮件" />
-            <TextField name="invitation_code" label="邀请人代码" />
             <MutiSelectField
               label="分组"
               name="group_ids"

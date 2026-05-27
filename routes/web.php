@@ -10,6 +10,8 @@ Route::middleware('guest')->group(function () {
     Route::redirect('/', '/login');
     Route::get('login', [Auth\LoginController::class, 'show']);
     Route::post('login', [Auth\LoginController::class, 'store']);
+    Route::get('register', [Auth\RegisterController::class, 'show']);
+    Route::post('register', [Auth\RegisterController::class, 'store']);
 });
 
 Route::middleware('auth')->group(function () {

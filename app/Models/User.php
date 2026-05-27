@@ -65,6 +65,7 @@ class User extends Authenticatable
         'name',
         'email',
         'phone',
+        'invitation_code'
     ];
 
     protected array $filterable = [

@@ -29,7 +29,6 @@ class UserRequest extends FormRequest
             'phone' => ['nullable', 'string', Rule::unique('users')->ignore($this->route('user'))],
             'group_ids' => [Rule::requiredUnless($this->user()->can('viewAdmin')), 'array'],
             'group_ids.*' => ['nullable', 'exists:user_groups,id'],
-            'invitation_code' => ['nullable', 'string', 'exists:users,inviter_code'],
         ];
     }
 

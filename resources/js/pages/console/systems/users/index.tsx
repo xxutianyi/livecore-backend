@@ -24,6 +24,11 @@ export default function Users({ data }: { data: PaginateData<User> }) {
       sortable: true,
     },
     {
+      dataKey: 'inviter_code',
+      title: '邀请码',
+      sortable: true,
+    },
+    {
       dataKey: 'role',
       title: '用户角色',
       tableRowRender: (data) => (

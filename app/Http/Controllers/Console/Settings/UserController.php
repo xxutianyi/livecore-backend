@@ -34,6 +34,7 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $user = User::create($request->validated());
+        $user->update(['invitation_code' => $request->user()->inviter_code]);
         $user->groups()->sync($request->group_ids);
 
         return back();

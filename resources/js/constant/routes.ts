@@ -1,5 +1,6 @@
 import {
   ChartBar,
+  Code2,
   HeartPulse,
   Lock,
   Play,
@@ -77,7 +78,7 @@ const routes: RouteItemGroup[] = [
       },
       {
         title: '接口访问',
-        icon: Lock,
+        icon: Code2,
         href: route('systems.clients.index'),
         roles: ['admin'],
       },

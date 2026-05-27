@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserGroup;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -72,6 +73,17 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('manageUserGroup', function (User $user, UserGroup $group) {
             return $user->role === 'admin' ||
                 ($user->role === 'room-admin' && $user->manageable_groups->contains($group->id));
+        });
+
+        /**
+         * 默认密码强度策略
+         */
+        Password::defaults(function () {
+            $rule = Password::min(8);
+
+            return $this->app->isProduction()
+                ? $rule->numbers()->letters()->symbols()->uncompromised()
+                : $rule;
         });
     }
 }
