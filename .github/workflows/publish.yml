@@ -35,7 +35,7 @@ jobs:
         with:
           images: |
             ghcr.io/${{ github.repository }}
-            ccr.ccs.tencentyun.com/winglab/${{ github.event.repository.name }}
+            hkccr.ccs.tencentyun.com/winglab/${{ github.event.repository.name }}
           flavor: |
             latest=true
           tags: |
