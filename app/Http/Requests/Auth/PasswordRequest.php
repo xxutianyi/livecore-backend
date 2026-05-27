@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class PasswordRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class PasswordRequest extends FormRequest
     {
         return [
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', 'confirmed']
+            'password' => ['required', 'confirmed', Password::defaults()]
         ];
     }
 

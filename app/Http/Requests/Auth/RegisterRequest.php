@@ -49,7 +49,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'password.confirmed' => '两次输入的密码不一致',
-            'password.defaults' => '密码强度不足，最少8个字符，并且包含字母、数字和特殊符号'
+            'password.defaults' => '密码强度不足，最少8个字符，并且包含大小写字母和数字'
         ];
     }
 }
