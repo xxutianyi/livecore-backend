@@ -90,8 +90,11 @@ RUN apt-get update && apt-get upgrade -y \
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.4
 
 # 复制项目文件并安装依赖
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+
 COPY . .
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer dump-autoload
 
 # 复制前端依赖供运行时打包
 COPY --from=dependencies /app/node_modules ./node_modules
