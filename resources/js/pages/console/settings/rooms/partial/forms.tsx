@@ -101,7 +101,7 @@ export function CoverUpdate({ room }: { room: LiveRoom }) {
           }}
         >
           <FieldGroup>
-            <UploadField name="file" accept={['image/*']} />
+            <UploadField name="cover" accept={['image/*']} />
             <Field>
               <Button type="submit">保存</Button>
             </Field>
