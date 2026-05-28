@@ -22,16 +22,6 @@ export default function Users({ data }: { data: PaginateData<User> }) {
       sortable: true,
     },
     {
-      dataKey: 'phone',
-      title: '手机号',
-      sortable: true,
-    },
-    {
-      dataKey: 'email',
-      title: '电子邮箱',
-      sortable: true,
-    },
-    {
       dataKey: 'invitation_code',
       title: '邀请人代码',
       sortable: true,
