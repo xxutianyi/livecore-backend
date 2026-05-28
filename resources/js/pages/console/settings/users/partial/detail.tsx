@@ -9,8 +9,6 @@ export function UserDetail({ user }: { user: User }) {
     <Section title="用户信息">
       <Description>
         <DescriptionItem label="姓名">{user.name}</DescriptionItem>
-        <DescriptionItem label="手机号">{user.phone}</DescriptionItem>
-        <DescriptionItem label="电子邮件">{user.email}</DescriptionItem>
         <DescriptionItem label="邀请人代码">{user.invitation_code}</DescriptionItem>
         <DescriptionItem label="注册日期">{formatDate(user.created_at)}</DescriptionItem>
         <DescriptionItem label="在线状态">
