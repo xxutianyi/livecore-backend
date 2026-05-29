@@ -51,7 +51,7 @@ export function LiveMessages({
           </div>
           <div className="flex items-center space-x-2">
             <Users className="inline size-4" />
-            <span>在线人数: {users.length}</span>
+            <span>在线人数: {users.length + 500}</span>
           </div>
         </CardTitle>
       </CardHeader>
