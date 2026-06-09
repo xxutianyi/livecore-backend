@@ -49,7 +49,7 @@ export default function Event({ room, event, events, messages }: PageProps) {
             </div>
           )}
         </Card>
-        <Card className="relative max-md:h-[calc(100svh-66px-56.25vw)] max-md:rounded-none md:w-1/4">
+        <Card className="relative max-md:h-[calc(100svh-65px-56.25vw)] max-md:rounded-none md:w-1/4">
           <Tabs defaultValue="events">
             <CardHeader className="-mt-3">
               <TabsList className="w-full">
