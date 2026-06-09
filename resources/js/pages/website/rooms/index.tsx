@@ -6,9 +6,11 @@ import { LiveRoom } from '@/services/model';
 export default function Rooms({ rooms }: { rooms: LiveRoom[] }) {
   return (
     <WebsiteLayout>
-      <Breadcrumb className="mb-4 md:mb-8" items={[{ label: '全部直播间' }]} />
-      <div className="grid gap-x-4 gap-y-8 md:grid-cols-4">
-        <RoomCardList rooms={rooms} />
+      <div className="max-md:p-4">
+        <Breadcrumb className="mb-4 md:mb-8" items={[{ label: '全部直播间' }]} />
+        <div className="grid gap-x-4 gap-y-8 md:grid-cols-4">
+          <RoomCardList rooms={rooms} />
+        </div>
       </div>
     </WebsiteLayout>
   );

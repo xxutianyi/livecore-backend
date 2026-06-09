@@ -67,7 +67,7 @@ export function WebsiteLayout({ children }: PropsWithChildren) {
           <ThemeToggle />
         </div>
       </div>
-      <ScrollArea className="h-[calc(100svh-64px)] overflow-hidden bg-muted/20 p-4 md:p-8">
+      <ScrollArea className="h-[calc(100svh-64px)] overflow-hidden bg-muted/20 p-0 md:p-8">
         {children}
       </ScrollArea>
       <Toaster position="top-right" />

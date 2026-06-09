@@ -8,28 +8,30 @@ import { Info } from 'lucide-react';
 export default function Events({ room, events }: { room: LiveRoom; events: LiveEvent[] }) {
   return (
     <WebsiteLayout>
-      <Breadcrumb
-        className="mb-4 md:mb-8"
-        items={[
-          { label: '全部直播间', link: route('watch.rooms.index') },
-          { label: room.name, link: route('watch.rooms.show', room.id) },
-          { label: '直播回放' },
-        ]}
-      />
-      {events.length > 0 ? (
-        <div className="grid gap-x-4 gap-y-8 md:grid-cols-4">
-          <EventCardList events={events} />
-        </div>
-      ) : (
-        <Empty className="mx-auto max-w-7xl border">
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <Info />
-            </EmptyMedia>
-            <EmptyTitle>暂无可查看的回放</EmptyTitle>
-          </EmptyHeader>
-        </Empty>
-      )}
+      <div className="max-md:p-4">
+        <Breadcrumb
+          className="mb-4 md:mb-8"
+          items={[
+            { label: '全部直播间', link: route('watch.rooms.index') },
+            { label: room.name, link: route('watch.rooms.show', room.id) },
+            { label: '直播回放' },
+          ]}
+        />
+        {events.length > 0 ? (
+          <div className="grid gap-x-4 gap-y-8 md:grid-cols-4">
+            <EventCardList events={events} />
+          </div>
+        ) : (
+          <Empty className="mx-auto max-w-7xl border">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <Info />
+              </EmptyMedia>
+              <EmptyTitle>暂无可查看的回放</EmptyTitle>
+            </EmptyHeader>
+          </Empty>
+        )}
+      </div>
     </WebsiteLayout>
   );
 }
