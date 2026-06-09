@@ -28,7 +28,7 @@ export default function Event({ room, event, events, messages }: PageProps) {
           { label: event.name },
         ]}
       />
-      <div className="max-md:-m-4 max-md:flex-col md:flex md:gap-x-4">
+      <div className="max-md:flex-col md:flex md:gap-x-4">
         <Card className="relative aspect-video p-0 max-md:rounded-none md:w-3/4">
           <div className="absolute top-4 left-5 z-10 flex items-center space-x-2 text-gray-50 max-md:hidden">
             <Video className="inline size-4" />
@@ -49,7 +49,7 @@ export default function Event({ room, event, events, messages }: PageProps) {
             </div>
           )}
         </Card>
-        <Card className="relative max-md:h-[calc(100svh-64px-56.25vw)] max-md:rounded-none md:w-1/4">
+        <Card className="relative max-md:h-[calc(100svh-66px-56.25vw)] max-md:rounded-none md:w-1/4">
           <Tabs defaultValue="events">
             <CardHeader className="-mt-3">
               <TabsList className="w-full">
