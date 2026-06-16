@@ -15,6 +15,13 @@ class UserTokenController extends Controller
         $name = "client:" . $request->client_id;
         $token = $user->createToken($name, [], $ttl)->plainTextToken;
 
-        return ApiResponse::success(['token' => $token, 'expires_in' => 2 * 60 * 60]);
+        return ApiResponse::success([
+            'token' => $token,
+            'expires_in' => 2 * 60 * 60,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+            ],
+        ]);
     }
 }
