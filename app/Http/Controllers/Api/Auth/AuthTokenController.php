@@ -19,6 +19,10 @@ class AuthTokenController extends Controller
         return ApiResponse::success([
             'token' => $token,
             'expires_in' => 60 * 60 * 24 * 30,
+            'user' => [
+                'id' => $request->user()->id,
+                'name' => $request->user()->name,
+            ],
         ]);
     }
 
