@@ -6,6 +6,7 @@ use App\Models\Live\LiveRoom;
 use App\Models\User;
 use App\Models\UserGroup;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -24,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->isProduction()) {
+            URL::forceScheme('https');
+        }
+        
         Gate::define('viewPulse', function (User $user) {
             return $user->role === 'admin';
         });
