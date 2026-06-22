@@ -24,7 +24,7 @@ class BroadcastRoomCache
         }
 
         if (!$room && Cache::has($cacheKey)) {
-            return redirect($request->url() . '/' . Cache::get($cacheKey));
+            return redirect($request->path() . '/' . Cache::get($cacheKey));
         }
 
         return $next($request);
