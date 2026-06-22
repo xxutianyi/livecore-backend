@@ -49,6 +49,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'client' => HandleClientRequests::class,
             'broadcast' => BroadcastRoomCache::class,
         ]);
+        
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
 
