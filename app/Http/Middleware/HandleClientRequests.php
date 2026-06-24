@@ -11,6 +11,30 @@ use Symfony\Component\HttpFoundation\Response;
 
 class HandleClientRequests
 {
+    protected function resolveClientIp(Request $request): ?string
+    {
+        $candidates = [
+            $request->headers->get('cf-connecting-ip'),
+            $request->headers->get('x-real-ip'),
+            $request->headers->get('x-forwarded-for'),
+            $request->ip(),
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (!$candidate) {
+                continue;
+            }
+
+            $ip = trim(explode(',', $candidate)[0]);
+
+            if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                return $ip;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -25,7 +49,12 @@ class HandleClientRequests
 
         $client = Client::find($request->client_id);
         $secret = Hash::check($request->client_secret, $client?->secret);
-        $whitelist = $client->whitelist->isEmpty() ?? $client?->whitelist->contains($request->ip());
+        $clientIp = $this->resolveClientIp($request);
+        $whitelist = $client?->whitelist->isEmpty() ?? false;
+
+        if (!$whitelist && $clientIp) {
+            $whitelist = $client?->whitelist->contains($clientIp) ?? false;
+        }
 
         if (!$secret || !$whitelist) {
             return ApiResponse::unAuthorized();
