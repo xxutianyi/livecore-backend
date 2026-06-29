@@ -15,6 +15,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Request as RequestAlias;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -30,7 +31,14 @@ return Application::configure(basePath: dirname(__DIR__))
         ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->statefulApi();
+        $middleware->trustProxies(
+            at: $_ENV['TRUSTED_PROXIES'] ?? $_SERVER['TRUSTED_PROXIES'] ?? '*',
+            headers: RequestAlias::HEADER_X_FORWARDED_FOR
+                | RequestAlias::HEADER_X_FORWARDED_HOST
+                | RequestAlias::HEADER_X_FORWARDED_PORT
+                | RequestAlias::HEADER_X_FORWARDED_PROTO
+                | RequestAlias::HEADER_X_FORWARDED_PREFIX,
+        );
 
         $middleware->redirectUsersTo(function (Request $request) {
             if ($request->expectsJson()) throw new RedirectUserException();
@@ -54,7 +62,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'broadcast' => BroadcastRoomCache::class,
         ]);
 
-        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
 

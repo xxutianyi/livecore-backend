@@ -14,10 +14,10 @@ class HandleClientRequests
     protected function resolveClientIp(Request $request): ?string
     {
         $candidates = [
-            $request->headers->get('cf-connecting-ip'),
-            $request->headers->get('x-real-ip'),
-            $request->headers->get('x-forwarded-for'),
             $request->ip(),
+            $request->headers->get('cf-connecting-ip'),
+            $request->headers->get('x-forwarded-for'),
+            $request->headers->get('x-real-ip'),
         ];
 
         foreach ($candidates as $candidate) {
