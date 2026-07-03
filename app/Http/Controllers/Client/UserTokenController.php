@@ -11,13 +11,14 @@ class UserTokenController extends Controller
 {
     public function __invoke(Request $request, User $user)
     {
-        $ttl = now()->addHours(2);
+        $sec = 60 * 5;
+        $ttl = now()->addSeconds($sec);
         $name = "client:" . $request->client_id;
         $token = $user->createToken($name, [], $ttl)->plainTextToken;
 
         return ApiResponse::success([
             'token' => $token,
-            'expires_in' => 2 * 60 * 60,
+            'expires_in' => $sec,
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,

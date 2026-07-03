@@ -11,14 +11,15 @@ class AuthTokenController extends Controller
 {
     public function store(TokenRequest $request)
     {
+        $sec = 60 * 5;
         $request->authenticate();
-        $ttl = now()->addDays(30);
+        $ttl = now()->addSeconds($sec);
         $name = $request->input('device_name');
         $token = $request->user()->createToken($name, ['*'], $ttl)->plainTextToken;
 
         return ApiResponse::success([
             'token' => $token,
-            'expires_in' => 60 * 60 * 24 * 30,
+            'expires_in' => $sec,
             'user' => [
                 'id' => $request->user()->id,
                 'name' => $request->user()->name,
