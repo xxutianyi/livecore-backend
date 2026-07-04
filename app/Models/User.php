@@ -23,7 +23,7 @@ use RahulHaque\Filepond\Traits\HasFilepond;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuids, Searchable, Filterable, Sortable, HasFilepond, HasApiTokens;
+    use Filterable, HasApiTokens, HasFactory, HasFilepond, HasUuids, Notifiable, Searchable, Sortable;
 
     protected $fillable = [
         'name',
@@ -33,8 +33,10 @@ class User extends Authenticatable
         'password',
         'inviter_code',
         'invitation_code',
+        'external_id',
         'email_verified_at',
         'phone_verified_at',
+        'account_type',
     ];
 
     protected $hidden = [
@@ -48,7 +50,7 @@ class User extends Authenticatable
     protected $appends = [
         'online',
         'leaving_at',
-        'manageable_groups'
+        'manageable_groups',
     ];
 
     protected array $sortable = [
@@ -65,12 +67,13 @@ class User extends Authenticatable
         'name',
         'email',
         'phone',
-        'invitation_code'
+        'invitation_code',
     ];
 
     protected array $filterable = [
         'role',
-        'invitation_code'
+        'account_type',
+        'invitation_code',
     ];
 
     protected function casts(): array
@@ -154,7 +157,6 @@ class User extends Authenticatable
         });
     }
 
-
     public function scopeCanViewBy(Builder $builder, User $user): Builder
     {
         if ($user->can('viewAdmin')) {
@@ -170,13 +172,24 @@ class User extends Authenticatable
     public function scopeAdmins(Builder $builder): Builder
     {
         return $builder
-            ->where('role', 'admin')
-            ->orWhere('role', 'room-admin');
+            ->where('account_type', 'human')
+            ->where(function (Builder $builder) {
+                $builder
+                    ->where('role', 'admin')
+                    ->orWhere('role', 'room-admin');
+            });
     }
 
     public function scopeAudiences(Builder $builder): Builder
     {
         return $builder->where('role', 'audience');
+    }
+
+    public function scopeServiceAccounts(Builder $builder): Builder
+    {
+        return $builder
+            ->where('account_type', 'service')
+            ->where('role', 'room-admin');
     }
 
     public function scopeWhereGroup(Builder $builder, ?string $group): Builder
@@ -199,7 +212,7 @@ class User extends Authenticatable
             });
         }
 
-        if (!$online) {
+        if (! $online) {
             $builder->whereDoesntHave('onlines')
                 ->orWhereHas('onlines', function (Builder $builder) {
                     $builder->whereNotNull('leaving_at');

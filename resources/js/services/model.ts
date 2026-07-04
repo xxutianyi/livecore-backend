@@ -15,6 +15,8 @@ export interface WithChildren<T extends Model> {
 export interface User extends Model {
   name: string;
   role: string;
+  account_type?: string;
+  external_id?: string;
   email?: string;
   phone?: string;
   online?: boolean;

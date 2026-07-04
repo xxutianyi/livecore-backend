@@ -21,7 +21,7 @@ class HandleClientRequests
         ];
 
         foreach ($candidates as $candidate) {
-            if (!$candidate) {
+            if (! $candidate) {
                 continue;
             }
 
@@ -38,7 +38,7 @@ class HandleClientRequests
     /**
      * Handle an incoming request.
      *
-     * @param Closure(Request): (Response) $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -52,11 +52,11 @@ class HandleClientRequests
         $clientIp = $this->resolveClientIp($request);
         $whitelist = $client?->whitelist->isEmpty() ?? false;
 
-        if (!$whitelist && $clientIp) {
+        if (! $whitelist && $clientIp) {
             $whitelist = $client?->whitelist->contains($clientIp) ?? false;
         }
 
-        if (!$secret || !$whitelist) {
+        if (! $secret || ! $whitelist) {
             return ApiResponse::unAuthorized();
         }
 

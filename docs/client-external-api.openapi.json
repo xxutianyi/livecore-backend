@@ -1,0 +1,229 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "LiveCore 外部 Client API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://liveapp.rdqh.net.cn"
+    }
+  ],
+  "tags": [
+    {
+      "name": "第三方专用"
+    }
+  ],
+  "paths": {
+    "/api/client/actors/{actor}/rooms": {
+      "get": {
+        "tags": ["第三方专用"],
+        "summary": "查询授权直播间列表",
+        "parameters": [
+          { "$ref": "#/components/parameters/Actor" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/actors/{actor}/groups": {
+      "get": {
+        "tags": ["第三方专用"],
+        "summary": "查询授权观众分组列表",
+        "parameters": [
+          { "$ref": "#/components/parameters/Actor" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/actors/{actor}/audiences/upsert": {
+      "post": {
+        "tags": ["第三方专用"],
+        "summary": "新建或更新观众并附加分组",
+        "parameters": [
+          { "$ref": "#/components/parameters/Actor" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AudienceUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/actors/{actor}/audiences/{audience}/groups/attach": {
+      "post": {
+        "tags": ["第三方专用"],
+        "summary": "附加观众分组",
+        "parameters": [
+          { "$ref": "#/components/parameters/Actor" },
+          { "$ref": "#/components/parameters/Audience" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AudienceGroupsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/actors/{actor}/audiences/{audience}/groups/detach": {
+      "delete": {
+        "tags": ["第三方专用"],
+        "summary": "分离观众分组",
+        "parameters": [
+          { "$ref": "#/components/parameters/Actor" },
+          { "$ref": "#/components/parameters/Audience" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AudienceGroupsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "Actor": {
+        "name": "actor",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" },
+        "description": "后台影子用户 ID"
+      },
+      "Audience": {
+        "name": "audience",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" },
+        "description": "观众用户 ID"
+      },
+      "ClientIdQuery": {
+        "name": "client_id",
+        "in": "query",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" }
+      },
+      "ClientSecretQuery": {
+        "name": "client_secret",
+        "in": "query",
+        "required": true,
+        "schema": { "type": "string" }
+      }
+    },
+    "schemas": {
+      "AudienceUpsertRequest": {
+        "type": "object",
+        "required": ["client_id", "client_secret", "external_id", "name", "group_ids"],
+        "properties": {
+          "client_id": { "type": "string", "format": "uuid" },
+          "client_secret": { "type": "string" },
+          "external_id": { "type": "string", "description": "外部系统用户唯一标识" },
+          "name": { "type": "string" },
+          "phone": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true, "format": "email" },
+          "group_ids": {
+            "type": "array",
+            "items": { "type": "string", "format": "uuid" }
+          }
+        }
+      },
+      "AudienceGroupsRequest": {
+        "type": "object",
+        "required": ["client_id", "client_secret", "group_ids"],
+        "properties": {
+          "client_id": { "type": "string", "format": "uuid" },
+          "client_secret": { "type": "string" },
+          "group_ids": {
+            "type": "array",
+            "items": { "type": "string", "format": "uuid" }
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "example": 0 },
+          "data": { "nullable": true },
+          "message": { "type": "string", "example": "success" },
+          "errors": { "nullable": true }
+        }
+      }
+    }
+  }
+}

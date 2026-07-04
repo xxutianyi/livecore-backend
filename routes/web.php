@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\Auth as Auth;
-use App\Http\Controllers\Console as Console;
-use App\Http\Controllers\Watch as Watch;
+use App\Http\Controllers\Auth;
+use App\Http\Controllers\Console;
+use App\Http\Controllers\Watch;
 use Illuminate\Support\Facades\Route;
-
 
 Route::middleware('guest')->group(function () {
     Route::redirect('/', '/login');
@@ -20,16 +19,18 @@ Route::middleware('auth')->group(function () {
     Route::put('profile', [Auth\ProfileController::class, 'update'])->name('profile.update');
     Route::put('password', [Auth\ProfileController::class, 'password'])->name('password.update');
 
-    Route::get('rooms',[Watch\RoomController::class,'index'])->name('watch.rooms.index');
-    Route::get('rooms/{room}',[Watch\RoomController::class,'show'])->name('watch.rooms.show');
-    Route::get('rooms/{room}/events',[Watch\EventController::class,'index'])->name('watch.rooms.events.index');
-    Route::get('rooms/{room}/events/{event}',[Watch\EventController::class,'show'])->name('watch.rooms.events.show');
+    Route::get('rooms', [Watch\RoomController::class, 'index'])->name('watch.rooms.index');
+    Route::get('rooms/{room}', [Watch\RoomController::class, 'show'])->name('watch.rooms.show');
+    Route::get('rooms/{room}/events', [Watch\EventController::class, 'index'])->name('watch.rooms.events.index');
+    Route::get('rooms/{room}/events/{event}', [Watch\EventController::class, 'show'])->name('watch.rooms.events.show');
     Route::post('events/{event}/message', [Watch\MessageController::class, 'store'])->name('watch.messages.store');
 
     Route::can('viewAdmin')->group(function () {
         Route::prefix('systems')->name('systems.')->group(function () {
             Route::resource('users', Console\Systems\UserController::class)->except(['create', 'edit']);
             Route::put('/users/{user}/manageable', Console\Systems\UserManageableController::class)->name('users.manageable');
+            Route::resource('service-accounts', Console\Systems\ServiceAccountController::class)->except(['create', 'edit']);
+            Route::put('/service-accounts/{user}/manageable', Console\Systems\UserManageableController::class)->name('service-accounts.manageable');
             Route::resource('clients', Console\Systems\ClientController::class)->only(['index', 'store', 'destroy']);
         });
     });

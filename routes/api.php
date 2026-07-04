@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api as Api;
-use App\Http\Controllers\Client as Client;
+use App\Http\Controllers\Api;
+use App\Http\Controllers\Client;
 use Illuminate\Support\Facades\Route;
 
 Route::post('live-callback/push', [Api\LiveCallbackController::class, 'push']);
@@ -16,6 +16,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::prefix('client')->middleware('client')->group(function () {
     Route::post('token/{user}', Client\UserTokenController::class);
+    Route::get('actors/{actor}/rooms', [Client\ExternalController::class, 'rooms']);
+    Route::get('actors/{actor}/groups', [Client\ExternalController::class, 'groups']);
+    Route::post('actors/{actor}/audiences/upsert', [Client\ExternalController::class, 'upsertAudience']);
+    Route::post('actors/{actor}/audiences/{audience}/groups/attach', [Client\ExternalController::class, 'attachAudienceGroups']);
+    Route::delete('actors/{actor}/audiences/{audience}/groups/detach', [Client\ExternalController::class, 'detachAudienceGroups']);
 });
 
 Route::middleware('guest')->group(function () {

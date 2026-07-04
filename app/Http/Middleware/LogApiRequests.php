@@ -18,6 +18,7 @@ class LogApiRequests
 
         try {
             $response = $next($request);
+
             return $response;
         } catch (Throwable $throwable) {
             $exception = $throwable;
@@ -33,7 +34,7 @@ class LogApiRequests
             Log::channel('api')->info('API request', [
                 'method' => $request->getMethod(),
                 'path' => $request->path(),
-                'query' => $request->query(),
+                'query' => collect($request->query())->except(['client_secret'])->all(),
                 'payload' => $payload,
                 'status' => $response?->getStatusCode() ?? 500,
                 'duration_ms' => (int) round((microtime(true) - $startedAt) * 1000),

@@ -66,7 +66,13 @@ export function RoomIndex({ user }: { user: User }) {
   );
 }
 
-export function RoomUpdate({ user }: { user: User }) {
+export function RoomUpdate({
+  user,
+  routeName = 'systems.users.manageable',
+}: {
+  user: User;
+  routeName?: string;
+}) {
   const [open, setOpen] = useState(false);
 
   const { options } = usePage<SharedProps>().props;
@@ -81,7 +87,7 @@ export function RoomUpdate({ user }: { user: User }) {
           <DialogTitle>授权直播间</DialogTitle>
         </DialogHeader>
         <Form
-          action={route('systems.users.manageable', user.id)}
+          action={route(routeName, user.id)}
           method="PUT"
           onSuccess={() => {
             setOpen(false);

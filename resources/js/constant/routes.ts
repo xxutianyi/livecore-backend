@@ -4,6 +4,7 @@ import {
   HeartPulse,
   Lock,
   Play,
+  ServerCog,
   ShieldAlert,
   TvMinimal,
   TvMinimalPlay,
@@ -74,6 +75,12 @@ const routes: RouteItemGroup[] = [
         title: '管理员',
         icon: Lock,
         href: route('systems.users.index'),
+        roles: ['admin'],
+      },
+      {
+        title: '影子用户',
+        icon: ServerCog,
+        href: route('systems.service-accounts.index'),
         roles: ['admin'],
       },
       {
