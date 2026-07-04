@@ -33,7 +33,6 @@ class User extends Authenticatable
         'password',
         'inviter_code',
         'invitation_code',
-        'external_id',
         'email_verified_at',
         'phone_verified_at',
         'account_type',

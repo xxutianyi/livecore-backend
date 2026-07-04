@@ -14,11 +14,6 @@ export default function ServiceAccounts({ data }: { data: PaginateData<User> }) 
       sortable: true,
     },
     {
-      dataKey: 'inviter_code',
-      title: '邀请码',
-      sortable: true,
-    },
-    {
       dataKey: 'manageable',
       title: '授权直播间',
       tableRowRender: (data) => `${data.manageable?.length ?? 0} 个`,

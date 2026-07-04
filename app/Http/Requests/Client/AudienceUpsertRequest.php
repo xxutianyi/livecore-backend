@@ -14,7 +14,6 @@ class AudienceUpsertRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'external_id' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -26,7 +25,6 @@ class AudienceUpsertRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'external_id' => '外部用户ID',
             'name' => '姓名',
             'phone' => '手机号',
             'email' => '电子邮件',

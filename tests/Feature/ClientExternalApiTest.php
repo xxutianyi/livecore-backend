@@ -31,9 +31,9 @@ function clientUrl(string $path, ?array $credentials = null): string
     return $path.(str_contains($path, '?') ? '&' : '?').$query;
 }
 
-function clientPayload(array $payload = [], ?array $credentials = null): array
+function clientPayload(array $payload = []): array
 {
-    return array_merge($payload, $credentials ?? clientCredentials());
+    return $payload;
 }
 
 function serviceActorWithGroups(): array
@@ -125,20 +125,26 @@ test('client can upsert audience and attach only requested groups without exposi
     $credentials = clientCredentials();
     $audience = User::factory()->create([
         'role' => 'audience',
-        'external_id' => 'ext-001',
+        'name' => 'Old Audience',
+        'phone' => '13800138001',
     ]);
     $audience->groups()->attach($otherGroup);
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/upsert", clientPayload([
-        'external_id' => 'ext-001',
+    $response = $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+        'phone' => '13800138001',
         'name' => 'External Audience',
         'group_ids' => [$group->id],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 0)
         ->assertJsonPath('data.id', $audience->id)
-        ->assertJsonPath('data.group_ids.0', $group->id)
+        ->assertJsonPath('data.user_id', $audience->id)
+        ->assertJsonPath('data.name', 'External Audience')
         ->assertJsonMissing(['groups' => []]);
+
+    expect($response->json('data.group_ids'))
+        ->toContain($group->id)
+        ->toContain($otherGroup->id);
 
     expect($audience->fresh()->groups()->pluck('user_groups.id')->all())
         ->toContain($group->id)
@@ -149,19 +155,18 @@ test('client can upsert audience without phone and email', function () {
     [$actor, , $group] = serviceActorWithGroups();
     $credentials = clientCredentials();
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/upsert", clientPayload([
-        'external_id' => 'ext-without-contact',
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
         'name' => 'No Contact Audience',
         'group_ids' => [$group->id],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 0)
-        ->assertJsonPath('data.external_id', 'ext-without-contact')
+        ->assertJsonPath('data.name', 'No Contact Audience')
         ->assertJsonPath('data.phone', null)
         ->assertJsonPath('data.email', null)
         ->assertJsonPath('data.group_ids.0', $group->id);
 
-    $audience = User::where('external_id', 'ext-without-contact')->first();
+    $audience = User::where('name', 'No Contact Audience')->first();
 
     expect($audience)
         ->not->toBeNull()
@@ -170,103 +175,124 @@ test('client can upsert audience without phone and email', function () {
         ->and($audience->groups()->pluck('user_groups.id')->all())->toContain($group->id);
 });
 
-test('client upsert updates existing audience by external id', function () {
+test('client upsert updates existing audience by unique identity fields', function () {
     [$actor, , $group] = serviceActorWithGroups();
     $credentials = clientCredentials();
     $audience = User::factory()->create([
         'role' => 'audience',
-        'external_id' => 'ext-update',
         'name' => 'Old Name',
         'phone' => null,
-        'email' => null,
+        'email' => 'old-audience@example.com',
     ]);
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/upsert", clientPayload([
-        'external_id' => 'ext-update',
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
         'name' => 'New Name',
         'phone' => '13800138000',
-        'email' => 'new-audience@example.com',
+        'email' => 'old-audience@example.com',
         'group_ids' => [$group->id],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 0)
         ->assertJsonPath('data.id', $audience->id)
         ->assertJsonPath('data.name', 'New Name')
         ->assertJsonPath('data.phone', '13800138000')
-        ->assertJsonPath('data.email', 'new-audience@example.com');
+        ->assertJsonPath('data.email', 'old-audience@example.com');
 
     $audience->refresh();
 
     expect($audience->name)
         ->toBe('New Name')
         ->and($audience->phone)->toBe('13800138000')
-        ->and($audience->email)->toBe('new-audience@example.com')
-        ->and(User::where('external_id', 'ext-update')->count())->toBe(1);
+        ->and($audience->email)->toBe('old-audience@example.com')
+        ->and(User::where('email', 'old-audience@example.com')->count())->toBe(1);
 });
 
 test('client upsert rejects unauthorized invalid empty and missing groups', function () {
     [$actor, , , $otherGroup] = serviceActorWithGroups();
     $credentials = clientCredentials();
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/upsert", clientPayload([
-        'external_id' => 'ext-unauthorized-group',
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
         'name' => 'Unauthorized Group',
         'group_ids' => [$otherGroup->id],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4000);
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/upsert", clientPayload([
-        'external_id' => 'ext-empty-groups',
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
         'name' => 'Empty Groups',
         'group_ids' => [],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4003)
         ->assertJsonStructure(['errors' => ['group_ids']]);
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/upsert", clientPayload([
-        'external_id' => 'ext-missing-groups',
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
         'name' => 'Missing Groups',
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4003)
         ->assertJsonStructure(['errors' => ['group_ids']]);
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/upsert", clientPayload([
-        'external_id' => 'ext-invalid-group',
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
         'name' => 'Invalid Group',
         'group_ids' => ['not-a-uuid'],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4003)
         ->assertJsonStructure(['errors' => ['group_ids.0']]);
 
-    expect(User::whereIn('external_id', [
-        'ext-unauthorized-group',
-        'ext-empty-groups',
-        'ext-missing-groups',
-        'ext-invalid-group',
+    expect(User::whereIn('name', [
+        'Unauthorized Group',
+        'Empty Groups',
+        'Missing Groups',
+        'Invalid Group',
     ])->count())->toBe(0);
 });
 
-test('client upsert refuses external id owned by non audience user', function () {
+test('client upsert refuses identity owned by non audience user', function () {
     [$actor, , $group] = serviceActorWithGroups();
     $credentials = clientCredentials();
     $admin = User::factory()->create([
         'role' => 'admin',
-        'external_id' => 'ext-admin',
+        'name' => 'Admin Identity',
     ]);
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/upsert", clientPayload([
-        'external_id' => 'ext-admin',
-        'name' => 'Should Not Update',
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+        'name' => 'Admin Identity',
         'group_ids' => [$group->id],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4000);
 
-    expect($admin->fresh()->name)->not->toBe('Should Not Update');
+    expect($admin->fresh()->role)->toBe('admin');
+});
+
+test('client upsert rejects identity fields matching different users', function () {
+    [$actor, , $group] = serviceActorWithGroups();
+    $credentials = clientCredentials();
+    $audienceByName = User::factory()->create([
+        'role' => 'audience',
+        'name' => 'Identity Name',
+        'email' => 'identity-name@example.com',
+    ]);
+    $audienceByEmail = User::factory()->create([
+        'role' => 'audience',
+        'name' => 'Other Identity',
+        'email' => 'identity-email@example.com',
+    ]);
+
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+        'name' => 'Identity Name',
+        'email' => 'identity-email@example.com',
+        'group_ids' => [$group->id],
+    ]))
+        ->assertOk()
+        ->assertJsonPath('code', 4003)
+        ->assertJsonStructure(['errors' => ['identity']]);
+
+    expect($audienceByName->fresh()->email)
+        ->toBe('identity-name@example.com')
+        ->and($audienceByEmail->fresh()->name)->toBe('Other Identity');
 });
 
 test('client cannot attach unauthorized groups', function () {
@@ -274,13 +300,34 @@ test('client cannot attach unauthorized groups', function () {
     $credentials = clientCredentials();
     $audience = User::factory()->create(['role' => 'audience']);
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/$audience->id/groups/attach", clientPayload([
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/$audience->id/groups/attach", $credentials), clientPayload([
         'group_ids' => [$otherGroup->id],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4000);
 
     expect($audience->fresh()->groups()->count())->toBe(0);
+});
+
+test('client attach returns complete audience group ids after operation', function () {
+    [$actor, , $group] = serviceActorWithGroups();
+    $credentials = clientCredentials();
+    $otherRoom = LiveRoom::factory()->create();
+    $otherAllowedGroup = UserGroup::create(['name' => 'Other allowed group']);
+    $actor->manageable()->attach($otherRoom);
+    $otherRoom->groups()->attach($otherAllowedGroup);
+    $audience = User::factory()->create(['role' => 'audience']);
+    $audience->groups()->attach($otherAllowedGroup);
+
+    $response = $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/$audience->id/groups/attach", $credentials), clientPayload([
+        'group_ids' => [$group->id],
+    ]))
+        ->assertOk()
+        ->assertJsonPath('code', 0);
+
+    expect($response->json('data.group_ids'))
+        ->toContain($group->id)
+        ->toContain($otherAllowedGroup->id);
 });
 
 test('client cannot attach or detach non audience users', function () {
@@ -288,15 +335,15 @@ test('client cannot attach or detach non audience users', function () {
     $credentials = clientCredentials();
     $roomAdmin = User::factory()->create(['role' => 'room-admin']);
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/$roomAdmin->id/groups/attach", clientPayload([
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/$roomAdmin->id/groups/attach", $credentials), clientPayload([
         'group_ids' => [$group->id],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4000);
 
-    $this->deleteJson("/api/client/actors/$actor->id/audiences/$roomAdmin->id/groups/detach", clientPayload([
+    $this->deleteJson(clientUrl("/api/client/actors/$actor->id/audiences/$roomAdmin->id/groups/detach", $credentials), clientPayload([
         'group_ids' => [$group->id],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4000);
 
@@ -309,12 +356,13 @@ test('client detach removes only requested manageable groups', function () {
     $audience = User::factory()->create(['role' => 'audience']);
     $audience->groups()->attach([$group->id, $otherGroup->id]);
 
-    $this->deleteJson("/api/client/actors/$actor->id/audiences/$audience->id/groups/detach", clientPayload([
+    $this->deleteJson(clientUrl("/api/client/actors/$actor->id/audiences/$audience->id/groups/detach", $credentials), clientPayload([
         'group_ids' => [$group->id],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 0)
-        ->assertJsonPath('data.group_ids.0', $group->id);
+        ->assertJsonPath('data.group_ids.0', $otherGroup->id)
+        ->assertJsonMissingPath('data.group_ids.1');
 
     $groupIds = $audience->fresh()->groups()->pluck('user_groups.id')->all();
 
@@ -329,9 +377,9 @@ test('client detach rejects unauthorized groups without deleting existing member
     $audience = User::factory()->create(['role' => 'audience']);
     $audience->groups()->attach([$group->id, $otherGroup->id]);
 
-    $this->deleteJson("/api/client/actors/$actor->id/audiences/$audience->id/groups/detach", clientPayload([
+    $this->deleteJson(clientUrl("/api/client/actors/$actor->id/audiences/$audience->id/groups/detach", $credentials), clientPayload([
         'group_ids' => [$otherGroup->id],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4000);
 
@@ -347,22 +395,22 @@ test('client attach and detach validate missing target audience and group fields
     $credentials = clientCredentials();
     $missingAudienceId = fake()->uuid();
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/$missingAudienceId/groups/attach", clientPayload([
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/$missingAudienceId/groups/attach", $credentials), clientPayload([
         'group_ids' => [],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4004);
 
     $audience = User::factory()->create(['role' => 'audience']);
 
-    $this->postJson("/api/client/actors/$actor->id/audiences/$audience->id/groups/attach", clientPayload([], $credentials))
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/$audience->id/groups/attach", $credentials), clientPayload([]))
         ->assertOk()
         ->assertJsonPath('code', 4003)
         ->assertJsonStructure(['errors' => ['group_ids']]);
 
-    $this->deleteJson("/api/client/actors/$actor->id/audiences/$audience->id/groups/detach", clientPayload([
+    $this->deleteJson(clientUrl("/api/client/actors/$actor->id/audiences/$audience->id/groups/detach", $credentials), clientPayload([
         'group_ids' => [],
-    ], $credentials))
+    ]))
         ->assertOk()
         ->assertJsonPath('code', 4003)
         ->assertJsonStructure(['errors' => ['group_ids']]);

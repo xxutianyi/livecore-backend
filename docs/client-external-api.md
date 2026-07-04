@@ -15,8 +15,8 @@
 
 服务端仍会校验 client secret 和 IP 白名单。
 
-- `GET` 接口通过 query 传 `client_id`、`client_secret`。
-- `POST` / `DELETE` 接口通过 JSON body 传 `client_id`、`client_secret`。
+- 所有接口都通过 query 传 `client_id`、`client_secret`。
+- `POST` / `DELETE` 接口的 JSON body 只放业务字段。
 
 ## Actor
 
@@ -49,16 +49,13 @@ GET /api/client/actors/{actor}/groups?client_id={client_id}&client_secret={clien
 ## 新建或更新观众并附加分组
 
 ```http
-POST /api/client/actors/{actor}/audiences/upsert
+POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_secret={client_secret}
 ```
 
 请求：
 
 ```json
 {
-  "client_id": "client-uuid",
-  "client_secret": "client-secret",
-  "external_id": "external-user-id",
   "name": "观众名称",
   "phone": "13800000000",
   "email": "user@example.com",
@@ -68,48 +65,69 @@ POST /api/client/actors/{actor}/audiences/upsert
 
 规则：
 
-- `external_id` 是外部系统用户唯一标识，必填。
-- 用户不存在时创建 `audience`。
-- 用户存在时只更新基础字段。
+- 系统会使用 `name`、`phone`、`email` 作为唯一标识匹配已有用户。
+- 用户不存在时创建 `audience`，并在响应中返回本系统用户 ID。
+- 用户存在时只更新基础字段，并返回同一个本系统用户 ID。
+- 如果 `name`、`phone`、`email` 分别匹配到多个不同用户，请求会被拒绝。
 - `group_ids` 必须全部在 actor 可管理分组内。
 - 只附加本次传入的分组，不覆盖用户已有其他分组。
-- 返回只包含本次请求涉及的 `group_ids`，不返回用户完整分组。
+- 返回的 `group_ids` 是操作后该用户的完整分组 ID 列表。
+
+成功响应中的 `data.id` / `data.user_id` 即本系统观众用户 ID，后续附加/分离分组接口的 `{audience}` 使用这个 ID。
+
+返回：
+
+```json
+{
+  "code": 0,
+  "data": {
+    "id": "user-uuid",
+    "user_id": "user-uuid",
+    "name": "观众名称",
+    "phone": "13800000000",
+    "email": "user@example.com",
+    "group_ids": ["group-uuid"]
+  },
+  "message": "success",
+  "errors": null
+}
+```
 
 ## 附加观众分组
 
 ```http
-POST /api/client/actors/{actor}/audiences/{audience}/groups/attach
+POST /api/client/actors/{actor}/audiences/{audience}/groups/attach?client_id={client_id}&client_secret={client_secret}
 ```
 
 请求：
 
 ```json
 {
-  "client_id": "client-uuid",
-  "client_secret": "client-secret",
   "group_ids": ["group-uuid"]
 }
 ```
 
 只附加 actor 可管理的分组，不覆盖其他分组。
 
+返回格式同“新建或更新观众并附加分组”，`data.group_ids` 是附加后该用户的完整分组 ID 列表。
+
 ## 分离观众分组
 
 ```http
-DELETE /api/client/actors/{actor}/audiences/{audience}/groups/detach
+DELETE /api/client/actors/{actor}/audiences/{audience}/groups/detach?client_id={client_id}&client_secret={client_secret}
 ```
 
 请求：
 
 ```json
 {
-  "client_id": "client-uuid",
-  "client_secret": "client-secret",
   "group_ids": ["group-uuid"]
 }
 ```
 
 只移除 actor 可管理且本次指定的分组，不影响用户已有其他分组。
+
+返回格式同“新建或更新观众并附加分组”，`data.group_ids` 是分离后该用户的完整分组 ID 列表。
 
 ## 响应格式
 

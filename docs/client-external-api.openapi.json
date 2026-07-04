@@ -30,7 +30,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "$ref": "#/components/schemas/AudienceApiResponse"
                 }
               }
             }
@@ -53,7 +53,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "$ref": "#/components/schemas/AudienceApiResponse"
                 }
               }
             }
@@ -66,7 +66,9 @@
         "tags": ["第三方专用"],
         "summary": "新建或更新观众并附加分组",
         "parameters": [
-          { "$ref": "#/components/parameters/Actor" }
+          { "$ref": "#/components/parameters/Actor" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
         ],
         "requestBody": {
           "required": true,
@@ -84,7 +86,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponse"
+                  "$ref": "#/components/schemas/AudienceApiResponse"
                 }
               }
             }
@@ -98,7 +100,9 @@
         "summary": "附加观众分组",
         "parameters": [
           { "$ref": "#/components/parameters/Actor" },
-          { "$ref": "#/components/parameters/Audience" }
+          { "$ref": "#/components/parameters/Audience" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
         ],
         "requestBody": {
           "required": true,
@@ -130,7 +134,9 @@
         "summary": "分离观众分组",
         "parameters": [
           { "$ref": "#/components/parameters/Actor" },
-          { "$ref": "#/components/parameters/Audience" }
+          { "$ref": "#/components/parameters/Audience" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
         ],
         "requestBody": {
           "required": true,
@@ -189,11 +195,8 @@
     "schemas": {
       "AudienceUpsertRequest": {
         "type": "object",
-        "required": ["client_id", "client_secret", "external_id", "name", "group_ids"],
+        "required": ["name", "group_ids"],
         "properties": {
-          "client_id": { "type": "string", "format": "uuid" },
-          "client_secret": { "type": "string" },
-          "external_id": { "type": "string", "description": "外部系统用户唯一标识" },
           "name": { "type": "string" },
           "phone": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true, "format": "email" },
@@ -205,14 +208,36 @@
       },
       "AudienceGroupsRequest": {
         "type": "object",
-        "required": ["client_id", "client_secret", "group_ids"],
+        "required": ["group_ids"],
         "properties": {
-          "client_id": { "type": "string", "format": "uuid" },
-          "client_secret": { "type": "string" },
           "group_ids": {
             "type": "array",
             "items": { "type": "string", "format": "uuid" }
           }
+        }
+      },
+      "AudienceResponseData": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "description": "本系统观众用户 ID" },
+          "user_id": { "type": "string", "format": "uuid", "description": "同 id，本系统观众用户 ID" },
+          "name": { "type": "string" },
+          "phone": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true, "format": "email" },
+          "group_ids": {
+            "type": "array",
+            "description": "操作后该用户的完整分组 ID 列表",
+            "items": { "type": "string", "format": "uuid" }
+          }
+        }
+      },
+      "AudienceApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "example": 0 },
+          "data": { "$ref": "#/components/schemas/AudienceResponseData" },
+          "message": { "type": "string", "example": "success" },
+          "errors": { "nullable": true }
         }
       },
       "ApiResponse": {

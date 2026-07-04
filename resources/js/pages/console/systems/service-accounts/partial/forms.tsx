@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { User } from '@/services/model';
-import { Form } from '@inertiajs/react';
+import { Form, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -74,6 +74,45 @@ export function ServiceAccountUpdate({ user }: { user: User }) {
             </Field>
           </FieldGroup>
         </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+export function ServiceAccountDelete({ user }: { user: User }) {
+  const [open, setOpen] = useState(false);
+
+  function handleDelete() {
+    router.delete(route('systems.service-accounts.destroy', user.id), {
+      onSuccess: () => {
+        setOpen(false);
+        toast.success('影子用户已删除');
+      },
+    });
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="destructive">删除影子用户</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>确认删除影子用户</DialogTitle>
+          <DialogDescription>
+            删除后使用该影子用户 ID 的外部 API 调用会立即失效，已授权直播间关系会被解除，且无法恢复。
+          </DialogDescription>
+        </DialogHeader>
+        <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm">
+          <div className="font-medium text-destructive">请确认你正在删除：</div>
+          <div className="mt-2 grid gap-1">
+            <div>名称：{user.name}</div>
+            <div className="break-all font-mono text-xs">ID：{user.id}</div>
+          </div>
+        </div>
+        <Button variant="destructive" onClick={handleDelete}>
+          确认删除，外部接口将失效
+        </Button>
       </DialogContent>
     </Dialog>
   );

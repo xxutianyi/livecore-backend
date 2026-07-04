@@ -11,6 +11,7 @@ use App\Response\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Rule;
 
 class ExternalController extends Controller
@@ -54,9 +55,11 @@ class ExternalController extends Controller
             return ApiResponse::unAuthorized();
         }
 
-        $audience = User::query()
-            ->where('external_id', $request->validated('external_id'))
-            ->first();
+        $audience = $this->resolveAudienceByIdentity($request);
+
+        if ($audience instanceof MessageBag) {
+            return ApiResponse::error('提交的数据验证失败', 4003, $audience->toArray());
+        }
 
         $uniqueErrors = $this->validateAudienceUniqueFields($request, $audience);
         if ($uniqueErrors) {
@@ -69,7 +72,6 @@ class ExternalController extends Controller
 
         if (! $audience) {
             $audience = new User([
-                'external_id' => $request->validated('external_id'),
                 'role' => 'audience',
                 'account_type' => 'human',
             ]);
@@ -80,7 +82,7 @@ class ExternalController extends Controller
         $audience->groups()->syncWithoutDetaching($groupIds);
         $this->forgetRoomAudienceCache($groupIds);
 
-        return ApiResponse::success($this->audienceResponse($audience, $groupIds));
+        return ApiResponse::success($this->audienceResponse($audience));
     }
 
     public function attachAudienceGroups(AudienceGroupsRequest $request, User $actor, User $audience)
@@ -98,7 +100,7 @@ class ExternalController extends Controller
         $audience->groups()->syncWithoutDetaching($groupIds);
         $this->forgetRoomAudienceCache($groupIds);
 
-        return ApiResponse::success($this->audienceResponse($audience, $groupIds));
+        return ApiResponse::success($this->audienceResponse($audience));
     }
 
     public function detachAudienceGroups(AudienceGroupsRequest $request, User $actor, User $audience)
@@ -116,7 +118,7 @@ class ExternalController extends Controller
         $audience->groups()->detach($groupIds);
         $this->forgetRoomAudienceCache($groupIds);
 
-        return ApiResponse::success($this->audienceResponse($audience, $groupIds));
+        return ApiResponse::success($this->audienceResponse($audience));
     }
 
     private function isValidActor(User $actor): bool
@@ -160,18 +162,19 @@ class ExternalController extends Controller
             });
     }
 
-    /**
-     * @param  array<int, string>  $groupIds
-     */
-    private function audienceResponse(User $audience, array $groupIds): array
+    private function audienceResponse(User $audience): array
     {
         return [
             'id' => $audience->id,
-            'external_id' => $audience->external_id,
+            'user_id' => $audience->id,
             'name' => $audience->name,
             'phone' => $audience->phone,
             'email' => $audience->email,
-            'group_ids' => $groupIds,
+            'group_ids' => $audience->groups()
+                ->pluck('user_groups.id')
+                ->map(fn ($id) => (string) $id)
+                ->values()
+                ->all(),
         ];
     }
 
@@ -188,5 +191,30 @@ class ExternalController extends Controller
         ]);
 
         return $validator->fails() ? $validator->errors()->toArray() : null;
+    }
+
+    private function resolveAudienceByIdentity(AudienceUpsertRequest $request): User|MessageBag|null
+    {
+        $identities = collect($request->only(['name', 'phone', 'email']))
+            ->filter(fn ($value) => filled($value));
+
+        $users = User::query()
+            ->where(function ($query) use ($identities) {
+                $identities->each(fn ($value, $field) => $query->orWhere($field, $value));
+            })
+            ->get();
+
+        if ($users->isEmpty()) {
+            return null;
+        }
+
+        if ($users->pluck('id')->unique()->count() > 1) {
+            return Validator::make([], [])->errors()->add(
+                'identity',
+                '姓名、手机号或电子邮件匹配到多个用户，请检查提交的数据'
+            );
+        }
+
+        return $users->first();
     }
 }
