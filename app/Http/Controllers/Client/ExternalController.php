@@ -43,6 +43,20 @@ class ExternalController extends Controller
         );
     }
 
+    public function audiences(Request $request)
+    {
+        return ApiResponse::success(
+            User::query()
+                ->where('role', 'audience')
+                ->with('groups')
+                ->orderBy('created_at')
+                ->orderBy('id')
+                ->get(['id', 'name', 'phone', 'email'])
+                ->map(fn (User $audience) => $this->audienceListResponse($audience))
+                ->values()
+        );
+    }
+
     public function upsertAudience(AudienceUpsertRequest $request, User $actor)
     {
         if (! $this->isValidActor($actor)) {
@@ -132,11 +146,21 @@ class ExternalController extends Controller
      */
     private function canManageGroups(User $actor, array $groupIds): bool
     {
-        $manageableGroupIds = $actor->manageable_groups
-            ->map(fn ($id) => (string) $id)
-            ->all();
+        $manageableGroupIds = $this->actorManageableGroupIds($actor);
 
         return empty(array_diff($groupIds, $manageableGroupIds));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function actorManageableGroupIds(User $actor): array
+    {
+        return $actor->manageable_groups
+            ->map(fn ($id) => (string) $id)
+            ->unique()
+            ->values()
+            ->all();
     }
 
     /**
@@ -172,6 +196,21 @@ class ExternalController extends Controller
             'email' => $audience->email,
             'group_ids' => $audience->groups()
                 ->pluck('user_groups.id')
+                ->map(fn ($id) => (string) $id)
+                ->values()
+                ->all(),
+        ];
+    }
+
+    private function audienceListResponse(User $audience): array
+    {
+        return [
+            'id' => $audience->id,
+            'name' => $audience->name,
+            'phone' => $audience->phone,
+            'email' => $audience->email,
+            'group_ids' => $audience->groups
+                ->pluck('id')
                 ->map(fn ($id) => (string) $id)
                 ->values()
                 ->all(),

@@ -30,6 +30,35 @@
 
 当前版本暂不限制 `client` 和影子用户绑定关系。
 
+## 全量查询观众
+
+```http
+GET /api/client/audiences?client_id={client_id}&client_secret={client_secret}
+```
+
+返回系统内全部观众，用于调用方存量拉取和同步。此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。
+
+返回：
+
+```json
+{
+  "code": 0,
+  "data": [
+    {
+      "id": "019f2d8a-c816-73fa-9dbf-89eee0aa08d1",
+      "name": "Apifox Existing Audience Updated Again",
+      "phone": "13900001001",
+      "email": "apifox-existing@example.com",
+      "group_ids": ["019f2d8a-c812-72bd-8ef9-b10d4168f19f"]
+    }
+  ],
+  "message": "success",
+  "errors": null
+}
+```
+
+本地验证时该接口返回 `code = 0`，共 6 条观众数据。
+
 ## 查询授权直播间
 
 ```http

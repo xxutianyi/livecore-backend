@@ -16,6 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::prefix('client')->middleware('client')->group(function () {
     Route::post('token/{user}', Client\UserTokenController::class);
+    Route::get('audiences', [Client\ExternalController::class, 'audiences']);
     Route::get('actors/{actor}/rooms', [Client\ExternalController::class, 'rooms']);
     Route::get('actors/{actor}/groups', [Client\ExternalController::class, 'groups']);
     Route::post('actors/{actor}/audiences/upsert', [Client\ExternalController::class, 'upsertAudience']);

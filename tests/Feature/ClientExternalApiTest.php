@@ -120,6 +120,47 @@ test('client rejects non service actors and ordinary admins', function () {
     }
 });
 
+test('client can list all audiences without actor permissions', function () {
+    $credentials = clientCredentials();
+    $group = UserGroup::create(['name' => 'Synced group']);
+    $otherGroup = UserGroup::create(['name' => 'Other synced group']);
+    $audience = User::factory()->create([
+        'role' => 'audience',
+        'name' => 'Synced Audience',
+        'phone' => '13800138100',
+        'email' => 'synced-audience@example.com',
+    ]);
+    $audience->groups()->attach([$group->id, $otherGroup->id]);
+    $audienceWithoutGroups = User::factory()->create([
+        'role' => 'audience',
+        'name' => 'Audience Without Groups',
+    ]);
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $response = $this->getJson(clientUrl('/api/client/audiences', $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 0);
+
+    $audiences = collect($response->json('data'))->keyBy('id');
+
+    expect($audiences->keys()->all())
+        ->toContain($audience->id)
+        ->toContain($audienceWithoutGroups->id)
+        ->not->toContain($admin->id);
+
+    expect($audiences[$audience->id])
+        ->toMatchArray([
+            'id' => $audience->id,
+            'name' => 'Synced Audience',
+            'phone' => '13800138100',
+            'email' => 'synced-audience@example.com',
+        ])
+        ->and($audiences[$audience->id]['group_ids'])
+        ->toContain($group->id)
+        ->toContain($otherGroup->id)
+        ->and($audiences[$audienceWithoutGroups->id]['group_ids'])->toBe([]);
+});
+
 test('client can upsert audience and attach only requested groups without exposing existing groups', function () {
     [$actor, , $group, $otherGroup] = serviceActorWithGroups();
     $credentials = clientCredentials();

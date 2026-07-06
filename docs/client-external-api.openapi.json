@@ -15,6 +15,29 @@
     }
   ],
   "paths": {
+    "/api/client/audiences": {
+      "get": {
+        "tags": ["第三方专用"],
+        "summary": "全量查询观众列表",
+        "description": "返回系统内全部观众，用于调用方存量拉取和同步。只校验 client 凭证和 IP 白名单，不需要 actor 授权。",
+        "parameters": [
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AudienceListApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/client/actors/{actor}/rooms": {
       "get": {
         "tags": ["第三方专用"],
@@ -229,6 +252,31 @@
             "description": "操作后该用户的完整分组 ID 列表",
             "items": { "type": "string", "format": "uuid" }
           }
+        }
+      },
+      "AudienceListItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "description": "本系统观众用户 ID" },
+          "name": { "type": "string" },
+          "phone": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true, "format": "email" },
+          "group_ids": {
+            "type": "array",
+            "items": { "type": "string", "format": "uuid" }
+          }
+        }
+      },
+      "AudienceListApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "example": 0 },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AudienceListItem" }
+          },
+          "message": { "type": "string", "example": "success" },
+          "errors": { "nullable": true }
         }
       },
       "AudienceApiResponse": {
