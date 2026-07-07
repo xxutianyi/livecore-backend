@@ -84,10 +84,14 @@ class ExternalController extends Controller
             return ApiResponse::unAuthorized();
         }
 
+        $plainPassword = null;
+
         if (! $audience) {
+            $plainPassword = $this->generatePassword();
             $audience = new User([
                 'role' => 'audience',
                 'account_type' => 'human',
+                'password' => $plainPassword,
             ]);
         }
 
@@ -96,7 +100,7 @@ class ExternalController extends Controller
         $audience->groups()->syncWithoutDetaching($groupIds);
         $this->forgetRoomAudienceCache($groupIds);
 
-        return ApiResponse::success($this->audienceResponse($audience));
+        return ApiResponse::success($this->audienceResponse($audience, $plainPassword));
     }
 
     public function attachAudienceGroups(AudienceGroupsRequest $request, User $actor, User $audience)
@@ -186,9 +190,9 @@ class ExternalController extends Controller
             });
     }
 
-    private function audienceResponse(User $audience): array
+    private function audienceResponse(User $audience, ?string $plainPassword = null): array
     {
-        return [
+        $response = [
             'id' => $audience->id,
             'user_id' => $audience->id,
             'name' => $audience->name,
@@ -200,6 +204,12 @@ class ExternalController extends Controller
                 ->values()
                 ->all(),
         ];
+
+        if ($plainPassword) {
+            $response['password'] = $plainPassword;
+        }
+
+        return $response;
     }
 
     private function audienceListResponse(User $audience): array
@@ -215,6 +225,34 @@ class ExternalController extends Controller
                 ->values()
                 ->all(),
         ];
+    }
+
+    private function generatePassword(): string
+    {
+        $groups = [
+            'ABCDEFGHJKLMNPQRSTUVWXYZ',
+            'abcdefghijkmnopqrstuvwxyz',
+            '23456789',
+            '!@#$%^&*',
+        ];
+
+        $characters = implode('', $groups);
+        $password = [];
+
+        foreach ($groups as $group) {
+            $password[] = $group[random_int(0, strlen($group) - 1)];
+        }
+
+        while (count($password) < 16) {
+            $password[] = $characters[random_int(0, strlen($characters) - 1)];
+        }
+
+        for ($i = count($password) - 1; $i > 0; $i--) {
+            $j = random_int(0, $i);
+            [$password[$i], $password[$j]] = [$password[$j], $password[$i]];
+        }
+
+        return implode('', $password);
     }
 
     private function validateAudienceUniqueFields(AudienceUpsertRequest $request, ?User $audience): ?array

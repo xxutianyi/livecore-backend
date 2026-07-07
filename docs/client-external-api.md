@@ -37,6 +37,7 @@ GET /api/client/audiences?client_id={client_id}&client_secret={client_secret}
 ```
 
 返回系统内全部观众，用于调用方存量拉取和同步。此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。
+此接口不会返回 `password`。
 
 返回：
 
@@ -95,8 +96,9 @@ POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_se
 规则：
 
 - 系统会使用 `name`、`phone`、`email` 作为唯一标识匹配已有用户。
-- 用户不存在时创建 `audience`，并在响应中返回本系统用户 ID。
-- 用户存在时只更新基础字段，并返回同一个本系统用户 ID。
+- 用户不存在时创建 `audience`，并在响应中返回本系统用户 ID 和一次性明文密码。
+- 一次性密码长度为 16 位，包含大写字母、小写字母、数字和符号。
+- 用户存在时只更新基础字段，并返回同一个本系统用户 ID，不返回密码。
 - 如果 `name`、`phone`、`email` 分别匹配到多个不同用户，请求会被拒绝。
 - `group_ids` 必须全部在 actor 可管理分组内。
 - 只附加本次传入的分组，不覆盖用户已有其他分组。
@@ -115,7 +117,8 @@ POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_se
     "name": "观众名称",
     "phone": "13800000000",
     "email": "user@example.com",
-    "group_ids": ["group-uuid"]
+    "group_ids": ["group-uuid"],
+    "password": "A7m@xQ2p!sL9vK4#"
   },
   "message": "success",
   "errors": null
@@ -140,6 +143,8 @@ POST /api/client/actors/{actor}/audiences/{audience}/groups/attach?client_id={cl
 
 返回格式同“新建或更新观众并附加分组”，`data.group_ids` 是附加后该用户的完整分组 ID 列表。
 
+此接口不会返回 `password`。
+
 ## 分离观众分组
 
 ```http
@@ -157,6 +162,8 @@ DELETE /api/client/actors/{actor}/audiences/{audience}/groups/detach?client_id={
 只移除 actor 可管理且本次指定的分组，不影响用户已有其他分组。
 
 返回格式同“新建或更新观众并附加分组”，`data.group_ids` 是分离后该用户的完整分组 ID 列表。
+
+此接口不会返回 `password`。
 
 ## 响应格式
 

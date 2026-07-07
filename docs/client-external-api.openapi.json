@@ -223,6 +223,11 @@
           "name": { "type": "string" },
           "phone": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true, "format": "email" },
+          "password": {
+            "type": "string",
+            "nullable": true,
+            "description": "仅新建观众时返回的一次性明文密码；更新、附加分组、分离分组时不返回。长度 16 位，包含大写字母、小写字母、数字和符号"
+          },
           "group_ids": {
             "type": "array",
             "items": { "type": "string", "format": "uuid" }

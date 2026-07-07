@@ -155,6 +155,7 @@ test('client can list all audiences without actor permissions', function () {
             'phone' => '13800138100',
             'email' => 'synced-audience@example.com',
         ])
+        ->not->toHaveKey('password')
         ->and($audiences[$audience->id]['group_ids'])
         ->toContain($group->id)
         ->toContain($otherGroup->id)
@@ -181,6 +182,7 @@ test('client can upsert audience and attach only requested groups without exposi
         ->assertJsonPath('data.id', $audience->id)
         ->assertJsonPath('data.user_id', $audience->id)
         ->assertJsonPath('data.name', 'External Audience')
+        ->assertJsonMissingPath('data.password')
         ->assertJsonMissing(['groups' => []]);
 
     expect($response->json('data.group_ids'))
@@ -196,7 +198,7 @@ test('client can upsert audience without phone and email', function () {
     [$actor, , $group] = serviceActorWithGroups();
     $credentials = clientCredentials();
 
-    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+    $response = $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
         'name' => 'No Contact Audience',
         'group_ids' => [$group->id],
     ]))
@@ -208,11 +210,18 @@ test('client can upsert audience without phone and email', function () {
         ->assertJsonPath('data.group_ids.0', $group->id);
 
     $audience = User::where('name', 'No Contact Audience')->first();
+    $password = $response->json('data.password');
 
     expect($audience)
         ->not->toBeNull()
         ->and($audience->phone)->toBeNull()
         ->and($audience->email)->toBeNull()
+        ->and($password)->toBeString()->toHaveLength(16)
+        ->and($password)->toMatch('/[A-Z]/')
+        ->and($password)->toMatch('/[a-z]/')
+        ->and($password)->toMatch('/[0-9]/')
+        ->and($password)->toMatch('/[!@#$%^&*]/')
+        ->and(Hash::check($password, $audience->password))->toBeTrue()
         ->and($audience->groups()->pluck('user_groups.id')->all())->toContain($group->id);
 });
 
@@ -237,7 +246,8 @@ test('client upsert updates existing audience by unique identity fields', functi
         ->assertJsonPath('data.id', $audience->id)
         ->assertJsonPath('data.name', 'New Name')
         ->assertJsonPath('data.phone', '13800138000')
-        ->assertJsonPath('data.email', 'old-audience@example.com');
+        ->assertJsonPath('data.email', 'old-audience@example.com')
+        ->assertJsonMissingPath('data.password');
 
     $audience->refresh();
 
