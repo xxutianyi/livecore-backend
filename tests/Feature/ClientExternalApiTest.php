@@ -162,6 +162,42 @@ test('client can list all audiences without actor permissions', function () {
         ->and($audiences[$audienceWithoutGroups->id]['group_ids'])->toBe([]);
 });
 
+test('client can list rooms accessible by audience id', function () {
+    $credentials = clientCredentials();
+    $group = UserGroup::create(['name' => 'Audience group']);
+    $otherGroup = UserGroup::create(['name' => 'Other audience group']);
+    $room = LiveRoom::factory()->create(['name' => 'Accessible room']);
+    $otherRoom = LiveRoom::factory()->create(['name' => 'Blocked room']);
+    $audience = User::factory()->create(['role' => 'audience']);
+    $audienceWithoutGroups = User::factory()->create(['role' => 'audience']);
+
+    $room->groups()->attach($group);
+    $otherRoom->groups()->attach($otherGroup);
+    $audience->groups()->attach($group);
+
+    $this->getJson(clientUrl("/api/client/audiences/$audience->id/rooms", $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 0)
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.id', $room->id)
+        ->assertJsonPath('data.0.name', 'Accessible room')
+        ->assertJsonMissing(['id' => $otherRoom->id]);
+
+    $this->getJson(clientUrl("/api/client/audiences/$audienceWithoutGroups->id/rooms", $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 0)
+        ->assertJsonCount(0, 'data');
+});
+
+test('client audience rooms rejects non audience users', function () {
+    $credentials = clientCredentials();
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $this->getJson(clientUrl("/api/client/audiences/$admin->id/rooms", $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 4000);
+});
+
 test('client can upsert audience and attach only requested groups without exposing existing groups', function () {
     [$actor, , $group, $otherGroup] = serviceActorWithGroups();
     $credentials = clientCredentials();

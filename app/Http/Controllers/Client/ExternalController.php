@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\AudienceGroupsRequest;
 use App\Http\Requests\Client\AudienceUpsertRequest;
+use App\Models\Live\LiveRoom;
 use App\Models\User;
 use App\Models\UserGroup;
 use App\Response\ApiResponse;
@@ -54,6 +55,27 @@ class ExternalController extends Controller
                 ->get(['id', 'name', 'phone', 'email'])
                 ->map(fn (User $audience) => $this->audienceListResponse($audience))
                 ->values()
+        );
+    }
+
+    public function audienceRooms(Request $request, User $audience)
+    {
+        if ($audience->role !== 'audience') {
+            return ApiResponse::unAuthorized();
+        }
+
+        $groupIds = $audience->groups()
+            ->pluck('user_groups.id')
+            ->map(fn ($id) => (string) $id)
+            ->all();
+
+        return ApiResponse::success(
+            LiveRoom::query()
+                ->select(['live_rooms.id', 'live_rooms.name', 'live_rooms.description', 'live_rooms.cover'])
+                ->whereHas('groups', fn ($query) => $query->whereIn('user_groups.id', $groupIds))
+                ->orderBy('created_at')
+                ->orderBy('id')
+                ->get()
         );
     }
 
