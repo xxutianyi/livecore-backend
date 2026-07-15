@@ -198,6 +198,43 @@ test('client audience rooms rejects non audience users', function () {
         ->assertJsonPath('code', 4000);
 });
 
+test('client can reset audience password and receive it once', function () {
+    $credentials = clientCredentials();
+    $audience = User::factory()->create([
+        'role' => 'audience',
+        'password' => 'OldPassword!1',
+    ]);
+
+    $response = $this->postJson(clientUrl("/api/client/audiences/$audience->id/password/reset", $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 0)
+        ->assertJsonPath('data.id', $audience->id)
+        ->assertJsonPath('data.user_id', $audience->id)
+        ->assertJsonMissing(['password' => 'OldPassword!1']);
+
+    $password = $response->json('data.password');
+
+    expect($password)
+        ->toBeString()->toHaveLength(16)
+        ->toMatch('/[A-Z]/')
+        ->toMatch('/[a-z]/')
+        ->toMatch('/[0-9]/')
+        ->toMatch('/[!@#$%^&*]/')
+        ->and(Hash::check($password, $audience->fresh()->password))->toBeTrue();
+});
+
+test('client reset audience password rejects non audience users', function () {
+    $credentials = clientCredentials();
+    $admin = User::factory()->create(['role' => 'admin']);
+    $oldPassword = $admin->password;
+
+    $this->postJson(clientUrl("/api/client/audiences/$admin->id/password/reset", $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 4000);
+
+    expect($admin->fresh()->password)->toBe($oldPassword);
+});
+
 test('client can upsert audience and attach only requested groups without exposing existing groups', function () {
     [$actor, , $group, $otherGroup] = serviceActorWithGroups();
     $credentials = clientCredentials();

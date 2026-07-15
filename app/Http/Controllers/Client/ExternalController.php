@@ -79,6 +79,18 @@ class ExternalController extends Controller
         );
     }
 
+    public function resetAudiencePassword(Request $request, User $audience)
+    {
+        if ($audience->role !== 'audience') {
+            return ApiResponse::unAuthorized();
+        }
+
+        $plainPassword = $this->generatePassword();
+        $audience->forceFill(['password' => $plainPassword])->save();
+
+        return ApiResponse::success($this->audienceResponse($audience, $plainPassword));
+    }
+
     public function upsertAudience(AudienceUpsertRequest $request, User $actor)
     {
         if (! $this->isValidActor($actor)) {

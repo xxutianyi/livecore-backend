@@ -38,6 +38,78 @@
         }
       }
     },
+    "/api/client/audiences/{audience}/rooms": {
+      "get": {
+        "tags": ["第三方专用"],
+        "summary": "查询观众可访问直播间列表",
+        "description": "返回指定观众通过所属分组可访问的直播间列表。只校验 client 凭证和 IP 白名单，不需要 actor 授权。",
+        "parameters": [
+          { "$ref": "#/components/parameters/Audience" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomListApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/audiences/{audience}/password/reset": {
+      "post": {
+        "tags": ["第三方专用"],
+        "summary": "重置观众密码",
+        "description": "为指定观众生成新的复杂随机密码，并在本次响应中返回一次性明文密码。只校验 client 凭证和 IP 白名单，不需要 actor 授权。",
+        "parameters": [
+          { "$ref": "#/components/parameters/Audience" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AudienceApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/token/{user}": {
+      "post": {
+        "tags": ["第三方专用"],
+        "summary": "获取用户 Token",
+        "description": "为指定用户签发短期访问 token。只校验 client 凭证和 IP 白名单，不需要 actor 授权。",
+        "parameters": [
+          { "$ref": "#/components/parameters/User" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/client/actors/{actor}/rooms": {
       "get": {
         "tags": ["第三方专用"],
@@ -53,7 +125,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AudienceApiResponse"
+                  "$ref": "#/components/schemas/RoomListApiResponse"
                 }
               }
             }
@@ -76,7 +148,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AudienceApiResponse"
+                  "$ref": "#/components/schemas/GroupListApiResponse"
                 }
               }
             }
@@ -202,6 +274,13 @@
         "schema": { "type": "string", "format": "uuid" },
         "description": "观众用户 ID"
       },
+      "User": {
+        "name": "user",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "string", "format": "uuid" },
+        "description": "用户 ID"
+      },
       "ClientIdQuery": {
         "name": "client_id",
         "in": "query",
@@ -252,6 +331,11 @@
           "name": { "type": "string" },
           "phone": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true, "format": "email" },
+          "password": {
+            "type": "string",
+            "nullable": true,
+            "description": "仅新建观众或重置密码时返回的一次性明文密码。长度 16 位，包含大写字母、小写字母、数字和符号"
+          },
           "group_ids": {
             "type": "array",
             "description": "操作后该用户的完整分组 ID 列表",
@@ -289,6 +373,74 @@
         "properties": {
           "code": { "type": "integer", "example": 0 },
           "data": { "$ref": "#/components/schemas/AudienceResponseData" },
+          "message": { "type": "string", "example": "success" },
+          "errors": { "nullable": true }
+        }
+      },
+      "RoomItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "description": { "type": "string", "nullable": true },
+          "cover": { "type": "string", "nullable": true }
+        }
+      },
+      "RoomListApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "example": 0 },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RoomItem" }
+          },
+          "message": { "type": "string", "example": "success" },
+          "errors": { "nullable": true }
+        }
+      },
+      "GroupItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "rooms": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RoomItem" }
+          }
+        }
+      },
+      "GroupListApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "example": 0 },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GroupItem" }
+          },
+          "message": { "type": "string", "example": "success" },
+          "errors": { "nullable": true }
+        }
+      },
+      "TokenUser": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" }
+        }
+      },
+      "TokenResponseData": {
+        "type": "object",
+        "properties": {
+          "token": { "type": "string" },
+          "expires_in": { "type": "integer", "example": 300 },
+          "user": { "$ref": "#/components/schemas/TokenUser" }
+        }
+      },
+      "TokenApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "example": 0 },
+          "data": { "$ref": "#/components/schemas/TokenResponseData" },
           "message": { "type": "string", "example": "success" },
           "errors": { "nullable": true }
         }

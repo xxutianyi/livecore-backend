@@ -60,6 +60,91 @@ GET /api/client/audiences?client_id={client_id}&client_secret={client_secret}
 
 本地验证时该接口返回 `code = 0`，共 6 条观众数据。
 
+## 查询观众可访问直播间
+
+```http
+GET /api/client/audiences/{audience}/rooms?client_id={client_id}&client_secret={client_secret}
+```
+
+`{audience}` 是本系统观众用户 ID。
+
+返回该观众通过所属分组可访问的直播间列表。此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。非观众用户会返回权限不足。
+
+返回：
+
+```json
+{
+  "code": 0,
+  "data": [
+    {
+      "id": "room-uuid",
+      "name": "直播间名称",
+      "description": "直播间描述",
+      "cover": "https://example.com/cover.jpg"
+    }
+  ],
+  "message": "success",
+  "errors": null
+}
+```
+
+## 重置观众密码
+
+```http
+POST /api/client/audiences/{audience}/password/reset?client_id={client_id}&client_secret={client_secret}
+```
+
+`{audience}` 是本系统观众用户 ID。
+
+为指定观众生成新的复杂随机密码，并在本次响应中返回一次性明文密码。此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。非观众用户会返回权限不足。
+
+返回：
+
+```json
+{
+  "code": 0,
+  "data": {
+    "id": "user-uuid",
+    "user_id": "user-uuid",
+    "name": "观众名称",
+    "phone": "13800000000",
+    "email": "user@example.com",
+    "group_ids": ["group-uuid"],
+    "password": "A7m@xQ2p!sL9vK4#"
+  },
+  "message": "success",
+  "errors": null
+}
+```
+
+## 获取用户 Token
+
+```http
+POST /api/client/token/{user}?client_id={client_id}&client_secret={client_secret}
+```
+
+`{user}` 是本系统用户 ID。
+
+为指定用户签发短期访问 token。此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。
+
+返回：
+
+```json
+{
+  "code": 0,
+  "data": {
+    "token": "70|plain-text-token",
+    "expires_in": 300,
+    "user": {
+      "id": "user-uuid",
+      "name": "用户名称"
+    }
+  },
+  "message": "success",
+  "errors": null
+}
+```
+
 ## 查询授权直播间
 
 ```http
