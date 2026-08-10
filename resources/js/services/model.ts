@@ -25,6 +25,8 @@ export interface User extends Model {
   email_verified_at?: string;
   phone_verified_at?: string;
   groups?: UserGroup[];
+  onlines?: UserOnline[];
+  messages?: LiveMessage[];
   manageable?: LiveRoom[];
 }
 

@@ -1,15 +1,15 @@
 import { PageContainer } from '@/components/container';
 import { Separator } from '@/components/ui/separator';
 import { ConsoleLayout } from '@/layouts/console-layout';
-import { LiveMessage, User, UserOnline } from '@/services/model';
+import { User } from '@/services/model';
 import { UserDetail } from './partial/detail';
 import { UserUpdate } from './partial/forms';
 import { MessageIndex } from './partial/messages';
 import { OnlineIndex } from './partial/onlines';
 
-type PageProps = { user: User; onlines: UserOnline[]; messages: LiveMessage[] };
+type PageProps = { user: User };
 
-export default function Show({ user, onlines, messages }: PageProps) {
+export default function Show({ user }: PageProps) {
   return (
     <ConsoleLayout>
       <PageContainer
@@ -23,9 +23,9 @@ export default function Show({ user, onlines, messages }: PageProps) {
         <Separator />
         <UserDetail user={user} />
         <Separator />
-        <OnlineIndex onlines={onlines} />
+        <OnlineIndex onlines={user.onlines ?? []} />
         <Separator />
-        <MessageIndex messages={messages} />
+        <MessageIndex messages={user.messages ?? []} />
       </PageContainer>
     </ConsoleLayout>
   );
