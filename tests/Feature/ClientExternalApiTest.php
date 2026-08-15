@@ -215,11 +215,12 @@ test('client can reset audience password and receive it once', function () {
     $password = $response->json('data.password');
 
     expect($password)
-        ->toBeString()->toHaveLength(16)
+        ->toBeString()->toHaveLength(8)
         ->toMatch('/[A-Z]/')
         ->toMatch('/[a-z]/')
         ->toMatch('/[0-9]/')
-        ->toMatch('/[!@#$%^&*]/')
+        ->not->toMatch('/[0-1IilOo]/')
+        ->not->toMatch('/[^A-Za-z0-9]/')
         ->and(Hash::check($password, $audience->fresh()->password))->toBeTrue();
 });
 
@@ -289,11 +290,12 @@ test('client can upsert audience without phone and email', function () {
         ->not->toBeNull()
         ->and($audience->phone)->toBeNull()
         ->and($audience->email)->toBeNull()
-        ->and($password)->toBeString()->toHaveLength(16)
+        ->and($password)->toBeString()->toHaveLength(8)
         ->and($password)->toMatch('/[A-Z]/')
         ->and($password)->toMatch('/[a-z]/')
         ->and($password)->toMatch('/[0-9]/')
-        ->and($password)->toMatch('/[!@#$%^&*]/')
+        ->and($password)->not->toMatch('/[0-1IilOo]/')
+        ->and($password)->not->toMatch('/[^A-Za-z0-9]/')
         ->and(Hash::check($password, $audience->password))->toBeTrue()
         ->and($audience->groups()->pluck('user_groups.id')->all())->toContain($group->id);
 });

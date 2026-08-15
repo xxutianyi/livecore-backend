@@ -265,9 +265,8 @@ class ExternalController extends Controller
     {
         $groups = [
             'ABCDEFGHJKLMNPQRSTUVWXYZ',
-            'abcdefghijkmnopqrstuvwxyz',
+            'abcdefghjkmnpqrstuvwxyz',
             '23456789',
-            '!@#$%^&*',
         ];
 
         $characters = implode('', $groups);
@@ -277,7 +276,7 @@ class ExternalController extends Controller
             $password[] = $group[random_int(0, strlen($group) - 1)];
         }
 
-        while (count($password) < 16) {
+        while (count($password) < 8) {
             $password[] = $characters[random_int(0, strlen($characters) - 1)];
         }
 
