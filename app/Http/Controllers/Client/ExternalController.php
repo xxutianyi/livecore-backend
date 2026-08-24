@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\AudienceGroupsRequest;
 use App\Http\Requests\Client\AudienceUpsertRequest;
+use App\Models\Live\LiveMessage;
 use App\Models\Live\LiveRoom;
+use App\Models\Online\UserOnline;
 use App\Models\User;
 use App\Models\UserGroup;
 use App\Response\ApiResponse;
@@ -89,6 +91,40 @@ class ExternalController extends Controller
         $audience->forceFill(['password' => $plainPassword])->save();
 
         return ApiResponse::success($this->audienceResponse($audience, $plainPassword));
+    }
+
+    public function viewingRecords(Request $request, User $audience)
+    {
+        if ($audience->role !== 'audience') {
+            return ApiResponse::unAuthorized();
+        }
+
+        return ApiResponse::success(
+            UserOnline::query()
+                ->where('user_id', $audience->id)
+                ->with(['room', 'event'])
+                ->latest('joined_at')
+                ->latest('id')
+                ->get()
+        );
+    }
+
+    public function commentRecords(Request $request, User $audience)
+    {
+        if ($audience->role !== 'audience') {
+            return ApiResponse::unAuthorized();
+        }
+
+        return ApiResponse::success(
+            LiveMessage::query()
+                ->where('sender_id', $audience->id)
+                ->select(['id', 'content', 'room_id', 'event_id', 'sender_id', 'created_at'])
+                ->without(['sender', 'reviewer'])
+                ->with(['room', 'event'])
+                ->latest('created_at')
+                ->latest('id')
+                ->get()
+        );
     }
 
     public function upsertAudience(AudienceUpsertRequest $request, User $actor)

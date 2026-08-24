@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "LiveCore 外部 Client API",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "servers": [
     {
@@ -55,6 +55,54 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RoomListApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/audiences/{audience}/viewing-records": {
+      "get": {
+        "tags": ["第三方专用"],
+        "summary": "查询观众观看记录",
+        "description": "返回指定观众的观看记录，按 joined_at 和 ID 倒序排列。每条记录包含直播间和直播场次的基础信息。只校验 client 凭证和 IP 白名单，不需要 actor 授权；非观众用户返回权限不足。",
+        "parameters": [
+          { "$ref": "#/components/parameters/Audience" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功，或业务权限不足（code = 4000）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ViewingRecordListApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/client/audiences/{audience}/comment-records": {
+      "get": {
+        "tags": ["第三方专用"],
+        "summary": "查询观众评论记录",
+        "description": "返回指定观众提交的全部评论记录，包含尚未审核发布的评论；按 created_at 和 ID 倒序排列。每条记录包含直播间和直播场次的基础信息。只校验 client 凭证和 IP 白名单，不需要 actor 授权；非观众用户返回权限不足。",
+        "parameters": [
+          { "$ref": "#/components/parameters/Audience" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功，或业务权限不足（code = 4000）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentRecordListApiResponse"
                 }
               }
             }
@@ -305,7 +353,7 @@
           "password": {
             "type": "string",
             "nullable": true,
-            "description": "仅新建观众时返回的一次性明文密码；更新、附加分组、分离分组时不返回。长度 16 位，包含大写字母、小写字母、数字和符号"
+            "description": "仅新建观众时返回的一次性明文密码；更新、附加分组、分离分组时不返回。长度 8 位，包含大写字母、小写字母和数字，不含易混淆字符或符号"
           },
           "group_ids": {
             "type": "array",
@@ -334,7 +382,7 @@
           "password": {
             "type": "string",
             "nullable": true,
-            "description": "仅新建观众或重置密码时返回的一次性明文密码。长度 16 位，包含大写字母、小写字母、数字和符号"
+            "description": "仅新建观众或重置密码时返回的一次性明文密码。长度 8 位，包含大写字母、小写字母和数字，不含易混淆字符或符号"
           },
           "group_ids": {
             "type": "array",
@@ -393,6 +441,66 @@
           "data": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/RoomItem" }
+          },
+          "message": { "type": "string", "example": "success" },
+          "errors": { "nullable": true }
+        }
+      },
+      "LiveEventReference": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" }
+        }
+      },
+      "ViewingRecordItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "living": { "type": "boolean", "description": "进入记录时的直播状态" },
+          "user_id": { "type": "string", "format": "uuid" },
+          "room_id": { "type": "string", "format": "uuid" },
+          "event_id": { "type": "string", "format": "uuid" },
+          "joined_at": { "type": "string", "format": "date-time", "nullable": true },
+          "leaving_at": { "type": "string", "format": "date-time", "nullable": true },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" },
+          "room": { "$ref": "#/components/schemas/RoomItem" },
+          "event": { "$ref": "#/components/schemas/LiveEventReference" }
+        }
+      },
+      "ViewingRecordListApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "example": 0 },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ViewingRecordItem" }
+          },
+          "message": { "type": "string", "example": "success" },
+          "errors": { "nullable": true }
+        }
+      },
+      "CommentRecordItem": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "content": { "type": "string" },
+          "room_id": { "type": "string", "format": "uuid" },
+          "event_id": { "type": "string", "format": "uuid" },
+          "sender_id": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "room": { "$ref": "#/components/schemas/RoomItem" },
+          "event": { "$ref": "#/components/schemas/LiveEventReference" }
+        }
+      },
+      "CommentRecordListApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "example": 0 },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CommentRecordItem" }
           },
           "message": { "type": "string", "example": "success" },
           "errors": { "nullable": true }

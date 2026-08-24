@@ -19,6 +19,8 @@ Route::prefix('client')->middleware('client')->group(function () {
     Route::get('audiences', [Client\ExternalController::class, 'audiences']);
     Route::get('audiences/{audience}/rooms', [Client\ExternalController::class, 'audienceRooms']);
     Route::post('audiences/{audience}/password/reset', [Client\ExternalController::class, 'resetAudiencePassword']);
+    Route::get('audiences/{audience}/viewing-records', [Client\ExternalController::class, 'viewingRecords']);
+    Route::get('audiences/{audience}/comment-records', [Client\ExternalController::class, 'commentRecords']);
     Route::get('actors/{actor}/rooms', [Client\ExternalController::class, 'rooms']);
     Route::get('actors/{actor}/groups', [Client\ExternalController::class, 'groups']);
     Route::post('actors/{actor}/audiences/upsert', [Client\ExternalController::class, 'upsertAudience']);

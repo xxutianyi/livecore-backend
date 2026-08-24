@@ -1,7 +1,10 @@
 <?php
 
 use App\Models\Client;
+use App\Models\Live\LiveEvent;
+use App\Models\Live\LiveMessage;
 use App\Models\Live\LiveRoom;
+use App\Models\Online\UserOnline;
 use App\Models\User;
 use App\Models\UserGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -194,6 +197,100 @@ test('client audience rooms rejects non audience users', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
     $this->getJson(clientUrl("/api/client/audiences/$admin->id/rooms", $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 4000);
+});
+
+test('client can list a user viewing records with their rooms and events', function () {
+    $credentials = clientCredentials();
+    $user = User::factory()->create(['role' => 'audience']);
+    $otherUser = User::factory()->create();
+    $room = LiveRoom::factory()->create(['name' => 'Watched room']);
+    $event = LiveEvent::factory()->create(['room_id' => $room->id, 'name' => 'Watched event']);
+    $olderRecord = UserOnline::create([
+        'living' => false,
+        'user_id' => $user->id,
+        'room_id' => $room->id,
+        'event_id' => $event->id,
+        'joined_at' => now()->subHour(),
+        'leaving_at' => now()->subMinutes(30),
+    ]);
+    $latestRecord = UserOnline::create([
+        'living' => true,
+        'user_id' => $user->id,
+        'room_id' => $room->id,
+        'event_id' => $event->id,
+        'joined_at' => now()->subMinutes(10),
+    ]);
+    UserOnline::create([
+        'living' => false,
+        'user_id' => $otherUser->id,
+        'room_id' => $room->id,
+        'event_id' => $event->id,
+        'joined_at' => now(),
+    ]);
+
+    $this->getJson(clientUrl("/api/client/audiences/$user->id/viewing-records", $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 0)
+        ->assertJsonCount(2, 'data')
+        ->assertJsonPath('data.0.id', $latestRecord->id)
+        ->assertJsonPath('data.0.room.id', $room->id)
+        ->assertJsonPath('data.0.room.name', 'Watched room')
+        ->assertJsonPath('data.0.event.id', $event->id)
+        ->assertJsonPath('data.0.event.name', 'Watched event')
+        ->assertJsonPath('data.1.id', $olderRecord->id);
+});
+
+test('client can list a user comment records with their rooms and events', function () {
+    $credentials = clientCredentials();
+    $user = User::factory()->create(['role' => 'audience']);
+    $otherUser = User::factory()->create();
+    $room = LiveRoom::factory()->create(['name' => 'Commented room']);
+    $event = LiveEvent::factory()->create(['room_id' => $room->id, 'name' => 'Commented event']);
+    $olderComment = LiveMessage::create([
+        'content' => 'Earlier comment',
+        'room_id' => $room->id,
+        'event_id' => $event->id,
+        'sender_id' => $user->id,
+        'created_at' => now()->subHour(),
+    ]);
+    $latestComment = LiveMessage::create([
+        'content' => 'Latest comment',
+        'room_id' => $room->id,
+        'event_id' => $event->id,
+        'sender_id' => $user->id,
+        'created_at' => now()->subMinutes(10),
+    ]);
+    LiveMessage::create([
+        'content' => 'Someone else comment',
+        'room_id' => $room->id,
+        'event_id' => $event->id,
+        'sender_id' => $otherUser->id,
+    ]);
+
+    $this->getJson(clientUrl("/api/client/audiences/$user->id/comment-records", $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 0)
+        ->assertJsonCount(2, 'data')
+        ->assertJsonPath('data.0.id', $latestComment->id)
+        ->assertJsonPath('data.0.content', 'Latest comment')
+        ->assertJsonPath('data.0.room.id', $room->id)
+        ->assertJsonPath('data.0.room.name', 'Commented room')
+        ->assertJsonPath('data.0.event.id', $event->id)
+        ->assertJsonPath('data.0.event.name', 'Commented event')
+        ->assertJsonPath('data.1.id', $olderComment->id);
+});
+
+test('client records reject non audience users', function () {
+    $credentials = clientCredentials();
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $this->getJson(clientUrl("/api/client/audiences/$admin->id/viewing-records", $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 4000);
+
+    $this->getJson(clientUrl("/api/client/audiences/$admin->id/comment-records", $credentials))
         ->assertOk()
         ->assertJsonPath('code', 4000);
 });

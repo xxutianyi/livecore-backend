@@ -88,6 +88,89 @@ GET /api/client/audiences/{audience}/rooms?client_id={client_id}&client_secret={
 }
 ```
 
+## 查询观众观看记录
+
+```http
+GET /api/client/audiences/{audience}/viewing-records?client_id={client_id}&client_secret={client_secret}
+```
+
+`{audience}` 是本系统观众用户 ID。
+
+返回该观众的观看记录，数据来自用户进入直播间时创建的记录。结果按 `joined_at` 倒序排列；同一时间的记录再按 ID 倒序排列。每条记录包含直播间和直播场次的基础信息。
+
+此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。非观众用户会返回权限不足（`code = 4000`）。
+
+返回：
+
+```json
+{
+  "code": 0,
+  "data": [
+    {
+      "id": "online-uuid",
+      "living": false,
+      "user_id": "audience-uuid",
+      "room_id": "room-uuid",
+      "event_id": "event-uuid",
+      "joined_at": "2026-08-24T10:00:00.000000Z",
+      "leaving_at": "2026-08-24T11:00:00.000000Z",
+      "created_at": "2026-08-24T10:00:00.000000Z",
+      "updated_at": "2026-08-24T11:00:00.000000Z",
+      "room": {
+        "id": "room-uuid",
+        "name": "直播间名称"
+      },
+      "event": {
+        "id": "event-uuid",
+        "name": "直播场次名称"
+      }
+    }
+  ],
+  "message": "success",
+  "errors": null
+}
+```
+
+## 查询观众评论记录
+
+```http
+GET /api/client/audiences/{audience}/comment-records?client_id={client_id}&client_secret={client_secret}
+```
+
+`{audience}` 是本系统观众用户 ID。
+
+返回该观众提交的全部评论记录（包含尚未审核发布的评论），按 `created_at` 倒序排列；同一时间的记录再按 ID 倒序排列。每条记录包含直播间和直播场次的基础信息。
+
+此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。非观众用户会返回权限不足（`code = 4000`）。
+
+返回：
+
+```json
+{
+  "code": 0,
+  "data": [
+    {
+      "id": "message-uuid",
+      "content": "这场直播很精彩",
+      "room_id": "room-uuid",
+      "event_id": "event-uuid",
+      "sender_id": "audience-uuid",
+      "created_at": "2026-08-24T10:30:00.000000Z",
+      "room": {
+        "id": "room-uuid",
+        "name": "直播间名称"
+      },
+      "event": {
+        "id": "event-uuid",
+        "name": "直播场次名称"
+      }
+    }
+  ],
+  "message": "success",
+  "errors": null
+}
+```
+
 ## 重置观众密码
 
 ```http
@@ -96,7 +179,7 @@ POST /api/client/audiences/{audience}/password/reset?client_id={client_id}&clien
 
 `{audience}` 是本系统观众用户 ID。
 
-为指定观众生成新的复杂随机密码，并在本次响应中返回一次性明文密码。此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。非观众用户会返回权限不足。
+为指定观众生成新的 8 位可读随机密码，并在本次响应中返回一次性明文密码。密码包含大写字母、小写字母和数字，不包含易混淆字符或符号。此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。非观众用户会返回权限不足。
 
 返回：
 
@@ -110,7 +193,7 @@ POST /api/client/audiences/{audience}/password/reset?client_id={client_id}&clien
     "phone": "13800000000",
     "email": "user@example.com",
     "group_ids": ["group-uuid"],
-    "password": "A7m@xQ2p!sL9vK4#"
+    "password": "A7mQ2pX4"
   },
   "message": "success",
   "errors": null
@@ -182,7 +265,7 @@ POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_se
 
 - 系统会使用 `name`、`phone`、`email` 作为唯一标识匹配已有用户。
 - 用户不存在时创建 `audience`，并在响应中返回本系统用户 ID 和一次性明文密码。
-- 一次性密码长度为 16 位，包含大写字母、小写字母、数字和符号。
+- 一次性密码长度为 8 位，包含大写字母、小写字母和数字；不含易混淆字符或符号。
 - 用户存在时只更新基础字段，并返回同一个本系统用户 ID，不返回密码。
 - 如果 `name`、`phone`、`email` 分别匹配到多个不同用户，请求会被拒绝。
 - `group_ids` 必须全部在 actor 可管理分组内。
@@ -203,7 +286,7 @@ POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_se
     "phone": "13800000000",
     "email": "user@example.com",
     "group_ids": ["group-uuid"],
-    "password": "A7m@xQ2p!sL9vK4#"
+    "password": "A7mQ2pX4"
   },
   "message": "success",
   "errors": null
