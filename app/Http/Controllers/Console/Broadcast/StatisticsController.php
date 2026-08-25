@@ -8,6 +8,7 @@ use App\Models\Live\LiveRoom;
 use App\Models\Online\UserOnline;
 use App\Models\Stats\LiveEventStat;
 use App\Models\Stats\LiveRoomStat;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -109,8 +110,8 @@ class StatisticsController extends Controller
                             $room->name,
                             $online->event->name,
                             $online->user->name,
-                            $online->joined_at?->format('Y-m-d H:i:s'),
-                            $online->leaving_at?->format('Y-m-d H:i:s'),
+                            $this->formatExportDatetime($online->joined_at),
+                            $this->formatExportDatetime($online->leaving_at),
                             $online->living ? '直播' : '回放',
                         ]);
                     }
@@ -120,5 +121,10 @@ class StatisticsController extends Controller
         }, $filename, [
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
+    }
+
+    private function formatExportDatetime(?CarbonInterface $datetime): ?string
+    {
+        return $datetime?->setTimezone('Asia/Shanghai')->format('Y-m-d H:i:s');
     }
 }

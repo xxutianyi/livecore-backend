@@ -44,6 +44,12 @@ export default function StatisticsPage({
           },
         ]}
         actions={[
+          <Button key="export" variant="outline" size="lg" asChild>
+            <a href={route('broadcast.statistics.export', [event.room_id, event.id])}>
+              <Download />
+              导出数据
+            </a>
+          </Button>,
           <Toggle
             key="refresh"
             variant="outline"
@@ -58,22 +64,7 @@ export default function StatisticsPage({
         ]}
       >
         <Separator />
-        <Section
-          title={
-            <SectionTitle
-              title="场次数据"
-              actions={[
-                <EventTimeRange key="range" />,
-                <Button key="export" variant="outline" asChild>
-                  <a href={route('broadcast.statistics.export', [event.room_id, event.id])}>
-                    <Download />
-                    导出数据
-                  </a>
-                </Button>,
-              ]}
-            />
-          }
-        >
+        <Section title={<SectionTitle title="场次数据" actions={[<EventTimeRange />]} />}>
           <VisitChart data={data} />
         </Section>
         <Separator />

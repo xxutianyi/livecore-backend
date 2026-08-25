@@ -4,6 +4,7 @@ use App\Models\Live\LiveEvent;
 use App\Models\Live\LiveRoom;
 use App\Models\Online\UserOnline;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -16,8 +17,8 @@ test('room admins can export an event viewing records as a csv file', function (
     $roomAdmin->manageable()->attach($room);
     $event = LiveEvent::factory()->create(['room_id' => $room->id, 'name' => '导出场次']);
     $otherEvent = LiveEvent::factory()->create(['room_id' => $room->id]);
-    $joinedAt = now()->subHour()->startOfMinute();
-    $leavingAt = now()->subMinutes(30)->startOfMinute();
+    $joinedAt = CarbonImmutable::create(2026, 8, 25, 0, 0, 0, 'UTC');
+    $leavingAt = CarbonImmutable::create(2026, 8, 25, 2, 0, 0, 'UTC');
 
     UserOnline::create([
         'living' => true,
@@ -52,8 +53,8 @@ test('room admins can export an event viewing records as a csv file', function (
     expect($response->streamedContent())
         ->toContain('直播间名称,场次名称,用户名称,观看开始时间,观看结束时间,直播/回放')
         ->toContain('导出直播间,导出场次,导出观众')
-        ->toContain($joinedAt->format('Y-m-d H:i:s'))
-        ->toContain($leavingAt->format('Y-m-d H:i:s'))
+        ->toContain('2026-08-25 08:00:00')
+        ->toContain('2026-08-25 10:00:00')
         ->toContain('直播')
         ->toContain('回放')
         ->not->toContain($otherEvent->name);
