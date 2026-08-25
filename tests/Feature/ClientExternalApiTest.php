@@ -295,7 +295,7 @@ test('client records reject non audience users', function () {
         ->assertJsonPath('code', 4000);
 });
 
-test('client can reset audience password and receive it once', function () {
+test('client resets an audience password to the fixed password', function () {
     $credentials = clientCredentials();
     $audience = User::factory()->create([
         'role' => 'audience',
@@ -307,17 +307,12 @@ test('client can reset audience password and receive it once', function () {
         ->assertJsonPath('code', 0)
         ->assertJsonPath('data.id', $audience->id)
         ->assertJsonPath('data.user_id', $audience->id)
-        ->assertJsonMissing(['password' => 'OldPassword!1']);
+        ->assertJsonPath('data.password', 'Password!@');
 
     $password = $response->json('data.password');
 
     expect($password)
-        ->toBeString()->toHaveLength(8)
-        ->toMatch('/[A-Z]/')
-        ->toMatch('/[a-z]/')
-        ->toMatch('/[0-9]/')
-        ->not->toMatch('/[0-1IilOo]/')
-        ->not->toMatch('/[^A-Za-z0-9]/')
+        ->toBe('Password!@')
         ->and(Hash::check($password, $audience->fresh()->password))->toBeTrue();
 });
 
@@ -387,12 +382,7 @@ test('client can upsert audience without phone and email', function () {
         ->not->toBeNull()
         ->and($audience->phone)->toBeNull()
         ->and($audience->email)->toBeNull()
-        ->and($password)->toBeString()->toHaveLength(8)
-        ->and($password)->toMatch('/[A-Z]/')
-        ->and($password)->toMatch('/[a-z]/')
-        ->and($password)->toMatch('/[0-9]/')
-        ->and($password)->not->toMatch('/[0-1IilOo]/')
-        ->and($password)->not->toMatch('/[^A-Za-z0-9]/')
+        ->and($password)->toBe('Password!@')
         ->and(Hash::check($password, $audience->password))->toBeTrue()
         ->and($audience->groups()->pluck('user_groups.id')->all())->toContain($group->id);
 });

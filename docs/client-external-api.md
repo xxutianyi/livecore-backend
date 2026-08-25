@@ -179,7 +179,7 @@ POST /api/client/audiences/{audience}/password/reset?client_id={client_id}&clien
 
 `{audience}` 是本系统观众用户 ID。
 
-为指定观众生成新的 8 位可读随机密码，并在本次响应中返回一次性明文密码。密码包含大写字母、小写字母和数字，不包含易混淆字符或符号。此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。非观众用户会返回权限不足。
+将指定观众的密码重置为固定值 `Password!@`，并在本次响应中返回该明文密码。此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。非观众用户会返回权限不足。
 
 返回：
 
@@ -193,7 +193,7 @@ POST /api/client/audiences/{audience}/password/reset?client_id={client_id}&clien
     "phone": "13800000000",
     "email": "user@example.com",
     "group_ids": ["group-uuid"],
-    "password": "A7mQ2pX4"
+    "password": "Password!@"
   },
   "message": "success",
   "errors": null
@@ -264,8 +264,7 @@ POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_se
 规则：
 
 - 系统会使用 `name`、`phone`、`email` 作为唯一标识匹配已有用户。
-- 用户不存在时创建 `audience`，并在响应中返回本系统用户 ID 和一次性明文密码。
-- 一次性密码长度为 8 位，包含大写字母、小写字母和数字；不含易混淆字符或符号。
+- 用户不存在时创建 `audience`，并在响应中返回本系统用户 ID 和固定明文密码 `Password!@`。
 - 用户存在时只更新基础字段，并返回同一个本系统用户 ID，不返回密码。
 - 如果 `name`、`phone`、`email` 分别匹配到多个不同用户，请求会被拒绝。
 - `group_ids` 必须全部在 actor 可管理分组内。
@@ -286,7 +285,7 @@ POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_se
     "phone": "13800000000",
     "email": "user@example.com",
     "group_ids": ["group-uuid"],
-    "password": "A7mQ2pX4"
+    "password": "Password!@"
   },
   "message": "success",
   "errors": null

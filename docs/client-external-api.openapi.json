@@ -114,7 +114,7 @@
       "post": {
         "tags": ["第三方专用"],
         "summary": "重置观众密码",
-        "description": "为指定观众生成新的复杂随机密码，并在本次响应中返回一次性明文密码。只校验 client 凭证和 IP 白名单，不需要 actor 授权。",
+        "description": "将指定观众的密码重置为固定值 Password!@，并在本次响应中返回该明文密码。只校验 client 凭证和 IP 白名单，不需要 actor 授权。",
         "parameters": [
           { "$ref": "#/components/parameters/Audience" },
           { "$ref": "#/components/parameters/ClientIdQuery" },
@@ -353,7 +353,7 @@
           "password": {
             "type": "string",
             "nullable": true,
-            "description": "仅新建观众时返回的一次性明文密码；更新、附加分组、分离分组时不返回。长度 8 位，包含大写字母、小写字母和数字，不含易混淆字符或符号"
+            "description": "仅新建观众时返回固定明文密码 Password!@；更新、附加分组、分离分组时不返回"
           },
           "group_ids": {
             "type": "array",
@@ -382,7 +382,7 @@
           "password": {
             "type": "string",
             "nullable": true,
-            "description": "仅新建观众或重置密码时返回的一次性明文密码。长度 8 位，包含大写字母、小写字母和数字，不含易混淆字符或符号"
+            "description": "新建观众和重置密码接口均返回固定明文密码 Password!@；附加或分离分组时不返回"
           },
           "group_ids": {
             "type": "array",

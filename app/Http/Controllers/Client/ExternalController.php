@@ -19,6 +19,8 @@ use Illuminate\Validation\Rule;
 
 class ExternalController extends Controller
 {
+    private const RESET_AUDIENCE_PASSWORD = 'Password!@';
+
     public function rooms(Request $request, User $actor)
     {
         if (! $this->isValidActor($actor)) {
@@ -87,7 +89,7 @@ class ExternalController extends Controller
             return ApiResponse::unAuthorized();
         }
 
-        $plainPassword = $this->generatePassword();
+        $plainPassword = self::RESET_AUDIENCE_PASSWORD;
         $audience->forceFill(['password' => $plainPassword])->save();
 
         return ApiResponse::success($this->audienceResponse($audience, $plainPassword));
@@ -157,7 +159,7 @@ class ExternalController extends Controller
         $plainPassword = null;
 
         if (! $audience) {
-            $plainPassword = $this->generatePassword();
+            $plainPassword = self::RESET_AUDIENCE_PASSWORD;
             $audience = new User([
                 'role' => 'audience',
                 'account_type' => 'human',
@@ -295,33 +297,6 @@ class ExternalController extends Controller
                 ->values()
                 ->all(),
         ];
-    }
-
-    private function generatePassword(): string
-    {
-        $groups = [
-            'ABCDEFGHJKLMNPQRSTUVWXYZ',
-            'abcdefghjkmnpqrstuvwxyz',
-            '23456789',
-        ];
-
-        $characters = implode('', $groups);
-        $password = [];
-
-        foreach ($groups as $group) {
-            $password[] = $group[random_int(0, strlen($group) - 1)];
-        }
-
-        while (count($password) < 8) {
-            $password[] = $characters[random_int(0, strlen($characters) - 1)];
-        }
-
-        for ($i = count($password) - 1; $i > 0; $i--) {
-            $j = random_int(0, $i);
-            [$password[$i], $password[$j]] = [$password[$j], $password[$i]];
-        }
-
-        return implode('', $password);
     }
 
     private function validateAudienceUniqueFields(AudienceUpsertRequest $request, ?User $audience): ?array
