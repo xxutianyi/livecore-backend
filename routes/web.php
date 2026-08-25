@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
             Route::get('statistics', Console\Broadcast\WelcomeController::class)->name('statistics');
 
             Route::get('statistics/{room}', [Console\Broadcast\StatisticsController::class, 'index'])->name('statistics.index');
+            Route::get('statistics/{room}/export', [Console\Broadcast\StatisticsController::class, 'exportRoom'])->name('statistics.export-room');
+            Route::get('statistics/{room}/{event}/export', [Console\Broadcast\StatisticsController::class, 'export'])->name('statistics.export');
             Route::get('statistics/{room}/{event}', [Console\Broadcast\StatisticsController::class, 'show'])->name('statistics.show');
 
             Route::get('playbacks/{room}', [Console\Broadcast\PlaybacksController::class, 'index'])->name('playbacks.index');

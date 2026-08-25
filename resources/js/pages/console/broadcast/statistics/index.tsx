@@ -1,12 +1,13 @@
 import { PageContainer, Section, SectionTitle } from '@/components/container';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Toggle } from '@/components/ui/toggle';
 import { ConsoleLayout } from '@/layouts/console-layout';
 import { VisitChart } from '@/pages/console/broadcast/statistics/components/charts';
 import { RoomTimeRange } from '@/pages/console/broadcast/statistics/components/ranges';
-import { LiveEvent, LiveRoomStat } from '@/services/model';
+import { LiveEvent, LiveRoom, LiveRoomStat } from '@/services/model';
 import { usePoll } from '@inertiajs/react';
-import { RefreshCw } from 'lucide-react';
+import { Download, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { RoomSelect } from '../components/rooms';
 import { EventIndex } from './components/events';
@@ -14,9 +15,11 @@ import { EventIndex } from './components/events';
 export default function StatisticsPage({
   events,
   data,
+  room,
 }: {
   events: LiveEvent[];
   data: LiveRoomStat[];
+  room: LiveRoom;
 }) {
   const [polling, setPolling] = useState(false);
   const { stop, start } = usePoll(10000, {}, { autoStart: false });
@@ -35,6 +38,12 @@ export default function StatisticsPage({
         title="观看数据"
         breadcrumb={[{ label: '观看数据', link: route('broadcast.statistics') }]}
         actions={[
+          <Button key="export" variant="outline" size="lg" asChild>
+            <a href={route('broadcast.statistics.export-room', room.id)}>
+              <Download />
+              导出数据
+            </a>
+          </Button>,
           <Toggle
             key="refresh"
             variant="outline"

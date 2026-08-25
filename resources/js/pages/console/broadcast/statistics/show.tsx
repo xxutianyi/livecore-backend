@@ -1,4 +1,5 @@
 import { PageContainer, Section, SectionTitle } from '@/components/container';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Toggle } from '@/components/ui/toggle';
 import { ConsoleLayout } from '@/layouts/console-layout';
@@ -6,7 +7,7 @@ import { VisitChart } from '@/pages/console/broadcast/statistics/components/char
 import { EventTimeRange } from '@/pages/console/broadcast/statistics/components/ranges';
 import { LiveEvent, LiveEventStat } from '@/services/model';
 import { usePoll } from '@inertiajs/react';
-import { RefreshCw } from 'lucide-react';
+import { Download, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import { RoomSelect } from '../components/rooms';
 import { EventIndex } from './components/events';
@@ -57,7 +58,22 @@ export default function StatisticsPage({
         ]}
       >
         <Separator />
-        <Section title={<SectionTitle title="场次数据" actions={[<EventTimeRange />]} />}>
+        <Section
+          title={
+            <SectionTitle
+              title="场次数据"
+              actions={[
+                <EventTimeRange key="range" />,
+                <Button key="export" variant="outline" asChild>
+                  <a href={route('broadcast.statistics.export', [event.room_id, event.id])}>
+                    <Download />
+                    导出数据
+                  </a>
+                </Button>,
+              ]}
+            />
+          }
+        >
           <VisitChart data={data} />
         </Section>
         <Separator />
