@@ -19,8 +19,9 @@
       "get": {
         "tags": ["第三方专用"],
         "summary": "全量查询观众列表",
-        "description": "返回系统内全部观众，用于调用方存量拉取和同步。只校验 client 凭证和 IP 白名单，不需要 actor 授权。",
+        "description": "返回系统内全部观众，用于调用方存量拉取和同步。响应缓存一分钟；通过外部接口创建/更新观众或调整观众分组后会立即失效。只校验 client 凭证和 IP 白名单，不需要 actor 授权。",
         "parameters": [
+          { "$ref": "#/components/parameters/OnlineQuery" },
           { "$ref": "#/components/parameters/ClientIdQuery" },
           { "$ref": "#/components/parameters/ClientSecretQuery" }
         ],
@@ -335,6 +336,13 @@
         "required": true,
         "schema": { "type": "string", "format": "uuid" }
       },
+      "OnlineQuery": {
+        "name": "online",
+        "in": "query",
+        "required": false,
+        "description": "true 仅查询在线观众；false 仅查询离线观众；不传返回全部观众",
+        "schema": { "type": "boolean" }
+      },
       "ClientSecretQuery": {
         "name": "client_secret",
         "in": "query",
@@ -398,6 +406,7 @@
           "name": { "type": "string" },
           "phone": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true, "format": "email" },
+          "online": { "type": "boolean", "description": "是否存在未离开的观看记录" },
           "group_ids": {
             "type": "array",
             "items": { "type": "string", "format": "uuid" }
@@ -489,6 +498,17 @@
           "room_id": { "type": "string", "format": "uuid" },
           "event_id": { "type": "string", "format": "uuid" },
           "sender_id": { "type": "string", "format": "uuid" },
+          "reviewer_id": { "type": "string", "format": "uuid", "nullable": true },
+          "review_status": {
+            "type": "string",
+            "enum": ["pending", "reviewed"],
+            "description": "评论审核状态"
+          },
+          "reviewed_at": { "type": "string", "format": "date-time", "nullable": true },
+          "reviewer": {
+            "allOf": [{ "$ref": "#/components/schemas/TokenUser" }],
+            "nullable": true
+          },
           "created_at": { "type": "string", "format": "date-time" },
           "room": { "$ref": "#/components/schemas/RoomItem" },
           "event": { "$ref": "#/components/schemas/LiveEventReference" }

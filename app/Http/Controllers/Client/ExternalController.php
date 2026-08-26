@@ -19,6 +19,8 @@ use Illuminate\Validation\Rule;
 
 class ExternalController extends Controller
 {
+    private const AUDIENCE_LIST_CACHE_KEY = 'client-audiences';
+
     private const RESET_AUDIENCE_PASSWORD = 'Password!@';
 
     public function rooms(Request $request, User $actor)
@@ -50,15 +52,18 @@ class ExternalController extends Controller
 
     public function audiences(Request $request)
     {
+        $request->validate([
+            'online' => ['nullable', 'in:true,false,1,0'],
+        ]);
+
+        $online = $request->filled('online') ? $request->boolean('online') : null;
+
         return ApiResponse::success(
-            User::query()
-                ->where('role', 'audience')
-                ->with('groups')
-                ->orderBy('created_at')
-                ->orderBy('id')
-                ->get(['id', 'name', 'phone', 'email'])
-                ->map(fn (User $audience) => $this->audienceListResponse($audience))
-                ->values()
+            Cache::remember(
+                $this->audienceListCacheKey($online),
+                now()->addMinute(),
+                fn () => $this->audienceList($online),
+            )
         );
     }
 
@@ -120,12 +125,25 @@ class ExternalController extends Controller
         return ApiResponse::success(
             LiveMessage::query()
                 ->where('sender_id', $audience->id)
-                ->select(['id', 'content', 'room_id', 'event_id', 'sender_id', 'created_at'])
-                ->without(['sender', 'reviewer'])
-                ->with(['room', 'event'])
+                ->select([
+                    'id',
+                    'content',
+                    'room_id',
+                    'event_id',
+                    'sender_id',
+                    'reviewer_id',
+                    'reviewed_at',
+                    'created_at',
+                ])
+                ->without('sender')
+                ->with(['room', 'event', 'reviewer'])
                 ->latest('created_at')
                 ->latest('id')
                 ->get()
+                ->each(fn (LiveMessage $message) => $message->setAttribute(
+                    'review_status',
+                    $message->reviewed_at ? 'reviewed' : 'pending',
+                ))
         );
     }
 
@@ -171,6 +189,7 @@ class ExternalController extends Controller
         $audience->save();
         $audience->groups()->syncWithoutDetaching($groupIds);
         $this->forgetRoomAudienceCache($groupIds);
+        $this->forgetAudienceListCache();
 
         return ApiResponse::success($this->audienceResponse($audience, $plainPassword));
     }
@@ -189,6 +208,7 @@ class ExternalController extends Controller
 
         $audience->groups()->syncWithoutDetaching($groupIds);
         $this->forgetRoomAudienceCache($groupIds);
+        $this->forgetAudienceListCache();
 
         return ApiResponse::success($this->audienceResponse($audience));
     }
@@ -207,6 +227,7 @@ class ExternalController extends Controller
 
         $audience->groups()->detach($groupIds);
         $this->forgetRoomAudienceCache($groupIds);
+        $this->forgetAudienceListCache();
 
         return ApiResponse::success($this->audienceResponse($audience));
     }
@@ -262,6 +283,47 @@ class ExternalController extends Controller
             });
     }
 
+    private function forgetAudienceListCache(): void
+    {
+        foreach ([null, true, false] as $online) {
+            Cache::forget($this->audienceListCacheKey($online));
+        }
+    }
+
+    private function audienceListCacheKey(?bool $online): string
+    {
+        return match ($online) {
+            true => self::AUDIENCE_LIST_CACHE_KEY.':online',
+            false => self::AUDIENCE_LIST_CACHE_KEY.':offline',
+            default => self::AUDIENCE_LIST_CACHE_KEY,
+        };
+    }
+
+    private function audienceList(?bool $online)
+    {
+        $query = User::query()
+            ->where('role', 'audience')
+            ->with('groups')
+            ->withExists([
+                'onlines as online_status' => fn ($query) => $query->whereNull('leaving_at'),
+            ]);
+
+        if ($online === true) {
+            $query->whereHas('onlines', fn ($query) => $query->whereNull('leaving_at'));
+        }
+
+        if ($online === false) {
+            $query->whereDoesntHave('onlines', fn ($query) => $query->whereNull('leaving_at'));
+        }
+
+        return $query
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->get(['id', 'name', 'phone', 'email'])
+            ->map(fn (User $audience) => $this->audienceListResponse($audience))
+            ->values();
+    }
+
     private function audienceResponse(User $audience, ?string $plainPassword = null): array
     {
         $response = [
@@ -291,6 +353,7 @@ class ExternalController extends Controller
             'name' => $audience->name,
             'phone' => $audience->phone,
             'email' => $audience->email,
+            'online' => (bool) $audience->online_status,
             'group_ids' => $audience->groups
                 ->pluck('id')
                 ->map(fn ($id) => (string) $id)

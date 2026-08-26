@@ -33,11 +33,14 @@
 ## 全量查询观众
 
 ```http
-GET /api/client/audiences?client_id={client_id}&client_secret={client_secret}
+GET /api/client/audiences?client_id={client_id}&client_secret={client_secret}&online={true|false}
 ```
 
 返回系统内全部观众，用于调用方存量拉取和同步。此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。
 此接口不会返回 `password`。
+`online` 为 `true` 表示该观众存在尚未离开的观看记录。
+可选 query 参数 `online=true` 仅返回在线观众，`online=false` 仅返回离线观众；不传则返回全部观众。
+响应会缓存一分钟；通过外部接口创建/更新观众或调整观众分组后，缓存会立即失效。
 
 返回：
 
@@ -50,6 +53,7 @@ GET /api/client/audiences?client_id={client_id}&client_secret={client_secret}
       "name": "Apifox Existing Audience Updated Again",
       "phone": "13900001001",
       "email": "apifox-existing@example.com",
+      "online": true,
       "group_ids": ["019f2d8a-c812-72bd-8ef9-b10d4168f19f"]
     }
   ],
@@ -139,7 +143,7 @@ GET /api/client/audiences/{audience}/comment-records?client_id={client_id}&clien
 
 `{audience}` 是本系统观众用户 ID。
 
-返回该观众提交的全部评论记录（包含尚未审核发布的评论），按 `created_at` 倒序排列；同一时间的记录再按 ID 倒序排列。每条记录包含直播间和直播场次的基础信息。
+返回该观众提交的全部评论记录（包含尚未审核发布的评论），按 `created_at` 倒序排列；同一时间的记录再按 ID 倒序排列。每条记录包含直播间、直播场次和审核信息。`review_status` 为 `pending` 表示待审核，为 `reviewed` 表示已审核。
 
 此接口只校验 client 凭证和 IP 白名单，不需要 actor 授权。非观众用户会返回权限不足（`code = 4000`）。
 
@@ -155,6 +159,13 @@ GET /api/client/audiences/{audience}/comment-records?client_id={client_id}&clien
       "room_id": "room-uuid",
       "event_id": "event-uuid",
       "sender_id": "audience-uuid",
+      "reviewer_id": "reviewer-uuid",
+      "review_status": "reviewed",
+      "reviewed_at": "2026-08-24T10:31:00.000000Z",
+      "reviewer": {
+        "id": "reviewer-uuid",
+        "name": "审核人名称"
+      },
       "created_at": "2026-08-24T10:30:00.000000Z",
       "room": {
         "id": "room-uuid",

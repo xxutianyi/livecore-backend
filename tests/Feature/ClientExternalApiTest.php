@@ -8,6 +8,7 @@ use App\Models\Online\UserOnline;
 use App\Models\User;
 use App\Models\UserGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 uses(RefreshDatabase::class);
@@ -139,6 +140,15 @@ test('client can list all audiences without actor permissions', function () {
         'name' => 'Audience Without Groups',
     ]);
     $admin = User::factory()->create(['role' => 'admin']);
+    $room = LiveRoom::factory()->create();
+    $event = LiveEvent::factory()->create(['room_id' => $room->id]);
+    UserOnline::create([
+        'living' => true,
+        'user_id' => $audience->id,
+        'room_id' => $room->id,
+        'event_id' => $event->id,
+        'joined_at' => now(),
+    ]);
 
     $response = $this->getJson(clientUrl('/api/client/audiences', $credentials))
         ->assertOk()
@@ -162,7 +172,82 @@ test('client can list all audiences without actor permissions', function () {
         ->and($audiences[$audience->id]['group_ids'])
         ->toContain($group->id)
         ->toContain($otherGroup->id)
+        ->and($audiences[$audience->id]['online'])->toBeTrue()
         ->and($audiences[$audienceWithoutGroups->id]['group_ids'])->toBe([]);
+
+    expect($audiences[$audienceWithoutGroups->id]['online'])->toBeFalse();
+});
+
+test('client audience list is cached for one minute and invalidated after an audience change', function () {
+    Cache::forget('client-audiences');
+    $credentials = clientCredentials();
+    $audience = User::factory()->create(['role' => 'audience', 'name' => 'Cached audience']);
+
+    $response = $this->getJson(clientUrl('/api/client/audiences', $credentials))
+        ->assertOk();
+
+    expect(collect($response->json('data'))->pluck('id'))->toContain($audience->id);
+
+    expect(Cache::has('client-audiences'))->toBeTrue();
+
+    $newAudience = User::factory()->create(['role' => 'audience', 'name' => 'Not yet cached']);
+
+    $this->getJson(clientUrl('/api/client/audiences', $credentials))
+        ->assertOk()
+        ->assertJsonMissing(['id' => $newAudience->id]);
+
+    [$actor, , $group] = serviceActorWithGroups();
+
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+        'name' => 'Invalidates audience cache',
+        'group_ids' => [$group->id],
+    ]))->assertOk()
+        ->assertJsonPath('code', 0);
+
+    expect(Cache::has('client-audiences'))->toBeFalse();
+
+    $response = $this->getJson(clientUrl('/api/client/audiences', $credentials))
+        ->assertOk();
+
+    expect(collect($response->json('data'))->pluck('id'))->toContain($newAudience->id);
+
+    Cache::forget('client-audiences');
+});
+
+test('client can filter the audience list by online status', function () {
+    Cache::forget('client-audiences:online');
+    Cache::forget('client-audiences:offline');
+    $credentials = clientCredentials();
+    $onlineAudience = User::factory()->create(['role' => 'audience', 'name' => 'Online audience']);
+    $offlineAudience = User::factory()->create(['role' => 'audience', 'name' => 'Offline audience']);
+    $room = LiveRoom::factory()->create();
+    $event = LiveEvent::factory()->create(['room_id' => $room->id]);
+    UserOnline::create([
+        'living' => true,
+        'user_id' => $onlineAudience->id,
+        'room_id' => $room->id,
+        'event_id' => $event->id,
+        'joined_at' => now(),
+    ]);
+
+    $onlineResponse = $this->getJson(clientUrl('/api/client/audiences?online=true', $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 0);
+
+    expect(collect($onlineResponse->json('data'))->pluck('id'))
+        ->toContain($onlineAudience->id)
+        ->not->toContain($offlineAudience->id);
+
+    $offlineResponse = $this->getJson(clientUrl('/api/client/audiences?online=false', $credentials))
+        ->assertOk()
+        ->assertJsonPath('code', 0);
+
+    expect(collect($offlineResponse->json('data'))->pluck('id'))
+        ->toContain($offlineAudience->id)
+        ->not->toContain($onlineAudience->id);
+
+    Cache::forget('client-audiences:online');
+    Cache::forget('client-audiences:offline');
 });
 
 test('client can list rooms accessible by audience id', function () {
@@ -246,6 +331,7 @@ test('client can list a user comment records with their rooms and events', funct
     $credentials = clientCredentials();
     $user = User::factory()->create(['role' => 'audience']);
     $otherUser = User::factory()->create();
+    $reviewer = User::factory()->create(['name' => 'Comment Reviewer']);
     $room = LiveRoom::factory()->create(['name' => 'Commented room']);
     $event = LiveEvent::factory()->create(['room_id' => $room->id, 'name' => 'Commented event']);
     $olderComment = LiveMessage::create([
@@ -262,6 +348,7 @@ test('client can list a user comment records with their rooms and events', funct
         'sender_id' => $user->id,
         'created_at' => now()->subMinutes(10),
     ]);
+    $latestComment->review($reviewer, now()->subMinute());
     LiveMessage::create([
         'content' => 'Someone else comment',
         'room_id' => $room->id,
@@ -279,7 +366,14 @@ test('client can list a user comment records with their rooms and events', funct
         ->assertJsonPath('data.0.room.name', 'Commented room')
         ->assertJsonPath('data.0.event.id', $event->id)
         ->assertJsonPath('data.0.event.name', 'Commented event')
-        ->assertJsonPath('data.1.id', $olderComment->id);
+        ->assertJsonPath('data.0.review_status', 'reviewed')
+        ->assertJsonPath('data.0.reviewed_at', $latestComment->fresh()->reviewed_at?->toJSON())
+        ->assertJsonPath('data.0.reviewer.id', $reviewer->id)
+        ->assertJsonPath('data.0.reviewer.name', 'Comment Reviewer')
+        ->assertJsonPath('data.1.id', $olderComment->id)
+        ->assertJsonPath('data.1.review_status', 'pending')
+        ->assertJsonPath('data.1.reviewed_at', null)
+        ->assertJsonPath('data.1.reviewer', null);
 });
 
 test('client records reject non audience users', function () {
