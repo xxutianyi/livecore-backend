@@ -23,7 +23,7 @@ Route::prefix('client')->middleware('client')->group(function () {
     Route::get('audiences/{audience}/comment-records', [Client\ExternalController::class, 'commentRecords']);
     Route::get('actors/{actor}/rooms', [Client\ExternalController::class, 'rooms']);
     Route::get('actors/{actor}/groups', [Client\ExternalController::class, 'groups']);
-    Route::post('actors/{actor}/audiences/upsert', [Client\ExternalController::class, 'upsertAudience']);
+    Route::post('actors/{actor}/audiences', [Client\ExternalController::class, 'createAudience']);
     Route::post('actors/{actor}/audiences/{audience}/groups/attach', [Client\ExternalController::class, 'attachAudienceGroups']);
     Route::delete('actors/{actor}/audiences/{audience}/groups/detach', [Client\ExternalController::class, 'detachAudienceGroups']);
 });

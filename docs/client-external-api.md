@@ -40,7 +40,7 @@ GET /api/client/audiences?client_id={client_id}&client_secret={client_secret}&on
 此接口不会返回 `password`。
 `online` 为 `true` 表示该观众存在尚未离开的观看记录。
 可选 query 参数 `online=true` 仅返回在线观众，`online=false` 仅返回离线观众；不传则返回全部观众。
-响应会缓存一分钟；通过外部接口创建/更新观众或调整观众分组后，缓存会立即失效。
+响应会缓存一分钟；通过外部接口新建观众或调整观众分组后，缓存会立即失效。
 
 返回：
 
@@ -255,10 +255,10 @@ GET /api/client/actors/{actor}/groups?client_id={client_id}&client_secret={clien
 
 返回 actor 可管理的观众分组。可管理分组由“actor 授权直播间 -> 直播间关联分组”推导。
 
-## 新建或更新观众并附加分组
+## 新建观众并附加分组
 
 ```http
-POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_secret={client_secret}
+POST /api/client/actors/{actor}/audiences?client_id={client_id}&client_secret={client_secret}
 ```
 
 请求：
@@ -274,13 +274,12 @@ POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_se
 
 规则：
 
-- 系统会使用 `name`、`phone`、`email` 作为唯一标识匹配已有用户。
-- 用户不存在时创建 `audience`，并在响应中返回本系统用户 ID 和固定明文密码 `Password!@`。
-- 用户存在时只更新基础字段，并返回同一个本系统用户 ID，不返回密码。
-- 如果 `name`、`phone`、`email` 分别匹配到多个不同用户，请求会被拒绝。
+- 此接口仅新建 `audience`，不会更新任何已有用户。
+- `name`（用户名）在全系统内唯一；重复时返回业务校验错误 `4003`，并在 `errors.name` 中说明“用户名已存在，请更换后重试。”。
+- `phone`、`email` 如有提供也必须全系统唯一，重复时同样返回 `4003`。
+- 成功时返回本系统用户 ID 和固定明文密码 `Password!@`。
 - `group_ids` 必须全部在 actor 可管理分组内。
-- 只附加本次传入的分组，不覆盖用户已有其他分组。
-- 返回的 `group_ids` 是操作后该用户的完整分组 ID 列表。
+- 返回的 `group_ids` 是新用户所属的分组 ID 列表。
 
 成功响应中的 `data.id` / `data.user_id` 即本系统观众用户 ID，后续附加/分离分组接口的 `{audience}` 使用这个 ID。
 
@@ -303,6 +302,19 @@ POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_se
 }
 ```
 
+用户名重复示例：
+
+```json
+{
+  "code": 4003,
+  "data": null,
+  "message": "提交的数据验证失败",
+  "errors": {
+    "name": ["用户名已存在，请更换后重试。"]
+  }
+}
+```
+
 ## 附加观众分组
 
 ```http
@@ -319,7 +331,7 @@ POST /api/client/actors/{actor}/audiences/{audience}/groups/attach?client_id={cl
 
 只附加 actor 可管理的分组，不覆盖其他分组。
 
-返回格式同“新建或更新观众并附加分组”，`data.group_ids` 是附加后该用户的完整分组 ID 列表。
+返回格式同“新建观众并附加分组”，`data.group_ids` 是附加后该用户的完整分组 ID 列表。
 
 此接口不会返回 `password`。
 
@@ -339,7 +351,7 @@ DELETE /api/client/actors/{actor}/audiences/{audience}/groups/detach?client_id={
 
 只移除 actor 可管理且本次指定的分组，不影响用户已有其他分组。
 
-返回格式同“新建或更新观众并附加分组”，`data.group_ids` 是分离后该用户的完整分组 ID 列表。
+返回格式同“新建观众并附加分组”，`data.group_ids` 是分离后该用户的完整分组 ID 列表。
 
 此接口不会返回 `password`。
 

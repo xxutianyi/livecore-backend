@@ -19,7 +19,7 @@
       "get": {
         "tags": ["第三方专用"],
         "summary": "全量查询观众列表",
-        "description": "返回系统内全部观众，用于调用方存量拉取和同步。响应缓存一分钟；通过外部接口创建/更新观众或调整观众分组后会立即失效。只校验 client 凭证和 IP 白名单，不需要 actor 授权。",
+        "description": "返回系统内全部观众，用于调用方存量拉取和同步。响应缓存一分钟；通过外部接口新建观众或调整观众分组后会立即失效。只校验 client 凭证和 IP 白名单，不需要 actor 授权。",
         "parameters": [
           { "$ref": "#/components/parameters/OnlineQuery" },
           { "$ref": "#/components/parameters/ClientIdQuery" },
@@ -205,10 +205,10 @@
         }
       }
     },
-    "/api/client/actors/{actor}/audiences/upsert": {
+    "/api/client/actors/{actor}/audiences": {
       "post": {
         "tags": ["第三方专用"],
-        "summary": "新建或更新观众并附加分组",
+        "summary": "新建观众并附加分组",
         "parameters": [
           { "$ref": "#/components/parameters/Actor" },
           { "$ref": "#/components/parameters/ClientIdQuery" },
@@ -219,7 +219,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AudienceUpsertRequest"
+                "$ref": "#/components/schemas/AudienceCreateRequest"
               }
             }
           }
@@ -351,18 +351,13 @@
       }
     },
     "schemas": {
-      "AudienceUpsertRequest": {
+      "AudienceCreateRequest": {
         "type": "object",
         "required": ["name", "group_ids"],
         "properties": {
-          "name": { "type": "string" },
+          "name": { "type": "string", "description": "全系统唯一的用户名；重复时返回 4003 和 errors.name" },
           "phone": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true, "format": "email" },
-          "password": {
-            "type": "string",
-            "nullable": true,
-            "description": "仅新建观众时返回固定明文密码 Password!@；更新、附加分组、分离分组时不返回"
-          },
           "group_ids": {
             "type": "array",
             "items": { "type": "string", "format": "uuid" }

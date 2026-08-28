@@ -198,7 +198,7 @@ test('client audience list is cached for one minute and invalidated after an aud
 
     [$actor, , $group] = serviceActorWithGroups();
 
-    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences", $credentials), clientPayload([
         'name' => 'Invalidates audience cache',
         'group_ids' => [$group->id],
     ]))->assertOk()
@@ -422,43 +422,31 @@ test('client reset audience password rejects non audience users', function () {
     expect($admin->fresh()->password)->toBe($oldPassword);
 });
 
-test('client can upsert audience and attach only requested groups without exposing existing groups', function () {
-    [$actor, , $group, $otherGroup] = serviceActorWithGroups();
+test('client can create an audience with requested groups', function () {
+    [$actor, , $group] = serviceActorWithGroups();
     $credentials = clientCredentials();
-    $audience = User::factory()->create([
-        'role' => 'audience',
-        'name' => 'Old Audience',
-        'phone' => '13800138001',
-    ]);
-    $audience->groups()->attach($otherGroup);
 
-    $response = $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+    $response = $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences", $credentials), clientPayload([
         'phone' => '13800138001',
         'name' => 'External Audience',
         'group_ids' => [$group->id],
     ]))
         ->assertOk()
         ->assertJsonPath('code', 0)
-        ->assertJsonPath('data.id', $audience->id)
-        ->assertJsonPath('data.user_id', $audience->id)
         ->assertJsonPath('data.name', 'External Audience')
-        ->assertJsonMissingPath('data.password')
-        ->assertJsonMissing(['groups' => []]);
+        ->assertJsonPath('data.password', 'Password!@');
 
-    expect($response->json('data.group_ids'))
-        ->toContain($group->id)
-        ->toContain($otherGroup->id);
+    $audience = User::findOrFail($response->json('data.id'));
 
     expect($audience->fresh()->groups()->pluck('user_groups.id')->all())
-        ->toContain($group->id)
-        ->toContain($otherGroup->id);
+        ->toBe([$group->id]);
 });
 
-test('client can upsert audience without phone and email', function () {
+test('client can create audience without phone and email', function () {
     [$actor, , $group] = serviceActorWithGroups();
     $credentials = clientCredentials();
 
-    $response = $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+    $response = $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences", $credentials), clientPayload([
         'name' => 'No Contact Audience',
         'group_ids' => [$group->id],
     ]))
@@ -481,51 +469,48 @@ test('client can upsert audience without phone and email', function () {
         ->and($audience->groups()->pluck('user_groups.id')->all())->toContain($group->id);
 });
 
-test('client upsert updates existing audience by unique identity fields', function () {
+test('client create rejects duplicate usernames without modifying the existing user', function () {
     [$actor, , $group] = serviceActorWithGroups();
     $credentials = clientCredentials();
     $audience = User::factory()->create([
         'role' => 'audience',
-        'name' => 'Old Name',
-        'phone' => null,
-        'email' => 'old-audience@example.com',
+        'name' => 'Existing Audience',
+        'phone' => '13800138000',
+        'email' => 'existing-audience@example.com',
     ]);
 
-    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
-        'name' => 'New Name',
-        'phone' => '13800138000',
-        'email' => 'old-audience@example.com',
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences", $credentials), clientPayload([
+        'name' => 'Existing Audience',
+        'phone' => '13900138000',
+        'email' => 'new-audience@example.com',
         'group_ids' => [$group->id],
     ]))
         ->assertOk()
-        ->assertJsonPath('code', 0)
-        ->assertJsonPath('data.id', $audience->id)
-        ->assertJsonPath('data.name', 'New Name')
-        ->assertJsonPath('data.phone', '13800138000')
-        ->assertJsonPath('data.email', 'old-audience@example.com')
-        ->assertJsonMissingPath('data.password');
+        ->assertJsonPath('code', 4003)
+        ->assertJsonPath('errors.name.0', '用户名已存在，请更换后重试。');
 
     $audience->refresh();
 
     expect($audience->name)
-        ->toBe('New Name')
+        ->toBe('Existing Audience')
         ->and($audience->phone)->toBe('13800138000')
-        ->and($audience->email)->toBe('old-audience@example.com')
-        ->and(User::where('email', 'old-audience@example.com')->count())->toBe(1);
+        ->and($audience->email)->toBe('existing-audience@example.com')
+        ->and(User::where('name', 'Existing Audience')->count())->toBe(1)
+        ->and(User::where('email', 'new-audience@example.com')->count())->toBe(0);
 });
 
-test('client upsert rejects unauthorized invalid empty and missing groups', function () {
+test('client create rejects unauthorized invalid empty and missing groups', function () {
     [$actor, , , $otherGroup] = serviceActorWithGroups();
     $credentials = clientCredentials();
 
-    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences", $credentials), clientPayload([
         'name' => 'Unauthorized Group',
         'group_ids' => [$otherGroup->id],
     ]))
         ->assertOk()
         ->assertJsonPath('code', 4000);
 
-    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences", $credentials), clientPayload([
         'name' => 'Empty Groups',
         'group_ids' => [],
     ]))
@@ -533,14 +518,14 @@ test('client upsert rejects unauthorized invalid empty and missing groups', func
         ->assertJsonPath('code', 4003)
         ->assertJsonStructure(['errors' => ['group_ids']]);
 
-    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences", $credentials), clientPayload([
         'name' => 'Missing Groups',
     ]))
         ->assertOk()
         ->assertJsonPath('code', 4003)
         ->assertJsonStructure(['errors' => ['group_ids']]);
 
-    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences", $credentials), clientPayload([
         'name' => 'Invalid Group',
         'group_ids' => ['not-a-uuid'],
     ]))
@@ -556,7 +541,7 @@ test('client upsert rejects unauthorized invalid empty and missing groups', func
     ])->count())->toBe(0);
 });
 
-test('client upsert refuses identity owned by non audience user', function () {
+test('client create rejects usernames already used by non audience users', function () {
     [$actor, , $group] = serviceActorWithGroups();
     $credentials = clientCredentials();
     $admin = User::factory()->create([
@@ -564,42 +549,36 @@ test('client upsert refuses identity owned by non audience user', function () {
         'name' => 'Admin Identity',
     ]);
 
-    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences", $credentials), clientPayload([
         'name' => 'Admin Identity',
         'group_ids' => [$group->id],
     ]))
         ->assertOk()
-        ->assertJsonPath('code', 4000);
+        ->assertJsonPath('code', 4003)
+        ->assertJsonPath('errors.name.0', '用户名已存在，请更换后重试。');
 
     expect($admin->fresh()->role)->toBe('admin');
 });
 
-test('client upsert rejects identity fields matching different users', function () {
+test('client create rejects duplicate contact fields', function () {
     [$actor, , $group] = serviceActorWithGroups();
     $credentials = clientCredentials();
-    $audienceByName = User::factory()->create([
-        'role' => 'audience',
-        'name' => 'Identity Name',
-        'email' => 'identity-name@example.com',
-    ]);
-    $audienceByEmail = User::factory()->create([
+    $audience = User::factory()->create([
         'role' => 'audience',
         'name' => 'Other Identity',
         'email' => 'identity-email@example.com',
     ]);
 
-    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
-        'name' => 'Identity Name',
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences", $credentials), clientPayload([
+        'name' => 'New Identity',
         'email' => 'identity-email@example.com',
         'group_ids' => [$group->id],
     ]))
         ->assertOk()
         ->assertJsonPath('code', 4003)
-        ->assertJsonStructure(['errors' => ['identity']]);
+        ->assertJsonPath('errors.email.0', '电子邮件已存在，请更换后重试。');
 
-    expect($audienceByName->fresh()->email)
-        ->toBe('identity-name@example.com')
-        ->and($audienceByEmail->fresh()->name)->toBe('Other Identity');
+    expect($audience->fresh()->name)->toBe('Other Identity');
 });
 
 test('client cannot attach unauthorized groups', function () {

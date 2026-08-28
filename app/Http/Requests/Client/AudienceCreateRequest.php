@@ -4,7 +4,7 @@ namespace App\Http\Requests\Client;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AudienceUpsertRequest extends FormRequest
+class AudienceCreateRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -25,7 +25,7 @@ class AudienceUpsertRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => '姓名',
+            'name' => '用户名',
             'phone' => '手机号',
             'email' => '电子邮件',
             'group_ids' => '用户分组',
