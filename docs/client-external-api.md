@@ -40,7 +40,7 @@ GET /api/client/audiences?client_id={client_id}&client_secret={client_secret}&on
 此接口不会返回 `password`。
 `online` 为 `true` 表示该观众存在尚未离开的观看记录。
 可选 query 参数 `online=true` 仅返回在线观众，`online=false` 仅返回离线观众；不传则返回全部观众。
-响应会缓存一分钟；通过外部接口新建观众或调整观众分组后，缓存会立即失效。
+响应会缓存一分钟；通过外部接口新建、更新观众或调整观众分组后，缓存会立即失效。
 
 返回：
 
@@ -314,6 +314,20 @@ POST /api/client/actors/{actor}/audiences?client_id={client_id}&client_secret={c
   }
 }
 ```
+
+## 兼容的更新或新建观众接口
+
+```http
+POST /api/client/actors/{actor}/audiences/upsert?client_id={client_id}&client_secret={client_secret}
+```
+
+此接口为兼容已有调用方保留，与上方“新建观众”接口并存。
+
+- 使用 `name`、`phone`、`email` 匹配已有用户；三者应匹配同一用户。
+- 未匹配到用户时，新建 `audience` 并返回固定明文密码 `Password!@`。
+- 匹配到一个观众时，更新其基础字段、附加本次传入分组，并返回同一个用户 ID；更新时不返回密码。
+- 多个字段匹配到不同用户时，返回业务校验错误 `4003`。
+- actor 与分组授权规则同“新建观众并附加分组”。
 
 ## 附加观众分组
 

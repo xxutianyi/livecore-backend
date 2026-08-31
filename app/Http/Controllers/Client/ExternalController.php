@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\AudienceGroupsRequest;
 use App\Http\Requests\Client\AudienceCreateRequest;
+use App\Http\Requests\Client\AudienceUpsertRequest;
 use App\Models\Live\LiveMessage;
 use App\Models\Live\LiveRoom;
 use App\Models\Online\UserOnline;
@@ -14,6 +15,7 @@ use App\Response\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\MessageBag;
 use Illuminate\Validation\Rule;
 
 class ExternalController extends Controller
@@ -169,6 +171,53 @@ class ExternalController extends Controller
             'account_type' => 'human',
             'password' => $plainPassword,
         ]);
+
+        $audience->fill($request->only(['name', 'phone', 'email']));
+        $audience->save();
+        $audience->groups()->syncWithoutDetaching($groupIds);
+        $this->forgetRoomAudienceCache($groupIds);
+        $this->forgetAudienceListCache();
+
+        return ApiResponse::success($this->audienceResponse($audience, $plainPassword));
+    }
+
+    public function upsertAudience(AudienceUpsertRequest $request, User $actor)
+    {
+        if (! $this->isValidActor($actor)) {
+            return ApiResponse::unAuthorized();
+        }
+
+        $groupIds = $this->normalizeIds($request->validated('group_ids'));
+
+        if (! $this->canManageGroups($actor, $groupIds)) {
+            return ApiResponse::unAuthorized();
+        }
+
+        $audience = $this->resolveAudienceByIdentity($request);
+
+        if ($audience instanceof MessageBag) {
+            return ApiResponse::error('提交的数据验证失败', 4003, $audience->toArray());
+        }
+
+        $uniqueErrors = $this->validateAudienceUniqueFields($request, $audience);
+        if ($uniqueErrors) {
+            return ApiResponse::error('提交的数据验证失败', 4003, $uniqueErrors);
+        }
+
+        if ($audience && $audience->role !== 'audience') {
+            return ApiResponse::unAuthorized();
+        }
+
+        $plainPassword = null;
+
+        if (! $audience) {
+            $plainPassword = self::RESET_AUDIENCE_PASSWORD;
+            $audience = new User([
+                'role' => 'audience',
+                'account_type' => 'human',
+                'password' => $plainPassword,
+            ]);
+        }
 
         $audience->fill($request->only(['name', 'phone', 'email']));
         $audience->save();
@@ -347,12 +396,12 @@ class ExternalController extends Controller
         ];
     }
 
-    private function validateAudienceUniqueFields(AudienceCreateRequest $request): ?array
+    private function validateAudienceUniqueFields(Request $request, ?User $audience = null): ?array
     {
         $validator = Validator::make($request->only(['name', 'phone', 'email']), [
-            'name' => ['required', 'string', Rule::unique('users', 'name')],
-            'phone' => ['nullable', 'string', Rule::unique('users', 'phone')],
-            'email' => ['nullable', 'email', Rule::unique('users', 'email')],
+            'name' => ['required', 'string', Rule::unique('users', 'name')->ignore($audience)],
+            'phone' => ['nullable', 'string', Rule::unique('users', 'phone')->ignore($audience)],
+            'email' => ['nullable', 'email', Rule::unique('users', 'email')->ignore($audience)],
         ], [
             'name.unique' => '用户名已存在，请更换后重试。',
             'phone.unique' => '手机号已存在，请更换后重试。',
@@ -364,6 +413,31 @@ class ExternalController extends Controller
         ]);
 
         return $validator->fails() ? $validator->errors()->toArray() : null;
+    }
+
+    private function resolveAudienceByIdentity(AudienceUpsertRequest $request): User|MessageBag|null
+    {
+        $identities = collect($request->only(['name', 'phone', 'email']))
+            ->filter(fn ($value) => filled($value));
+
+        $users = User::query()
+            ->where(function ($query) use ($identities) {
+                $identities->each(fn ($value, $field) => $query->orWhere($field, $value));
+            })
+            ->get();
+
+        if ($users->isEmpty()) {
+            return null;
+        }
+
+        if ($users->pluck('id')->unique()->count() > 1) {
+            return Validator::make([], [])->errors()->add(
+                'identity',
+                '姓名、手机号或电子邮件匹配到多个用户，请检查提交的数据'
+            );
+        }
+
+        return $users->first();
     }
 
 }

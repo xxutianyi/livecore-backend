@@ -469,6 +469,56 @@ test('client can create audience without phone and email', function () {
         ->and($audience->groups()->pluck('user_groups.id')->all())->toContain($group->id);
 });
 
+test('client can upsert an existing audience by identity fields', function () {
+    [$actor, , $group] = serviceActorWithGroups();
+    $credentials = clientCredentials();
+    $audience = User::factory()->create([
+        'role' => 'audience',
+        'name' => 'Old Name',
+        'phone' => null,
+        'email' => 'old-audience@example.com',
+    ]);
+
+    $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+        'name' => 'New Name',
+        'phone' => '13800138000',
+        'email' => 'old-audience@example.com',
+        'group_ids' => [$group->id],
+    ]))
+        ->assertOk()
+        ->assertJsonPath('code', 0)
+        ->assertJsonPath('data.id', $audience->id)
+        ->assertJsonPath('data.name', 'New Name')
+        ->assertJsonPath('data.phone', '13800138000')
+        ->assertJsonPath('data.email', 'old-audience@example.com')
+        ->assertJsonMissingPath('data.password');
+
+    $audience->refresh();
+
+    expect($audience->name)
+        ->toBe('New Name')
+        ->and($audience->phone)->toBe('13800138000')
+        ->and($audience->email)->toBe('old-audience@example.com')
+        ->and($audience->groups()->pluck('user_groups.id')->all())->toBe([$group->id]);
+});
+
+test('client upsert creates an audience when no identity matches', function () {
+    [$actor, , $group] = serviceActorWithGroups();
+    $credentials = clientCredentials();
+
+    $response = $this->postJson(clientUrl("/api/client/actors/$actor->id/audiences/upsert", $credentials), clientPayload([
+        'name' => 'Upsert Created Audience',
+        'group_ids' => [$group->id],
+    ]))
+        ->assertOk()
+        ->assertJsonPath('code', 0)
+        ->assertJsonPath('data.name', 'Upsert Created Audience')
+        ->assertJsonPath('data.password', 'Password!@');
+
+    expect(User::find($response->json('data.id')))
+        ->not->toBeNull();
+});
+
 test('client create rejects duplicate usernames without modifying the existing user', function () {
     [$actor, , $group] = serviceActorWithGroups();
     $credentials = clientCredentials();

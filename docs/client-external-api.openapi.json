@@ -238,6 +238,40 @@
         }
       }
     },
+    "/api/client/actors/{actor}/audiences/upsert": {
+      "post": {
+        "tags": ["第三方专用"],
+        "summary": "兼容的更新或新建观众接口",
+        "description": "保留给已有调用方。按姓名、手机号、电子邮件匹配同一已有用户时更新并附加分组；未匹配时新建观众。",
+        "parameters": [
+          { "$ref": "#/components/parameters/Actor" },
+          { "$ref": "#/components/parameters/ClientIdQuery" },
+          { "$ref": "#/components/parameters/ClientSecretQuery" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AudienceUpsertRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AudienceApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/client/actors/{actor}/audiences/{audience}/groups/attach": {
       "post": {
         "tags": ["第三方专用"],
@@ -356,6 +390,19 @@
         "required": ["name", "group_ids"],
         "properties": {
           "name": { "type": "string", "description": "全系统唯一的用户名；重复时返回 4003 和 errors.name" },
+          "phone": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true, "format": "email" },
+          "group_ids": {
+            "type": "array",
+            "items": { "type": "string", "format": "uuid" }
+          }
+        }
+      },
+      "AudienceUpsertRequest": {
+        "type": "object",
+        "required": ["name", "group_ids"],
+        "properties": {
+          "name": { "type": "string", "description": "用于匹配已有用户；没有匹配时作为新用户名称" },
           "phone": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true, "format": "email" },
           "group_ids": {
