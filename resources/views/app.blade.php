@@ -9,6 +9,22 @@
         <link rel="icon" src="/favicon.png" type="image/png" />
         <link rel="apple-touch-icon" src="/favicon.png" type="image/png" />
 
+        @auth
+            <script src="https://tam.cdn-go.cn/aegis-sdk/latest/aegis.min.js"></script>
+            <script>
+                if (typeof Aegis === 'function') {
+                    window.aegis = new Aegis({
+                        id: 'qVxyauLodmRbOJO5ox',
+                        uin: @json(auth()->id()),
+                        reportApiSpeed: true,
+                        reportAssetSpeed: true,
+                        spa: true,
+                        hostUrl: 'https://rumt-zh.com',
+                    });
+                }
+            </script>
+        @endauth
+
         @routes
         @viteReactRefresh
         @vite(['resources/js/app.tsx'])
