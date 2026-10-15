@@ -57,6 +57,8 @@ return Application::configure(basePath: dirname(__DIR__))
             LogApiRequests::class,
         ]);
 
+        $middleware->statefulApi();
+
         $middleware->alias([
             'client' => HandleClientRequests::class,
             'broadcast' => BroadcastRoomCache::class,
