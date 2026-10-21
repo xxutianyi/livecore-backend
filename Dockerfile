@@ -28,7 +28,7 @@ RUN --mount=type=cache,target=/root/.npm \
 # Stage 2: Run application
 # ============================================
 
-FROM ubuntu:24.04 AS runtime
+FROM php:8.4.27-cli-bookworm AS runtime
 
 WORKDIR /var/www/html
 
@@ -36,45 +36,23 @@ ENV TZ=UTC
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# 安装系统依赖
-RUN apt-get update && apt-get upgrade -y \
-    && mkdir -p /etc/apt/keyrings \
-    && apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python3 dnsutils librsvg2-bin fswatch ffmpeg nano \
-    && curl -sS 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xb8dc7e53946656efbce4c1dd71daeaab4ad4cab6' | gpg --dearmor | tee /etc/apt/keyrings/ppa_ondrej_php.gpg > /dev/null \
-    && echo "deb [signed-by=/etc/apt/keyrings/ppa_ondrej_php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu noble main" > /etc/apt/sources.list.d/ppa_ondrej_php.list \
-    && for attempt in 1 2 3 4 5; do \
-        apt-get update && apt-cache show php8.4-cli > /dev/null 2>&1 && break; \
-        if [ "$attempt" -eq 5 ]; then exit 1; fi; \
-        sleep 5; \
-    done \
-    && apt-get install -y \
-        libgd3 \
-        php8.4-cli \
-        php8.4-dev \
-        php8.4-pgsql \
-        php8.4-sqlite3 \
-        php8.4-gd \
-        php8.4-curl \
-        php8.4-mongodb \
-        php8.4-imap \
-        php8.4-mysql \
-        php8.4-mbstring \
-        php8.4-xml \
-        php8.4-zip \
-        php8.4-bcmath \
-        php8.4-soap \
-        php8.4-intl \
-        php8.4-readline \
-        php8.4-ldap \
-        php8.4-msgpack \
-        php8.4-igbinary \
-        php8.4-redis \
-        php8.4-swoole \
-        php8.4-memcached \
-        php8.4-pcov \
-        php8.4-imagick \
-        php8.4-xdebug \
-    && curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
+# 使用 PHP 官方修复镜像，不依赖临时不可用的 Ondřej PPA。
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates curl dnsutils ffmpeg fswatch git gnupg gosu \
+        libcap2-bin libc-client-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev \
+        libkrb5-dev libldap2-dev libmagickwand-dev libmemcached-dev libonig-dev \
+        libpng-dev libpq-dev libsasl2-dev libsqlite3-dev libssl-dev libwebp-dev \
+        libxml2-dev libxslt1-dev libzip-dev nano postgresql-client python3 \
+        sqlite3 supervisor unzip zip zlib1g-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu \
+    && docker-php-ext-install -j"$(nproc)" \
+        bcmath gd imap intl ldap mbstring mysqli opcache pcntl pdo_mysql \
+        pdo_pgsql pdo_sqlite pgsql soap sockets xsl zip \
+    && pecl install igbinary msgpack redis mongodb swoole memcached imagick pcov xdebug \
+    && docker-php-ext-enable igbinary msgpack redis mongodb swoole memcached imagick pcov xdebug \
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
     && apt-get update \
@@ -83,22 +61,14 @@ RUN apt-get update && apt-get upgrade -y \
     && corepack enable \
     && corepack prepare yarn@stable --activate \
     && npx -y playwright install-deps \
-    && curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/keyrings/pgdg.gpg > /dev/null \
-    && echo "deb [signed-by=/etc/apt/keyrings/pgdg.gpg] http://apt.postgresql.org/pub/repos/apt noble-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-    && apt-get update \
-    && apt-get install -y mysql-client postgresql-client-18 \
     && apt-get -y autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.4
-
 # The Octane, Reverb, and queue processes all use the PHP CLI SAPI.
-COPY docker/php.ini /etc/php/8.4/cli/conf.d/99-livecore-security.ini
+COPY docker/php.ini /usr/local/etc/php/conf.d/99-livecore-security.ini
 
-# PHP 8.4.27 contains the fixes for CVE-2026-109618 and CVE-2026-109619.
-# Refuse to publish an image if the package source has not provided the patch.
-RUN /usr/bin/php8.4 -r 'if (version_compare(PHP_VERSION, "8.4.27", "<")) { fwrite(STDERR, "PHP 8.4.27 or newer is required; found ".PHP_VERSION."\\n"); exit(1); }'
+RUN php -r 'if (version_compare(PHP_VERSION, "8.4.27", "<")) { fwrite(STDERR, "PHP 8.4.27 or newer is required; found ".PHP_VERSION."\\n"); exit(1); }'
 
 # 复制项目文件并安装依赖
 COPY composer.json composer.lock ./
