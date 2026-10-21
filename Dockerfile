@@ -63,15 +63,16 @@ RUN apt-get update && apt-get upgrade -y \
         --with-pgsql --with-readline --with-sodium=shared --with-xsl --with-zip \
     && make -j"$(nproc)" \
     && make install \
+    && cd / \
     && mkdir -p /usr/local/etc/php/conf.d \
     && touch /usr/local/etc/php/php.ini \
     && install_php_extension() { \
         extension_repo="$1"; extension_tag="$2"; shift 2; \
         extension_dir="$(mktemp -d)"; \
-        curl -fsSL --retry 5 --retry-all-errors --retry-delay 2 "https://github.com/${extension_repo}/archive/refs/tags/${extension_tag}.tar.gz" -o /tmp/extension.tar.gz; \
-        tar -xzf /tmp/extension.tar.gz -C "$extension_dir" --strip-components=1; \
-        (cd "$extension_dir" && phpize && ./configure "$@" && make -j"$(nproc)" && make install); \
-        rm -rf "$extension_dir" /tmp/extension.tar.gz; \
+        rm -rf "$extension_dir"; \
+        git clone --depth 1 --branch "$extension_tag" --recurse-submodules --shallow-submodules "https://github.com/${extension_repo}.git" "$extension_dir"; \
+        (cd "$extension_dir" && phpize && ./configure "$@" && make -j"$(nproc)" && make install) || return $?; \
+        rm -rf "$extension_dir"; \
     } \
     && install_php_extension igbinary/igbinary 3.2.16 \
     && install_php_extension msgpack/msgpack-php msgpack-3.0.0 \
@@ -80,7 +81,7 @@ RUN apt-get update && apt-get upgrade -y \
     && install_php_extension swoole/swoole-src v6.2.3 \
     && install_php_extension php-memcached-dev/php-memcached v3.4.0 \
     && install_php_extension Imagick/imagick 3.8.1 \
-    && install_php_extension php/pecl-mail-imap 1.0.3 \
+    && install_php_extension php/pecl-mail-imap 1.0.3 --with-kerberos --with-imap-ssl \
     && printf '%s\n' \
         'extension=igbinary' 'extension=msgpack' 'extension=redis' 'extension=mongodb' \
         'extension=swoole' 'extension=memcached' 'extension=imagick' 'extension=imap' \
