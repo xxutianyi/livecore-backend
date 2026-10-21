@@ -58,11 +58,12 @@ RUN apt-get update && apt-get upgrade -y \
         --enable-bcmath --enable-calendar --enable-exif --enable-ffi --enable-ftp --enable-intl --enable-mbstring \
         --enable-opcache --enable-pcntl --enable-shmop --enable-soap --enable-sockets --enable-sysvmsg \
         --enable-sysvsem --enable-sysvshm --with-curl --with-freetype --with-gd --with-jpeg --with-webp \
-        --with-gettext --with-kerberos --with-ldap --with-ldap-sasl --with-libdir=lib/x86_64-linux-gnu --with-mysqli=mysqlnd \
+        --with-gettext --with-kerberos --with-ldap --with-ldap-sasl --with-libdir="lib/$(gcc -print-multiarch)" --with-mysqli=mysqlnd \
         --with-openssl --with-password-argon2 --with-pdo-mysql=mysqlnd --with-pdo-pgsql --with-pdo-sqlite \
         --with-pgsql --with-readline --with-sodium=shared --with-xsl --with-zip \
     && make -j"$(nproc)" \
     && make install \
+    && mkdir -p /usr/local/etc/php/conf.d \
     && touch /usr/local/etc/php/php.ini \
     && pecl install -n igbinary \
     && pecl install -n msgpack \
