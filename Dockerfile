@@ -42,7 +42,7 @@ RUN apt-get update && apt-get upgrade -y \
         autoconf bison build-essential ca-certificates curl dnsutils ffmpeg fswatch git gnupg gosu \
         libargon2-dev libcap2-bin libc-client2007e-dev libcurl4-openssl-dev libedit-dev libffi-dev libfreetype6-dev libgettextpo-dev libicu-dev libjpeg-dev \
         libkrb5-dev libldap2-dev libmagickwand-dev libmemcached-dev libonig-dev \
-        libpng-dev libpq-dev libsasl2-dev libsqlite3-dev libssl-dev libwebp-dev \
+        libpng-dev libpq-dev libreadline-dev libsasl2-dev libsqlite3-dev libssl-dev libwebp-dev \
         libsodium-dev libxml2-dev libxslt1-dev libzip-dev nano pkg-config postgresql-client python3 re2c \
         sqlite3 supervisor unzip zip zlib1g-dev \
     && curl -fsSL https://www.php.net/distributions/php-8.4.27.tar.xz -o /tmp/php.tar.xz \
