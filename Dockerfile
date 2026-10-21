@@ -42,7 +42,11 @@ RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev python3 dnsutils librsvg2-bin fswatch ffmpeg nano \
     && curl -sS 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xb8dc7e53946656efbce4c1dd71daeaab4ad4cab6' | gpg --dearmor | tee /etc/apt/keyrings/ppa_ondrej_php.gpg > /dev/null \
     && echo "deb [signed-by=/etc/apt/keyrings/ppa_ondrej_php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu noble main" > /etc/apt/sources.list.d/ppa_ondrej_php.list \
-    && apt-get update \
+    && for attempt in 1 2 3 4 5; do \
+        apt-get update && apt-cache show php8.4-cli > /dev/null 2>&1 && break; \
+        if [ "$attempt" -eq 5 ]; then exit 1; fi; \
+        sleep 5; \
+    done \
     && apt-get install -y \
         libgd3 \
         php8.4-cli \
