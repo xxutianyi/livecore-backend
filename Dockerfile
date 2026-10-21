@@ -28,7 +28,7 @@ RUN --mount=type=cache,target=/root/.npm \
 # Stage 2: Run application
 # ============================================
 
-FROM php:8.4.27-cli-bookworm AS runtime
+FROM ubuntu:24.04 AS runtime
 
 WORKDIR /var/www/html
 
@@ -36,23 +36,38 @@ ENV TZ=UTC
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# 使用 PHP 官方修复镜像，不依赖临时不可用的 Ondřej PPA。
-RUN apt-get update \
+# 使用 PHP 官方源码构建修复版本，不依赖尚未更新的二进制包源。
+RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
-        ca-certificates curl dnsutils ffmpeg fswatch git gnupg gosu \
-        libcap2-bin libc-client-dev libfreetype6-dev libicu-dev libjpeg62-turbo-dev \
+        autoconf bison build-essential ca-certificates curl dnsutils ffmpeg fswatch git gnupg gosu \
+        libargon2-dev libcap2-bin libc-client2007e-dev libcurl4-openssl-dev libedit-dev libffi-dev libfreetype6-dev libgettextpo-dev libicu-dev libjpeg62-turbo-dev \
         libkrb5-dev libldap2-dev libmagickwand-dev libmemcached-dev libonig-dev \
         libpng-dev libpq-dev libsasl2-dev libsqlite3-dev libssl-dev libwebp-dev \
-        libxml2-dev libxslt1-dev libzip-dev nano postgresql-client python3 \
+        libsodium-dev libxml2-dev libxslt1-dev libzip-dev nano pkg-config postgresql-client python3 re2c \
         sqlite3 supervisor unzip zip zlib1g-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-    && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu \
-    && docker-php-ext-install -j"$(nproc)" \
-        bcmath gd imap intl ldap mbstring mysqli opcache pcntl pdo_mysql \
-        pdo_pgsql pdo_sqlite pgsql soap sockets xsl zip \
-    && pecl install igbinary msgpack redis mongodb swoole memcached imagick pcov xdebug \
-    && docker-php-ext-enable igbinary msgpack redis mongodb swoole memcached imagick pcov xdebug \
+    && curl -fsSL https://www.php.net/distributions/php-8.4.27.tar.xz -o /tmp/php.tar.xz \
+    && mkdir -p /usr/src/php \
+    && tar -xJf /tmp/php.tar.xz -C /usr/src/php --strip-components=1 \
+    && cd /usr/src/php \
+    && ./configure \
+        --prefix=/usr/local \
+        --with-config-file-path=/usr/local/etc \
+        --with-config-file-scan-dir=/usr/local/etc/php/conf.d \
+        --with-pear \
+        --enable-bcmath --enable-calendar --enable-exif --enable-ffi --enable-ftp --enable-intl --enable-mbstring \
+        --enable-opcache --enable-pcntl --enable-shmop --enable-soap --enable-sockets --enable-sysvmsg \
+        --enable-sysvsem --enable-sysvshm --with-curl --with-freetype --with-gd --with-jpeg --with-webp \
+        --with-gettext --with-kerberos --with-ldap --with-ldap-sasl --with-libdir=lib/x86_64-linux-gnu --with-mysqli=mysqlnd \
+        --with-openssl --with-password-argon2 --with-pdo-mysql=mysqlnd --with-pdo-pgsql --with-pdo-sqlite \
+        --with-pgsql --with-readline --with-sodium=shared --with-xsl --with-zip \
+    && make -j"$(nproc)" \
+    && make install \
+    && pecl install igbinary msgpack redis mongodb swoole memcached imagick imap pcov xdebug \
+    && printf '%s\n' \
+        'extension=igbinary' 'extension=msgpack' 'extension=redis' 'extension=mongodb' \
+        'extension=swoole' 'extension=memcached' 'extension=imagick' 'extension=imap' \
+        'extension=pcov' 'zend_extension=xdebug' > /usr/local/etc/php/conf.d/50-extensions.ini \
+    && rm -rf /usr/src/php /tmp/php.tar.xz \
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
     && apt-get update \
