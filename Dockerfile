@@ -63,7 +63,17 @@ RUN apt-get update && apt-get upgrade -y \
         --with-pgsql --with-readline --with-sodium=shared --with-xsl --with-zip \
     && make -j"$(nproc)" \
     && make install \
-    && pecl install -n igbinary msgpack redis mongodb swoole memcached imagick imap pcov xdebug \
+    && touch /usr/local/etc/php/php.ini \
+    && pecl install -n igbinary \
+    && pecl install -n msgpack \
+    && pecl install -n redis \
+    && pecl install -n mongodb \
+    && pecl install -n swoole \
+    && pecl install -n memcached \
+    && pecl install -n imagick \
+    && pecl install -n imap \
+    && pecl install -n pcov \
+    && pecl install -n xdebug \
     && printf '%s\n' \
         'extension=igbinary' 'extension=msgpack' 'extension=redis' 'extension=mongodb' \
         'extension=swoole' 'extension=memcached' 'extension=imagick' 'extension=imap' \
