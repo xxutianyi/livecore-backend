@@ -40,7 +40,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
         autoconf bison build-essential ca-certificates curl dnsutils ffmpeg fswatch git gnupg gosu \
-        libargon2-dev libcap2-bin libc-client2007e-dev libcurl4-openssl-dev libedit-dev libffi-dev libfreetype6-dev libgettextpo-dev libicu-dev libjpeg62-turbo-dev \
+        libargon2-dev libcap2-bin libc-client2007e-dev libcurl4-openssl-dev libedit-dev libffi-dev libfreetype6-dev libgettextpo-dev libicu-dev libjpeg-dev \
         libkrb5-dev libldap2-dev libmagickwand-dev libmemcached-dev libonig-dev \
         libpng-dev libpq-dev libsasl2-dev libsqlite3-dev libssl-dev libwebp-dev \
         libsodium-dev libxml2-dev libxslt1-dev libzip-dev nano pkg-config postgresql-client python3 re2c \
