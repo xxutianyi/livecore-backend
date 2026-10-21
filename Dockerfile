@@ -65,20 +65,26 @@ RUN apt-get update && apt-get upgrade -y \
     && make install \
     && mkdir -p /usr/local/etc/php/conf.d \
     && touch /usr/local/etc/php/php.ini \
-    && pecl install -n igbinary \
-    && pecl install -n msgpack \
-    && pecl install -n redis \
-    && pecl install -n mongodb \
-    && pecl install -n swoole \
-    && pecl install -n memcached \
-    && pecl install -n imagick \
-    && pecl install -n imap \
-    && pecl install -n pcov \
-    && pecl install -n xdebug \
+    && install_php_extension() { \
+        extension_repo="$1"; extension_tag="$2"; shift 2; \
+        extension_dir="$(mktemp -d)"; \
+        curl -fsSL --retry 5 --retry-all-errors --retry-delay 2 "https://github.com/${extension_repo}/archive/refs/tags/${extension_tag}.tar.gz" -o /tmp/extension.tar.gz; \
+        tar -xzf /tmp/extension.tar.gz -C "$extension_dir" --strip-components=1; \
+        (cd "$extension_dir" && phpize && ./configure "$@" && make -j"$(nproc)" && make install); \
+        rm -rf "$extension_dir" /tmp/extension.tar.gz; \
+    } \
+    && install_php_extension igbinary/igbinary 3.2.16 \
+    && install_php_extension msgpack/msgpack-php msgpack-3.0.0 \
+    && install_php_extension phpredis/phpredis 6.3.0 \
+    && install_php_extension mongodb/mongo-php-driver 2.5.3 \
+    && install_php_extension swoole/swoole-src v6.2.3 \
+    && install_php_extension php-memcached-dev/php-memcached v3.4.0 \
+    && install_php_extension Imagick/imagick 3.8.1 \
+    && install_php_extension php/pecl-mail-imap 1.0.3 \
     && printf '%s\n' \
         'extension=igbinary' 'extension=msgpack' 'extension=redis' 'extension=mongodb' \
         'extension=swoole' 'extension=memcached' 'extension=imagick' 'extension=imap' \
-        'extension=pcov' 'zend_extension=xdebug' > /usr/local/etc/php/conf.d/50-extensions.ini \
+        > /usr/local/etc/php/conf.d/50-extensions.ini \
     && rm -rf /usr/src/php /tmp/php.tar.xz \
     && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
     && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_24.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
