@@ -32,7 +32,8 @@ FROM ubuntu:24.04 AS runtime
 
 WORKDIR /var/www/html
 
-ENV TZ=UTC
+ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=UTC
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -62,7 +63,7 @@ RUN apt-get update && apt-get upgrade -y \
         --with-pgsql --with-readline --with-sodium=shared --with-xsl --with-zip \
     && make -j"$(nproc)" \
     && make install \
-    && pecl install igbinary msgpack redis mongodb swoole memcached imagick imap pcov xdebug \
+    && pecl install -n igbinary msgpack redis mongodb swoole memcached imagick imap pcov xdebug \
     && printf '%s\n' \
         'extension=igbinary' 'extension=msgpack' 'extension=redis' 'extension=mongodb' \
         'extension=swoole' 'extension=memcached' 'extension=imagick' 'extension=imap' \
