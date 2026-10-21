@@ -89,6 +89,13 @@ RUN apt-get update && apt-get upgrade -y \
 
 RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.4
 
+# The Octane, Reverb, and queue processes all use the PHP CLI SAPI.
+COPY docker/php.ini /etc/php/8.4/cli/conf.d/99-livecore-security.ini
+
+# PHP 8.4.27 contains the fixes for CVE-2026-109618 and CVE-2026-109619.
+# Refuse to publish an image if the package source has not provided the patch.
+RUN /usr/bin/php8.4 -r 'if (version_compare(PHP_VERSION, "8.4.27", "<")) { fwrite(STDERR, "PHP 8.4.27 or newer is required; found ".PHP_VERSION."\\n"); exit(1); }'
+
 # 复制项目文件并安装依赖
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist

@@ -220,13 +220,10 @@ return [
 
     'swoole' => [
         'options' => [
-            // Increase this to your desired maximum upload size (in bytes)
-            // Example: 100MB = 100 * 1024 * 1024
-            'package_max_length' => 100 * 1024 * 1024,
+            // Keep this aligned with PHP post_max_size in docker/php.ini.
+            'package_max_length' => 8 * 1024 * 1024,
 
-            // Optional: tell Swoole to use temporary files for large uploads
-            // instead of keeping them entirely in memory
-            'upload_max_filesize' => 100 * 1024 * 1024,
+            'upload_max_filesize' => 2 * 1024 * 1024,
         ],
     ],
 ];
