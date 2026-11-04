@@ -203,8 +203,12 @@ class User extends Authenticatable
         return $builder;
     }
 
-    public function scopeWhereOnline(Builder $builder, bool $online): Builder
+    public function scopeWhereOnline(Builder $builder, ?bool $online): Builder
     {
+        if ($online === null) {
+            return $builder;
+        }
+
         if ($online) {
             $builder->whereHas('onlines', function (Builder $builder) {
                 $builder->whereNull('leaving_at');
@@ -212,10 +216,9 @@ class User extends Authenticatable
         }
 
         if (! $online) {
-            $builder->whereDoesntHave('onlines')
-                ->orWhereHas('onlines', function (Builder $builder) {
-                    $builder->whereNotNull('leaving_at');
-                });
+            $builder->whereDoesntHave('onlines', function (Builder $builder) {
+                $builder->whereNull('leaving_at');
+            });
         }
 
         return $builder;
