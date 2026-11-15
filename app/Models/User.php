@@ -116,9 +116,19 @@ class User extends Authenticatable
     public function messages(): HasMany
     {
         return $this->hasMany(LiveMessage::class, 'sender_id')
-            ->select(['id', 'content', 'event_id', 'sender_id', 'created_at'])
+            ->select([
+                'id',
+                'content',
+                'room_id',
+                'event_id',
+                'sender_id',
+                'created_at',
+                'reviewed_at',
+            ])
             ->without(['sender', 'reviewer'])
-            ->with(['event']);
+            ->with(['room', 'event'])
+            ->latest('created_at')
+            ->latest('id');
     }
 
     public function manageable(): BelongsToMany

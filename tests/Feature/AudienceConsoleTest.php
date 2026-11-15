@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Live\LiveEvent;
+use App\Models\Live\LiveMessage;
 use App\Models\Live\LiveRoom;
 use App\Models\Online\UserOnline;
 use App\Models\User;
@@ -68,4 +69,42 @@ test('audience index keeps its default list and filters online status correctly'
         ->toBe('Online audience')
         ->and($offlineResponse->inertiaProps('data.data.0.name'))
         ->toBe('Offline audience');
+});
+
+test('audience detail comments include the live room and review time', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $reviewer = User::factory()->create(['role' => 'room-admin']);
+    $room = LiveRoom::factory()->create(['name' => 'Morning room']);
+    $event = LiveEvent::factory()->create([
+        'room_id' => $room->id,
+        'name' => 'Opening session',
+    ]);
+    $audience = User::factory()->create(['role' => 'audience', 'name' => 'Audience member']);
+    $reviewedAt = now()->subMinute()->startOfSecond();
+
+    $message = LiveMessage::create([
+        'content' => 'Hello from the room',
+        'room_id' => $room->id,
+        'event_id' => $event->id,
+        'sender_id' => $audience->id,
+        'reviewer_id' => $reviewer->id,
+        'reviewed_at' => $reviewedAt,
+    ]);
+
+    $response = $this->actingAs($admin)
+        ->get(route('settings.users.show', $audience))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('console/settings/users/show')
+            ->has('user.messages', 1)
+            ->where('user.messages.0.id', $message->id)
+            ->where('user.messages.0.content', 'Hello from the room')
+            ->where('user.messages.0.room.id', $room->id)
+            ->where('user.messages.0.room.name', 'Morning room')
+            ->where('user.messages.0.event.id', $event->id)
+            ->where('user.messages.0.event.name', 'Opening session')
+        );
+
+    expect($response->inertiaProps('user.messages.0.reviewed_at'))
+        ->toBe($message->fresh()->reviewed_at?->toJSON());
 });
