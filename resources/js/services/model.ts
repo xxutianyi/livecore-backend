@@ -89,6 +89,8 @@ export interface LiveMessage extends Model {
   content: string;
   event?: LiveEvent;
   event_id: LiveEvent['id'];
+  room?: Pick<LiveRoom, 'id' | 'name'>;
+  room_id?: LiveRoom['id'];
   sender?: Pick<User, 'id' | 'name'>;
   reviewer?: Pick<User, 'id' | 'name'>;
   reviewed_at?: string;
